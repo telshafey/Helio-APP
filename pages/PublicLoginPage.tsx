@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 import Logo from '../components/common/Logo';
 import type { AdminUser } from '../types';
 
 const PublicLoginPage: React.FC = () => {
-    const { publicLogin, login, admins } = useAppContext();
+    const { publicLogin, login } = useAuth();
+    const { admins } = useAppContext();
     const navigate = useNavigate();
     const [email, setEmail] = useState('test@test.com');
     const [password, setPassword] = useState('password');

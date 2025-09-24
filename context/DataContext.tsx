@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback, useMemo } from 'react';
 import { 
     mockCategories, mockServices, mockNews, mockNotifications, 
     mockProperties, mockEmergencyContacts, mockServiceGuides,
@@ -12,26 +12,26 @@ import type {
     EmergencyContact, ServiceGuide, AppUser, AdminUser,
     Driver, WeeklyScheduleItem, Supervisor, ExternalRoute,
     AuditLog, PublicPagesContent, Post, Comment,
-    Advertisement, AppContextType
+// FIX: Corrected the type import to use the newly defined DataContextType.
+    Advertisement, DataContextType
 } from '../types';
-import { useUI } from './UIContext';
 import { useAuth } from './AuthContext';
+import { useUI } from './UIContext';
 
-const AppContext = createContext<AppContextType | undefined>(undefined);
+const DataContext = createContext<DataContextType | undefined>(undefined);
 
-export const useAppContext = (): AppContextType => {
-    const context = useContext(AppContext);
+export const useData = (): DataContextType => {
+    const context = useContext(DataContext);
     if (context === undefined) {
-        throw new Error('useAppContext must be used within an AppProvider');
+        throw new Error('useData must be used within a DataProvider');
     }
     return context;
 };
 
-export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const { showToast } = useUI();
+export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const { currentUser, currentPublicUser } = useAuth();
-    
-    // Data State
+    const { showToast } = useUI();
+
     const [categories, setCategories] = useState<Category[]>(mockCategories);
     const [services, setServices] = useState<Service[]>(mockServices);
     const [news, setNews] = useState<News[]>(mockNews);
@@ -45,15 +45,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const [posts, setPosts] = useState<Post[]>(mockPosts);
     const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
     const [publicPagesContent, setPublicPagesContent] = useState<PublicPagesContent>(mockPublicPagesContent);
-    const [transportation, setTransportation] = useState({
-        internalSupervisor: mockInternalSupervisor,
-        externalSupervisor: mockExternalSupervisor,
-        internalDrivers: mockInternalDrivers,
-        weeklySchedule: mockWeeklySchedule,
-        externalRoutes: mockExternalRoutes,
-    });
     
-    // --- HELPER FUNCTIONS & CALLBACKS ---
+    // Transportation State
+    const [internalSupervisor, setInternalSupervisor] = useState<Supervisor>(mockInternalSupervisor);
+    const [externalSupervisor, setExternalSupervisor] = useState<Supervisor>(mockExternalSupervisor);
+    const [internalDrivers, setInternalDrivers] = useState<Driver[]>(mockInternalDrivers);
+    const [weeklySchedule, setWeeklySchedule] = useState<WeeklyScheduleItem[]>(mockWeeklySchedule);
+    const [externalRoutes, setExternalRoutes] = useState<ExternalRoute[]>(mockExternalRoutes);
 
     const logActivity = useCallback((action: string, details: string) => {
         const newLog: AuditLog = {
@@ -65,8 +63,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         };
         setAuditLogs(prevLogs => [newLog, ...prevLogs]);
     }, [currentUser]);
-
-    // Data Handlers
+    
     const handleUpdateReview = useCallback((serviceId: number, reviewId: number, newComment: string) => {
         let serviceName = '';
         let reviewUser = '';
@@ -153,6 +150,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         showToast('شكراً لك، تم إضافة تقييمك بنجاح!');
     }, [currentPublicUser, showToast]);
 
+
+    // CRUD Handlers for Services
     const handleSaveService = useCallback((serviceData: Omit<Service, 'id' | 'rating' | 'reviews' | 'isFavorite' | 'views' | 'creationDate'> & { id?: number }) => {
         if (serviceData.id) { // Update
             setServices(prev => prev.map(s => s.id === serviceData.id ? { ...s, ...serviceData } : s));
@@ -187,6 +186,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setServices(prev => prev.map(s => s.id === serviceId ? { ...s, isFavorite: !s.isFavorite } : s));
     }, []);
 
+    // CRUD Handlers for News
     const handleSaveNews = useCallback((newsData: Omit<News, 'id' | 'date' | 'author' | 'views'> & { id?: number }) => {
         if (newsData.id) {
             setNews(prev => prev.map(n => n.id === newsData.id ? { ...n, ...newsData } : n));
@@ -215,6 +215,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
     }, [news, logActivity, showToast]);
     
+    // CRUD Handlers for Notifications
     const handleSaveNotification = useCallback((notificationData: Omit<Notification, 'id'> & { id?: number }) => {
         if (notificationData.id) {
             setNotifications(prev => prev.map(n => n.id === notificationData.id ? { ...n, ...notificationData } : n));
@@ -240,6 +241,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
          }
     }, [notifications, logActivity, showToast]);
 
+    // CRUD Handlers for Advertisements
     const handleSaveAdvertisement = useCallback((adData: Omit<Advertisement, 'id'> & { id?: number }) => {
         if (adData.id) {
             setAdvertisements(prev => prev.map(ad => ad.id === adData.id ? { ...ad, ...adData } : ad));
@@ -265,6 +267,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
     }, [advertisements, logActivity, showToast]);
 
+    // CRUD Handlers for Properties
     const handleSaveProperty = useCallback((propertyData: Omit<Property, 'id' | 'views' | 'creationDate'> & { id?: number }) => {
         if (propertyData.id) {
             setProperties(prev => prev.map(p => p.id === propertyData.id ? { ...p, ...propertyData } : p));
@@ -292,9 +295,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
     }, [properties, logActivity, showToast]);
 
-    const handleSaveEmergencyContact = useCallback((contactData: Omit<EmergencyContact, 'id' | 'type'> & { id?: number; type?: 'city' | 'national' }) => {
+    // Emergency Contacts
+    const handleSaveEmergencyContact = useCallback((contactData: Omit<EmergencyContact, 'id'> & { id?: number }) => {
         if (contactData.id) {
-            setEmergencyContacts(prev => prev.map(c => c.id === contactData.id ? { ...c, ...contactData, type: contactData.type || c.type } : c));
+            setEmergencyContacts(prev => prev.map(c => c.id === contactData.id ? { ...c, ...contactData } : c));
             logActivity('تحديث رقم طوارئ', `تم تحديث رقم: ${contactData.title}`);
             showToast('تم تحديث الرقم بنجاح!');
         } else {
@@ -319,6 +323,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
     }, [emergencyContacts, logActivity, showToast]);
 
+    // Service Guides
     const handleSaveServiceGuide = useCallback((guideData: Omit<ServiceGuide, 'id'> & { id?: number }) => {
         if (guideData.id) {
             setServiceGuides(prev => prev.map(g => g.id === guideData.id ? { ...g, ...guideData } : g));
@@ -344,6 +349,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
     }, [serviceGuides, logActivity, showToast]);
     
+    // Users (AppUser)
     const handleSaveUser = useCallback((userData: Omit<AppUser, 'id' | 'joinDate'> & { id?: number }) => {
         if (userData.id) {
             setUsers(prev => prev.map(u => u.id === userData.id ? { ...u, ...userData } : u));
@@ -370,6 +376,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
     }, [users, logActivity, showToast]);
 
+    // Admins (AdminUser)
     const handleSaveAdmin = useCallback((adminData: Omit<AdminUser, 'id'> & { id?: number }) => {
          if (adminData.id) {
             setAdmins(prev => prev.map(a => a.id === adminData.id ? { ...a, ...adminData } : a));
@@ -395,54 +402,52 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
     }, [admins, logActivity, showToast]);
     
+    // Transportation
     const handleSaveDriver = useCallback((driverData: Omit<Driver, 'id'> & { id?: number }) => {
-        setTransportation(prev => {
-            let newDrivers;
-            if (driverData.id) {
-                newDrivers = prev.internalDrivers.map(d => d.id === driverData.id ? { ...d, ...driverData } : d);
-            } else {
-                const newDriver = { id: Date.now(), ...driverData };
-                newDrivers = [...prev.internalDrivers, newDriver];
-            }
-            return { ...prev, internalDrivers: newDrivers };
-        });
+        if (driverData.id) {
+            setInternalDrivers(prev => prev.map(d => d.id === driverData.id ? { ...d, ...driverData } : d));
+        } else {
+            const newDriver = { id: Date.now(), ...driverData };
+            setInternalDrivers(prev => [...prev, newDriver]);
+        }
         showToast('تم حفظ بيانات السائق بنجاح!');
     }, [showToast]);
 
     const handleDeleteDriver = useCallback((id: number) => {
-        setTransportation(prev => ({...prev, internalDrivers: prev.internalDrivers.filter(d => d.id !== id)}));
+        setInternalDrivers(prev => prev.filter(d => d.id !== id));
         showToast('تم حذف السائق بنجاح!');
     }, [showToast]);
 
     const handleSaveRoute = useCallback((routeData: Omit<ExternalRoute, 'id'> & { id?: number }) => {
-        setTransportation(prev => {
-            let newRoutes;
-            if (routeData.id) {
-                newRoutes = prev.externalRoutes.map(r => r.id === routeData.id ? { ...r, ...routeData } : r);
-            } else {
-                const newRoute = { id: Date.now(), ...routeData };
-                newRoutes = [...prev.externalRoutes, newRoute];
-            }
-            return {...prev, externalRoutes: newRoutes };
-        });
+        if (routeData.id) {
+            setExternalRoutes(prev => prev.map(r => r.id === routeData.id ? { ...r, ...routeData } : r));
+        } else {
+            const newRoute = { id: Date.now(), ...routeData };
+            setExternalRoutes(prev => [...prev, newRoute]);
+        }
         showToast('تم حفظ بيانات المسار بنجاح!');
     }, [showToast]);
 
     const handleDeleteRoute = useCallback((id: number) => {
-        setTransportation(prev => ({...prev, externalRoutes: prev.externalRoutes.filter(r => r.id !== id)}));
+        setExternalRoutes(prev => prev.filter(r => r.id !== id));
         showToast('تم حذف المسار بنجاح!');
     }, [showToast]);
 
     const handleSaveSchedule = useCallback((schedule: WeeklyScheduleItem[]) => {
-        setTransportation(prev => ({...prev, weeklySchedule: schedule}));
+        setWeeklySchedule(schedule);
         showToast('تم تحديث الجدول الأسبوعي بنجاح!');
     }, [showToast]);
     
     const handleSaveSupervisor = useCallback((type: 'internal' | 'external', supervisor: Supervisor) => {
-        setTransportation(prev => ({...prev, [`${type}Supervisor`]: supervisor}));
+        if (type === 'internal') {
+            setInternalSupervisor(supervisor);
+        } else {
+            setExternalSupervisor(supervisor);
+        }
         showToast('تم تحديث بيانات المشرف بنجاح!');
     }, [showToast]);
     
+    // Public Pages Content
     const handleUpdatePublicPageContent = useCallback(<K extends keyof PublicPagesContent>(page: K, newContent: PublicPagesContent[K]) => {
         setPublicPagesContent(prev => ({
             ...prev,
@@ -451,6 +456,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         showToast(`تم تحديث محتوى صفحة "${page}" بنجاح!`);
     }, [showToast]);
     
+    // Community Forum
     const addPost = useCallback((postData: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments'>) => {
         if (!currentPublicUser) return;
         const newPost: Post = {
@@ -501,73 +507,33 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }));
     }, [currentPublicUser]);
 
-    // --- CONTEXT VALUE ---
-    const value: AppContextType = {
-        categories,
-        services,
-        news,
-        notifications,
-        advertisements,
-        properties,
-        emergencyContacts,
-        serviceGuides,
-        users,
-        admins,
-        posts,
-        transportation,
+    const value: DataContextType = {
+        categories, services, news, notifications, advertisements, properties, emergencyContacts, serviceGuides, users, admins, posts,
+        transportation: { internalSupervisor, externalSupervisor, internalDrivers, weeklySchedule, externalRoutes },
         auditLogs,
         publicPagesContent,
         logActivity,
-        handleUpdateReview,
-        handleDeleteReview,
-        handleReplyToReview,
-        handleToggleHelpfulReview,
-        addReview,
-        handleSaveService,
-        handleDeleteService,
-        handleToggleFavorite,
-        handleSaveNews,
-        handleDeleteNews,
-        handleSaveNotification,
-        handleDeleteNotification,
-        handleSaveAdvertisement,
-        handleDeleteAdvertisement,
-        handleSaveProperty,
-        handleDeleteProperty,
-        handleSaveEmergencyContact,
-        handleDeleteEmergencyContact,
-        handleSaveServiceGuide,
-        handleDeleteServiceGuide,
-        handleSaveUser,
-        handleDeleteUser,
-        handleSaveAdmin,
-        handleDeleteAdmin,
-        handleSaveDriver,
-        handleDeleteDriver,
-        handleSaveRoute,
-        handleDeleteRoute,
+        handleUpdateReview, handleDeleteReview, handleReplyToReview, handleToggleHelpfulReview, addReview,
+        handleSaveService, handleDeleteService, handleToggleFavorite,
+        handleSaveNews, handleDeleteNews,
+        handleSaveNotification, handleDeleteNotification,
+        handleSaveAdvertisement, handleDeleteAdvertisement,
+        handleSaveProperty, handleDeleteProperty,
+        handleSaveEmergencyContact, handleDeleteEmergencyContact,
+        handleSaveServiceGuide, handleDeleteServiceGuide,
+        handleSaveUser, handleDeleteUser,
+        handleSaveAdmin, handleDeleteAdmin,
+        handleSaveDriver, handleDeleteDriver,
+        handleSaveRoute, handleDeleteRoute,
         handleSaveSchedule,
         handleSaveSupervisor,
         handleUpdatePublicPageContent,
-        addPost,
-        deletePost,
-        addComment,
-        toggleLikePost,
+        addPost, deletePost, addComment, toggleLikePost,
     };
-
-    return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
-};
-
-// FIX: Add and export useHasPermission hook to check for user roles.
-export const useHasPermission = (allowedRoles: (AdminUser['role'])[]): boolean => {
-    const { currentUser } = useAuth();
-
-    if (!currentUser) {
-        return false;
-    }
-    // Super admin can do anything
-    if (currentUser.role === 'مدير عام') {
-        return true;
-    }
-    return allowedRoles.includes(currentUser.role);
+    
+    return (
+        <DataContext.Provider value={value}>
+            {children}
+        </DataContext.Provider>
+    );
 };

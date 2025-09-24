@@ -4,7 +4,7 @@ import Sidebar from './components/common/Sidebar';
 import Header from './components/common/Header';
 import Spinner from './components/common/Spinner';
 import Breadcrumbs from './components/common/Breadcrumbs';
-import { useAppContext } from './context/AppContext';
+import { useAuth } from './context/AuthContext';
 import ToastContainer from './components/common/Toast';
 import ScrollToTop from './components/common/ScrollToTop';
 
@@ -62,7 +62,7 @@ const PublicTransportationPage = lazy(() => import('./pages/PublicTransportation
 
 
 const App: React.FC = () => {
-  const { isAuthenticated, isPublicAuthenticated } = useAppContext();
+  const { isAuthenticated, isPublicAuthenticated } = useAuth();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   return (

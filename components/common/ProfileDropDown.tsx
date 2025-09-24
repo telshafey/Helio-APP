@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAppContext } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
 import { AppUser } from '../../types';
 import { UserCircleIcon, ArrowLeftOnRectangleIcon } from './Icons';
 
@@ -10,7 +10,7 @@ interface ProfileDropDownProps {
 
 const ProfileDropDown: React.FC<ProfileDropDownProps> = ({ user }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const { publicLogout } = useAppContext();
+    const { publicLogout } = useAuth();
     const navigate = useNavigate();
     const dropdownRef = useRef<HTMLDivElement>(null);
 

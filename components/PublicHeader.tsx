@@ -1,12 +1,17 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
 // FIX: Corrected icon import path
 import { MoonIcon, SunIcon } from './common/Icons';
 import ProfileDropDown from './common/ProfileDropDown';
+// FIX: Import useUI to get dark mode state, as it's no longer in AppContext.
+import { useUI } from '../context/UIContext';
+// FIX: Import useAuth to get public user authentication state.
+import { useAuth } from '../context/AuthContext';
 
 const PublicHeader: React.FC = () => {
-    const { isDarkMode, toggleDarkMode, isPublicAuthenticated, currentPublicUser } = useAppContext();
+    // FIX: Destructure hooks separately. UI state comes from useUI, auth state from useAuth.
+    const { isDarkMode, toggleDarkMode } = useUI();
+    const { isPublicAuthenticated, currentPublicUser } = useAuth();
 
     const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
         `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -55,7 +60,7 @@ const PublicHeader: React.FC = () => {
                         
                         <div className="hidden sm:block border-r border-slate-200 dark:border-slate-700 h-8 mx-2"></div>
 
-                        <Link to="/login" className="hidden sm:block px-4 py-2 text-gray-700 dark:text-gray-200 font-semibold rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-sm">
+                        <Link to="/admin-login" className="hidden sm:block px-4 py-2 text-gray-700 dark:text-gray-200 font-semibold rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-sm">
                            دخول المسؤولين
                         </Link>
                     </div>

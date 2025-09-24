@@ -13,6 +13,7 @@ import {
     PhotoIcon
 } from './Icons';
 import { useAppContext } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
 import type { AdminUser } from '../../types';
 import Logo from './Logo';
 import { getIcon } from './iconUtils';
@@ -44,7 +45,8 @@ const filterNavItemsBySearch = (items: NavItemData[], query: string): NavItemDat
 };
 
 const Sidebar: React.FC = () => {
-    const { categories, logout, currentUser } = useAppContext();
+    const { categories } = useAppContext();
+    const { logout, currentUser } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({ 'الخدمات الرئيسية': true });
     const [searchQuery, setSearchQuery] = useState('');

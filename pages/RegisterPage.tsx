@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 import Logo from '../components/common/Logo';
 
 const RegisterPage: React.FC = () => {
-    const { register } = useAppContext();
+    const { register } = useAuth();
     const navigate = useNavigate();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');

@@ -2,17 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon, PhoneIcon, PencilSquareIcon, TrashIcon, PlusIcon, ShieldExclamationIcon } from '../components/common/Icons';
 import type { EmergencyContact } from '../types';
+// FIX: Import useHasPermission for role checks.
 import { useAppContext, useHasPermission } from '../context/AppContext';
 import Modal from '../components/common/Modal';
 import EmptyState from '../components/common/EmptyState';
 import PageBanner from '../components/common/PageBanner';
+// FIX: Import useAuth for authentication state.
+import { useAuth } from '../context/AuthContext';
 
 const EmergencyCard: React.FC<{ contact: EmergencyContact; onEdit: (contact: EmergencyContact) => void; onDelete: (id: number) => void; }> = ({ contact, onEdit, onDelete }) => {
-    const { isAuthenticated } = useAppContext();
+    // FIX: Get isAuthenticated from useAuth instead of useAppContext.
+    const { isAuthenticated } = useAuth();
     const canManage = useHasPermission(['مسؤول ادارة الخدمات']);
 
     return (
         <div className="group relative bg-white dark:bg-slate-800 rounded-xl p-6 text-center shadow-lg border border-transparent dark:border-slate-700 transform hover:-translate-y-1 transition-transform duration-300 ease-in-out">
+            {contact.type === 'city' && (
+                <span className="absolute top-2 right-2 text-xs bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300 px-2 py-1 rounded-full font-semibold">خدمة خاصة بالمدينة</span>
+            )}
             {isAuthenticated && canManage && (
                 <div className="absolute top-2 left-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button onClick={() => onEdit(contact)} className="p-2 bg-slate-100 dark:bg-slate-700 rounded-full text-blue-500 hover:bg-blue-100 dark:hover:bg-blue-900/50" title="تعديل الرقم">
@@ -37,7 +44,8 @@ const EmergencyCard: React.FC<{ contact: EmergencyContact; onEdit: (contact: Eme
 };
 
 const EmergencyListItem: React.FC<{ contact: EmergencyContact; onEdit: (contact: EmergencyContact) => void; onDelete: (id: number) => void; }> = ({ contact, onEdit, onDelete }) => {
-    const { isAuthenticated } = useAppContext();
+    // FIX: Get isAuthenticated from useAuth instead of useAppContext.
+    const { isAuthenticated } = useAuth();
     const canManage = useHasPermission(['مسؤول ادارة الخدمات']);
 
     return (
@@ -135,7 +143,9 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; children: Reac
 
 const EmergencyPage: React.FC = () => {
     const navigate = useNavigate();
-    const { emergencyContacts, handleSaveEmergencyContact, handleDeleteEmergencyContact, isAuthenticated } = useAppContext();
+    const { emergencyContacts, handleSaveEmergencyContact, handleDeleteEmergencyContact } = useAppContext();
+    // FIX: Get isAuthenticated from useAuth instead of useAppContext.
+    const { isAuthenticated } = useAuth();
     const canManage = useHasPermission(['مسؤول ادارة الخدمات']);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingContact, setEditingContact] = useState<EmergencyContact | null>(null);

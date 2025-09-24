@@ -1,10 +1,12 @@
 import React, { memo, useState } from 'react';
 import { SunIcon, MoonIcon, MagnifyingGlassIcon } from './Icons';
-import { useAppContext } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
+import { useUI } from '../../context/UIContext';
 import GlobalSearchModal from './GlobalSearchModal';
 
 const Header: React.FC = () => {
-  const { isDarkMode, toggleDarkMode, currentUser } = useAppContext();
+  const { isDarkMode, toggleDarkMode } = useUI();
+  const { currentUser } = useAuth();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   
   return (

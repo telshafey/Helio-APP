@@ -288,22 +288,34 @@ export interface Post {
   comments: Comment[];
 }
 
-export interface AppContextType {
-  // Admin Auth
+
+// --- CONTEXT TYPES ---
+export interface UIContextType {
+  isDarkMode: boolean;
+  toggleDarkMode: () => void;
+  toasts: ToastMessage[];
+  showToast: (message: string, type?: 'success' | 'error') => void;
+  dismissToast: (id: number) => void;
+}
+
+export type UseUIContextType = () => UIContextType;
+
+export interface AuthContextType {
   currentUser: AdminUser | null;
   isAuthenticated: boolean;
   login: (user: AdminUser) => void;
   logout: () => void;
-  
-  // Public User Auth
   currentPublicUser: AppUser | null;
   isPublicAuthenticated: boolean;
   publicLogin: (email: string, password?: string) => boolean;
   publicLogout: () => void;
   register: (user: Omit<AppUser, 'id' | 'joinDate' | 'avatar' | 'status'>) => boolean;
   updateProfile: (user: Omit<AppUser, 'joinDate'>) => void;
+}
 
-  // Data
+export type UseAuthContextType = () => AuthContextType;
+
+export interface DataContextType {
   categories: Category[];
   services: Service[];
   news: News[];
@@ -324,8 +336,6 @@ export interface AppContextType {
   };
   auditLogs: AuditLog[];
   publicPagesContent: PublicPagesContent;
-  
-  // Handlers
   logActivity: (action: string, details: string) => void;
   handleUpdateReview: (serviceId: number, reviewId: number, newComment: string) => void;
   handleDeleteReview: (serviceId: number, reviewId: number) => void;
@@ -343,7 +353,7 @@ export interface AppContextType {
   handleDeleteAdvertisement: (id: number) => void;
   handleSaveProperty: (property: Omit<Property, 'id' | 'views' | 'creationDate'> & { id?: number }) => void;
   handleDeleteProperty: (id: number) => void;
-  handleSaveEmergencyContact: (contact: Omit<EmergencyContact, 'id'> & { id?: number }) => void;
+  handleSaveEmergencyContact: (contact: Omit<EmergencyContact, 'id' | 'type'> & { id?: number; type?: 'city' | 'national' }) => void;
   handleDeleteEmergencyContact: (id: number) => void;
   handleSaveServiceGuide: (guide: Omit<ServiceGuide, 'id'> & { id?: number }) => void;
   handleDeleteServiceGuide: (id: number) => void;
@@ -362,11 +372,9 @@ export interface AppContextType {
   deletePost: (postId: number) => void;
   addComment: (postId: number, commentData: Omit<Comment, 'id' | 'date' | 'userId' | 'username' | 'avatar'>) => void;
   toggleLikePost: (postId: number) => void;
+}
 
-  // UI
-  isDarkMode: boolean;
-  toggleDarkMode: () => void;
-  toasts: ToastMessage[];
-  showToast: (message: string, type: 'success' | 'error') => void;
-  dismissToast: (id: number) => void;
+
+export interface AppContextType extends DataContextType {
+  // Now AppContext only contains DataContextType properties
 }

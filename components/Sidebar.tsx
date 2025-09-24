@@ -24,6 +24,8 @@ import {
 import { useAppContext } from '../context/AppContext';
 import type { AdminUser } from '../types';
 import Logo from './common/Logo';
+// FIX: Import useAuth to get current user and logout function.
+import { useAuth } from '../context/AuthContext';
 
 const iconComponents: { [key: string]: React.FC<React.SVGProps<SVGSVGElement>> } = {
     BuildingLibraryIcon, InformationCircleIcon, DocumentDuplicateIcon, TruckIcon,
@@ -65,7 +67,9 @@ const filterNavItemsBySearch = (items: NavItemData[], query: string): NavItemDat
 };
 
 const Sidebar: React.FC = () => {
-    const { categories, logout, currentUser } = useAppContext();
+    // FIX: Destructure auth properties from useAuth and data properties from useAppContext.
+    const { categories } = useAppContext();
+    const { logout, currentUser } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({ 'الخدمات الرئيسية': true });
     const [searchQuery, setSearchQuery] = useState('');

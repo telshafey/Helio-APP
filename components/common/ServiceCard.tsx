@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import type { Service } from '../../types';
 import { StarIcon, HeartIcon, HeartIconSolid } from './Icons';
 import { useAppContext } from '../../context/AppContext';
+// FIX: Import useAuth to check public authentication status.
+import { useAuth } from '../../context/AuthContext';
 
 const Rating: React.FC<{ rating: number }> = ({ rating }) => (
     <div className="flex items-center">
@@ -16,7 +18,9 @@ const Rating: React.FC<{ rating: number }> = ({ rating }) => (
 );
 
 const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
-    const { handleToggleFavorite, isPublicAuthenticated } = useAppContext();
+    // FIX: Get data-related functions from useAppContext and auth state from useAuth.
+    const { handleToggleFavorite } = useAppContext();
+    const { isPublicAuthenticated } = useAuth();
 
     const onFavoriteClick = (e: React.MouseEvent) => {
         e.preventDefault();

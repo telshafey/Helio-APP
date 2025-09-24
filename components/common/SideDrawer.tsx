@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAppContext } from '../../context/AppContext';
+// FIX: Import useAuth to get public user session data and logout function.
+import { useAuth } from '../../context/AuthContext';
 import Logo from './Logo';
 import { 
     XMarkIcon, TruckIcon, ShieldExclamationIcon, BuildingLibraryIcon,
@@ -14,7 +15,8 @@ interface SideDrawerProps {
 }
 
 const SideDrawer: React.FC<SideDrawerProps> = ({ isOpen, onClose }) => {
-    const { isPublicAuthenticated, currentPublicUser, publicLogout } = useAppContext();
+    // FIX: Destructure authentication properties from useAuth context.
+    const { isPublicAuthenticated, currentPublicUser, publicLogout } = useAuth();
     const navigate = useNavigate();
 
     const handleLogout = () => {

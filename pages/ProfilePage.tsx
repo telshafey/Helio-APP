@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
+import { useAuth } from '../context/AuthContext';
 import { ArrowLeftIcon, UserCircleIcon, PencilIcon, StarIcon, ChatBubbleOvalLeftIcon, HeartIconSolid } from '../components/common/Icons';
 import Modal from '../components/common/Modal';
 import ImageUploader from '../components/common/ImageUploader';
@@ -39,7 +40,8 @@ const EditProfileForm: React.FC<{ user: AppUser; onSave: (data: Omit<AppUser, 'j
 
 const ProfilePage: React.FC = () => {
     const navigate = useNavigate();
-    const { currentPublicUser, updateProfile, services } = useAppContext();
+    const { currentPublicUser, updateProfile } = useAuth();
+    const { services } = useAppContext();
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     const userReviews = useMemo(() => {

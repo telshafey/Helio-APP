@@ -1,10 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
+// FIX: Import useAuth to get the admin login function.
+import { useAuth } from '../context/AuthContext';
 import type { AdminUser } from '../types';
 
 const AdminLoginPage: React.FC = () => {
-    const { login, admins } = useAppContext();
+    // FIX: Destructure login from useAuth and admins from useAppContext.
+    const { login } = useAuth();
+    const { admins } = useAppContext();
     const navigate = useNavigate();
 
     const handleQuickLogin = (user: AdminUser) => {
