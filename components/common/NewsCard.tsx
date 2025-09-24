@@ -13,9 +13,9 @@ const NewsCard: React.FC<{ newsItem: News }> = ({ newsItem }) => {
                     loading="lazy" 
                 />
             </div>
-            <div className="p-5">
+            <div className="p-4">
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{new Date(newsItem.date).toLocaleDateString('ar-EG-u-nu-latn')} • {newsItem.author}</p>
-                <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-3 h-14 overflow-hidden group-hover:text-cyan-500">{newsItem.title}</h3>
+                <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-2 h-14 overflow-hidden group-hover:text-cyan-500">{newsItem.title}</h3>
                 <p className="text-gray-600 dark:text-gray-300 text-sm h-12 overflow-hidden text-ellipsis">{newsItem.content}</p>
             </div>
         </Link>

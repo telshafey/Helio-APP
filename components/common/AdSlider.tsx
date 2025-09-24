@@ -47,8 +47,8 @@ const AdSlider: React.FC<AdSliderProps> = ({ ads }) => {
         <>
             <img src={currentItem.imageUrl} alt={currentItem.title} className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
-            <div className="absolute bottom-0 right-0 p-6 md:p-8 text-white">
-                <h2 className="text-2xl md:text-3xl font-bold mb-2 drop-shadow-lg">{currentItem.title}</h2>
+            <div className="absolute bottom-0 right-0 p-4 md:p-6 text-white">
+                <h2 className="text-xl md:text-2xl font-bold mb-2 drop-shadow-lg">{currentItem.title}</h2>
             </div>
         </>
     );
@@ -66,7 +66,7 @@ const AdSlider: React.FC<AdSliderProps> = ({ ads }) => {
 
     return (
         <>
-            <div className="w-full h-64 md:h-80 relative group rounded-2xl overflow-hidden shadow-2xl">
+            <div className="w-full h-56 sm:h-64 md:h-72 relative group rounded-2xl overflow-hidden shadow-2xl">
                 <SlideWrapper>
                     <SlideContent />
                 </SlideWrapper>

@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import Spinner from '../components/common/Spinner';
 import { ArrowLeftIcon, HandThumbUpIcon, ChatBubbleOvalLeftEllipsisIcon } from '../components/common/Icons';
+import PageBanner from '../components/common/PageBanner';
 
 const PostDetailPage: React.FC = () => {
     const { postId } = useParams<{ postId: string }>();
@@ -39,8 +40,13 @@ const PostDetailPage: React.FC = () => {
     };
 
     return (
-        <div className="bg-slate-100 dark:bg-slate-900 min-h-screen py-12 animate-fade-in" dir="rtl">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
+        <div className="bg-slate-100 dark:bg-slate-900 min-h-screen animate-fade-in" dir="rtl">
+            <PageBanner
+                title={post.title || `منشور من ${post.username}`}
+                subtitle={`في قسم ${post.category}`}
+                icon={<ChatBubbleOvalLeftEllipsisIcon className="w-10 h-10 text-teal-500" />}
+            />
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 max-w-4xl">
                  <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-cyan-500 hover:underline mb-8">
                     <ArrowLeftIcon className="w-5 h-5"/>
                     <span>العودة إلى المجتمع</span>
@@ -55,10 +61,9 @@ const PostDetailPage: React.FC = () => {
                             </Link>
                             <div>
                                 <Link to={`/user/${post.userId}`} className="font-bold text-lg text-gray-800 dark:text-white hover:underline">{post.username}</Link>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">{new Date(post.date).toLocaleDateString('ar-EG-u-nu-latn')} • <span className="font-semibold text-cyan-500">{post.category}</span></p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">{new Date(post.date).toLocaleDateString('ar-EG-u-nu-latn')}</p>
                             </div>
                         </div>
-                        {post.title && <h1 className="text-3xl font-bold mb-4">{post.title}</h1>}
                         <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap text-lg leading-relaxed">{post.content}</p>
                         <div className="flex items-center gap-6 mt-6">
                             <button onClick={handleLikeClick} className={`flex items-center gap-2 text-lg font-semibold ${isLiked ? 'text-red-500' : 'text-gray-500 dark:text-gray-400 hover:text-red-500'}`}>

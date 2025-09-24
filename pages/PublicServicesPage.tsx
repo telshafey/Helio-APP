@@ -4,29 +4,9 @@ import { useAppContext } from '../context/AppContext';
 import { 
     Squares2X2Icon,
     ChevronDownIcon,
-    HeartIcon, ShoppingBagIcon, 
-    AcademicCapIcon, DevicePhoneMobileIcon, BoltIcon, SparklesIcon, CarIcon, 
-    PaintBrushIcon, 
-    CakeIcon,
-    WrenchScrewdriverIcon,
-    GiftIcon
 } from '../components/common/Icons';
-
-const iconComponents: { [key: string]: React.FC<React.SVGProps<SVGSVGElement>> } = {
-    HeartIcon, ShoppingBagIcon, 
-    AcademicCapIcon, DevicePhoneMobileIcon, BoltIcon, SparklesIcon, CarIcon, 
-    PaintBrushIcon, 
-    CakeIcon,
-    WrenchScrewdriverIcon,
-    Squares2X2Icon,
-    GiftIcon
-};
-
-const getIcon = (name: string, props: React.SVGProps<SVGSVGElement>) => {
-    const IconComponent = iconComponents[name];
-    return IconComponent ? <IconComponent {...props} /> : <Squares2X2Icon {...props} />;
-};
-
+import { getIcon } from '../components/common/iconUtils';
+import PageBanner from '../components/common/PageBanner';
 
 const PublicServicesPage: React.FC = () => {
     const { categories } = useAppContext();
@@ -40,15 +20,12 @@ const PublicServicesPage: React.FC = () => {
 
     return (
         <div className="animate-fade-in" dir="rtl">
+             <PageBanner
+                title="تصفح الخدمات"
+                subtitle="اكتشف كل ما تقدمه مدينة هليوبوليس الجديدة."
+                icon={<Squares2X2Icon className="w-12 h-12 text-cyan-500" />}
+            />
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="text-center mb-10 pt-16">
-                    <div className="inline-block p-4 bg-cyan-100 dark:bg-cyan-900/50 rounded-full mb-4">
-                        <Squares2X2Icon className="w-12 h-12 text-cyan-500" />
-                    </div>
-                    <h1 className="text-4xl font-extrabold text-gray-800 dark:text-white">تصفح الخدمات</h1>
-                    <p className="text-lg text-gray-500 dark:text-gray-400 mt-2">اكتشف كل ما تقدمه مدينة هليوبوليس الجديدة.</p>
-                </div>
-                
                 <div className="max-w-4xl mx-auto space-y-4">
                     {serviceCategories.map(category => (
                         <div key={category.id} className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden bg-white dark:bg-slate-800">

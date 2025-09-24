@@ -38,8 +38,8 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
                         <Rating rating={service.rating} />
                     </div>
                 </div>
-                <div className="p-5">
-                    <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2 truncate group-hover:text-cyan-500">{service.name}</h3>
+                <div className="p-4">
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-white mb-1 truncate group-hover:text-cyan-500">{service.name}</h3>
                     <p className="text-gray-500 dark:text-gray-400 text-sm truncate">{service.address}</p>
                 </div>
             </Link>

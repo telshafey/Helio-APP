@@ -18,10 +18,10 @@ const PublicHeader: React.FC = () => {
 
 
     return (
-        <header className="fixed top-0 left-0 right-0 h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm z-20 border-b border-slate-200 dark:border-slate-700" dir="rtl">
+        <header className="fixed top-0 left-0 right-0 h-14 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm z-20 border-b border-slate-200 dark:border-slate-700" dir="rtl">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-full">
                 <div className="flex items-center gap-4">
-                    <Logo className="h-9" />
+                    <Logo className="h-8" />
                      <div className="hidden md:block">
                         <div className="ml-10 flex items-baseline space-x-1 lg:space-x-4">
                             <NavLink to="/" end className={navLinkClasses}>الرئيسية</NavLink>

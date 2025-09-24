@@ -2,6 +2,7 @@ import React from 'react';
 import { useAppContext } from '../context/AppContext';
 import NewsCard from '../components/common/NewsCard';
 import { NewspaperIcon } from '../components/common/Icons';
+import PageBanner from '../components/common/PageBanner';
 
 const PublicNewsPage: React.FC = () => {
     const { news } = useAppContext();
@@ -9,17 +10,14 @@ const PublicNewsPage: React.FC = () => {
 
     return (
         <div className="animate-fade-in" dir="rtl">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="text-center mb-10">
-                    <div className="inline-block p-4 bg-purple-100 dark:bg-purple-900/50 rounded-full mb-4">
-                        <NewspaperIcon className="w-12 h-12 text-purple-500" />
-                    </div>
-                    <h1 className="text-4xl font-extrabold text-gray-800 dark:text-white">أخبار المدينة</h1>
-                    <p className="text-lg text-gray-500 dark:text-gray-400 mt-2">كن على اطلاع بآخر المستجدات والأحداث في هليوبوليس الجديدة.</p>
-                </div>
-                
+            <PageBanner
+                title="أخبار المدينة"
+                subtitle="كن على اطلاع بآخر المستجدات والأحداث في هليوبوليس الجديدة."
+                icon={<NewspaperIcon className="w-12 h-12 text-purple-500" />}
+            />
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 {sortedNews.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {sortedNews.map(newsItem => (
                             <NewsCard key={newsItem.id} newsItem={newsItem} />
                         ))}

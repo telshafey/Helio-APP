@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { ArrowLeftIcon, BellIcon } from '../components/common/Icons';
 import EmptyState from '../components/common/EmptyState';
+import PageBanner from '../components/common/PageBanner';
 
 const UserNotificationsPage: React.FC = () => {
     const navigate = useNavigate();
@@ -17,16 +18,17 @@ const UserNotificationsPage: React.FC = () => {
     
     return (
         <div className="animate-fade-in" dir="rtl">
+             <PageBanner
+                title="الإشعارات"
+                subtitle="أحدث التنبيهات والأخبار الهامة المرسلة إليك."
+                icon={<BellIcon className="w-12 h-12 text-cyan-500" />}
+            />
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-cyan-500 hover:underline mb-8">
                     <ArrowLeftIcon className="w-5 h-5"/>
                     <span>العودة</span>
                 </button>
                 <div className="max-w-3xl mx-auto">
-                    <h1 className="text-3xl font-bold mb-8 flex items-center gap-3 text-gray-800 dark:text-white">
-                        <BellIcon className="w-8 h-8"/>
-                        الإشعارات
-                    </h1>
                     {sortedNotifications.length > 0 ? (
                         <div className="space-y-4">
                             {sortedNotifications.map(n => (

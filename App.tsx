@@ -73,7 +73,7 @@ const App: React.FC = () => {
           <div className="bg-slate-100 dark:bg-slate-900 text-gray-800 dark:text-gray-200 min-h-screen font-sans flex flex-col" dir="rtl">
             <PublicHeader />
             <SideDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
-            <main className="flex-grow pt-16 pb-16 md:pb-0">
+            <main className="flex-grow pt-14 pb-14 md:pb-0">
               <Suspense fallback={<div className="h-screen w-screen flex items-center justify-center"><Spinner /></div>}>
                 <Routes>
                   <Route path="/" element={<PublicHomePage />} />

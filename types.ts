@@ -343,7 +343,7 @@ export interface AppContextType {
   handleDeleteAdvertisement: (id: number) => void;
   handleSaveProperty: (property: Omit<Property, 'id' | 'views' | 'creationDate'> & { id?: number }) => void;
   handleDeleteProperty: (id: number) => void;
-  handleSaveEmergencyContact: (contact: Omit<EmergencyContact, 'id' | 'type'> & { id?: number }) => void;
+  handleSaveEmergencyContact: (contact: Omit<EmergencyContact, 'id'> & { id?: number }) => void;
   handleDeleteEmergencyContact: (id: number) => void;
   handleSaveServiceGuide: (guide: Omit<ServiceGuide, 'id'> & { id?: number }) => void;
   handleDeleteServiceGuide: (id: number) => void;

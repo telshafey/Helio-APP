@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { PhoneIcon, UserCircleIcon, BusIcon, CalendarDaysIcon, MapPinIcon } from '../components/common/Icons';
+import PageBanner from '../components/common/PageBanner';
 
 const CallButton: React.FC<{ phone: string }> = ({ phone }) => (
     <a href={`tel:${phone}`} className="flex items-center justify-center gap-2 bg-green-500 text-white font-semibold px-3 py-1.5 rounded-md hover:bg-green-600 transition-colors text-sm">
@@ -45,15 +46,12 @@ const PublicTransportationPage: React.FC = () => {
 
     return (
         <div className="animate-fade-in bg-slate-100 dark:bg-slate-900" dir="rtl">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                 <div className="text-center mb-10">
-                    <div className="inline-block p-4 bg-lime-100 dark:bg-lime-900/50 rounded-full mb-4">
-                        <BusIcon className="w-12 h-12 text-lime-500" />
-                    </div>
-                    <h1 className="text-4xl font-extrabold text-gray-800 dark:text-white">دليل المواصلات</h1>
-                    <p className="text-lg text-gray-500 dark:text-gray-400 mt-2">كل ما تحتاجه لمعرفة مواعيد وخطوط سير الباصات.</p>
-                </div>
-
+            <PageBanner
+                title="دليل المواصلات"
+                subtitle="كل ما تحتاجه لمعرفة مواعيد وخطوط سير الباصات."
+                icon={<BusIcon className="w-12 h-12 text-lime-500" />}
+            />
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 <div className="border-b border-gray-200 dark:border-slate-700 mb-8">
                     <nav className="-mb-px flex justify-center gap-4" aria-label="Tabs">
                         <TabButton active={activeTab === 'internal'} onClick={() => setActiveTab('internal')}>الباصات الداخلية</TabButton>

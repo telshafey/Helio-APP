@@ -4,6 +4,7 @@ import { useAppContext } from '../context/AppContext';
 import { MagnifyingGlassIcon, HomeModernIcon, ArrowLeftIcon } from '../components/common/Icons';
 import PropertyCard from '../components/common/PropertyCard';
 import EmptyState from '../components/common/EmptyState';
+import PageBanner from '../components/common/PageBanner';
 
 const PublicPropertiesPage: React.FC = () => {
     const navigate = useNavigate();
@@ -23,15 +24,12 @@ const PublicPropertiesPage: React.FC = () => {
     
     return (
         <div className="animate-fade-in" dir="rtl">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="text-center mb-10">
-                    <div className="inline-block p-4 bg-amber-100 dark:bg-amber-900/50 rounded-full mb-4">
-                        <HomeModernIcon className="w-12 h-12 text-amber-500" />
-                    </div>
-                    <h1 className="text-4xl font-extrabold text-gray-800 dark:text-white">العقارات المتاحة</h1>
-                    <p className="text-lg text-gray-500 dark:text-gray-400 mt-2">ابحث عن منزلك القادم في هليوبوليس الجديدة.</p>
-                </div>
-
+            <PageBanner
+                title="العقارات المتاحة"
+                subtitle="ابحث عن منزلك القادم في هليوبوليس الجديدة."
+                icon={<HomeModernIcon className="w-12 h-12 text-amber-500" />}
+            />
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 {/* Filters */}
                 <div className="flex flex-col sm:flex-row gap-4 mb-8 p-4 bg-white dark:bg-slate-800 rounded-xl shadow-md sticky top-20 z-10">
                     <div className="relative flex-grow">
@@ -52,7 +50,7 @@ const PublicPropertiesPage: React.FC = () => {
                 </div>
                 
                 {filteredProperties.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {filteredProperties.map(prop => (
                             <PropertyCard key={prop.id} property={prop} />
                         ))}

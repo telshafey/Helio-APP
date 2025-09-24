@@ -10,7 +10,7 @@ interface KpiCardProps {
 }
 
 const KpiCard: React.FC<KpiCardProps> = ({ title, value, change, changeLabel, icon, changeType = 'positive' }) => {
-  const cardClasses = "bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col justify-between hover:scale-[1.02] h-full cursor-pointer";
+  const cardClasses = "bg-white dark:bg-slate-800 p-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col justify-between hover:scale-[1.02] h-full cursor-pointer";
 
   const changeColor = {
     positive: 'text-green-500',
@@ -21,13 +21,13 @@ const KpiCard: React.FC<KpiCardProps> = ({ title, value, change, changeLabel, ic
   return (
     <div className={cardClasses}>
       <div className="flex items-center justify-between text-gray-500 dark:text-gray-400">
-        <p className="font-medium">{title}</p>
+        <p className="font-medium text-sm">{title}</p>
         {icon}
       </div>
-      <div className="mt-4 text-right">
-        <p className="text-3xl font-bold text-gray-900 dark:text-white">{value}</p>
+      <div className="mt-2 text-right">
+        <p className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{value}</p>
         {change && changeLabel && (
-            <div className="flex items-baseline space-x-1 rtl:space-x-reverse text-sm mt-1">
+            <div className="flex items-baseline space-x-1 rtl:space-x-reverse text-xs mt-1">
                 <span className={`font-semibold ${changeColor}`}>
                     {change}
                 </span>

@@ -2,20 +2,11 @@ import React, { useState, memo, useMemo, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
     HomeIcon, UserGroupIcon, Cog6ToothIcon, MagnifyingGlassIcon, ArrowLeftOnRectangleIcon, Bars3Icon, XMarkIcon, 
-    WrenchScrewdriverIcon, TruckIcon, ShieldExclamationIcon, NewspaperIcon, ChevronDownIcon, HeartIcon, ShoppingBagIcon, 
-    BuildingStorefrontIcon, AcademicCapIcon, DevicePhoneMobileIcon, BoltIcon, SparklesIcon, CarIcon, Squares2X2Icon, 
-    PaintBrushIcon, HomeModernIcon, BuildingLibraryIcon, InformationCircleIcon,
-    CakeIcon, FireIcon,
-    BookOpenIcon, BellAlertIcon, DocumentChartBarIcon, DocumentDuplicateIcon, RectangleGroupIcon,
-    BeakerIcon,
-    GiftIcon,
-    FilmIcon,
-    TrashIcon,
-    BanknotesIcon,
-    EnvelopeIcon,
+    WrenchScrewdriverIcon, TruckIcon, ShieldExclamationIcon, NewspaperIcon, ChevronDownIcon, 
+    HomeModernIcon, BuildingLibraryIcon, 
+    BellAlertIcon, DocumentChartBarIcon, DocumentDuplicateIcon, RectangleGroupIcon,
     BuildingOffice2Icon,
     ChatBubbleOvalLeftIcon,
-    QuestionMarkCircleIcon,
     ClipboardDocumentListIcon,
     PencilSquareIcon,
     ChatBubbleOvalLeftEllipsisIcon,
@@ -24,19 +15,7 @@ import {
 import { useAppContext } from '../../context/AppContext';
 import type { AdminUser } from '../../types';
 import Logo from './Logo';
-
-const iconComponents: { [key: string]: React.FC<React.SVGProps<SVGSVGElement>> } = {
-    BuildingLibraryIcon, InformationCircleIcon, DocumentDuplicateIcon, TruckIcon,
-    HeartIcon, BuildingStorefrontIcon, HomeModernIcon, UserGroupIcon, BeakerIcon, CakeIcon, FireIcon, ShoppingBagIcon,
-    AcademicCapIcon, BookOpenIcon, GiftIcon, FilmIcon, SparklesIcon, BoltIcon, TrashIcon, WrenchScrewdriverIcon,
-    BanknotesIcon, EnvelopeIcon,
-    DevicePhoneMobileIcon, CarIcon, Squares2X2Icon, PaintBrushIcon
-};
-
-const getIcon = (name: string, props: React.SVGProps<SVGSVGElement>) => {
-    const IconComponent = iconComponents[name];
-    return IconComponent ? <IconComponent {...props} /> : <Squares2X2Icon {...props} />;
-};
+import { getIcon } from './iconUtils';
 
 
 interface NavItemData {

@@ -408,16 +408,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }, [properties, logActivity, showToast]);
 
     // Emergency Contacts
-    const handleSaveEmergencyContact = useCallback((contactData: Omit<EmergencyContact, 'id' | 'type'> & { id?: number }) => {
-         if (contactData.id) {
+    const handleSaveEmergencyContact = useCallback((contactData: Omit<EmergencyContact, 'id'> & { id?: number }) => {
+        if (contactData.id) {
             setEmergencyContacts(prev => prev.map(c => c.id === contactData.id ? { ...c, ...contactData } : c));
             logActivity('تحديث رقم طوارئ', `تم تحديث رقم: ${contactData.title}`);
             showToast('تم تحديث الرقم بنجاح!');
         } else {
             const newContact: EmergencyContact = {
                 id: Math.max(...emergencyContacts.map(c => c.id), 0) + 1,
-                type: 'city',
-                ...contactData,
+                title: contactData.title,
+                number: contactData.number,
+                type: contactData.type || 'city',
             };
             setEmergencyContacts(prev => [newContact, ...prev]);
             logActivity('إضافة رقم طوارئ', `تم إضافة رقم جديد: ${contactData.title}`);

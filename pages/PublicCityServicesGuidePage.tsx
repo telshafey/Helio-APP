@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../context/AppContext';
 import { ChevronDownIcon, DocumentDuplicateIcon } from '../components/common/Icons';
 import EmptyState from '../components/common/EmptyState';
+import PageBanner from '../components/common/PageBanner';
 
 const PublicCityServicesGuidePage: React.FC = () => {
     const { serviceGuides } = useAppContext();
@@ -14,15 +15,12 @@ const PublicCityServicesGuidePage: React.FC = () => {
     
     return (
         <div className="animate-fade-in" dir="rtl">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="text-center mb-10">
-                    <div className="inline-block p-4 bg-sky-100 dark:bg-sky-900/50 rounded-full mb-4">
-                        <DocumentDuplicateIcon className="w-12 h-12 text-sky-500" />
-                    </div>
-                    <h1 className="text-4xl font-extrabold text-gray-800 dark:text-white">خدمات جهاز المدينة</h1>
-                    <p className="text-lg text-gray-500 dark:text-gray-400 mt-2">خطوات واضحة ومستندات مطلوبة لإنجاز معاملاتك بسهولة.</p>
-                </div>
-
+            <PageBanner
+                title="خدمات جهاز المدينة"
+                subtitle="خطوات واضحة ومستندات مطلوبة لإنجاز معاملاتك بسهولة."
+                icon={<DocumentDuplicateIcon className="w-12 h-12 text-sky-500" />}
+            />
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 <div className="max-w-4xl mx-auto space-y-4">
                     {serviceGuides.length > 0 ? serviceGuides.map(guide => (
                         <div key={guide.id} className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden bg-white dark:bg-slate-800">
