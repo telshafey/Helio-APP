@@ -27,12 +27,13 @@ const PublicFooter: React.FC = () => {
                         </ul>
                     </div>
                     
-                    {/* Column 3: Legal */}
+                    {/* Column 3: Legal & Contact */}
                      <div>
-                        <h3 className="text-base font-semibold text-gray-800 dark:text-white">قانوني</h3>
+                        <h3 className="text-base font-semibold text-gray-800 dark:text-white">روابط هامة</h3>
                         <ul className="mt-4 space-y-2 text-sm">
                             <li><Link to="/privacy-policy" className="text-gray-500 dark:text-gray-400 hover:text-cyan-500">سياسة الخصوصية</Link></li>
                             <li><Link to="/terms-of-use" className="text-gray-500 dark:text-gray-400 hover:text-cyan-500">شروط الاستخدام</Link></li>
+                            <li><Link to="/contact" className="text-gray-500 dark:text-gray-400 hover:text-cyan-500">تواصل معنا</Link></li>
                         </ul>
                     </div>
                     

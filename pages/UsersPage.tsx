@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
     ArrowLeftIcon, MagnifyingGlassIcon, UserPlusIcon, PencilSquareIcon, 
-    TrashIcon, UserGroupIcon, UserCircleIcon, CheckCircleIcon, ClockIcon, NoSymbolIcon 
+    TrashIcon, UserGroupIcon, UserCircleIcon, CheckCircleIcon, ClockIcon, NoSymbolIcon, UserMinusIcon 
 } from '../components/common/Icons';
 import { useData } from '../context/DataContext';
 import { useHasPermission } from '../context/AuthContext';
@@ -17,6 +17,7 @@ const StatusBadge: React.FC<{ status: UserStatus }> = ({ status }) => {
         active: { text: 'مفعل', classes: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' },
         pending: { text: 'معلق', classes: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300' },
         banned: { text: 'محظور', classes: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300' },
+        deletion_requested: { text: 'طلب حذف', classes: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300' },
     };
     const { text, classes } = statusMap[status];
     return <span className={`px-2 py-1 text-xs font-medium rounded-full ${classes}`}>{text}</span>;
@@ -89,6 +90,7 @@ const UserForm: React.FC<{
                     <option value="active">مفعل</option>
                     <option value="pending">معلق</option>
                     <option value="banned">محظور</option>
+                    <option value="deletion_requested">طلب حذف</option>
                 </select>
             </div>
             <ImageUploader initialImages={avatar} onImagesChange={setAvatar} multiple={false} label="الصورة الرمزية" />
@@ -192,6 +194,7 @@ const RegularUsersTab: React.FC<{ onAdd: () => void; onEdit: (user: AppUser) => 
                         <option value="active">مفعل</option>
                         <option value="pending">معلق</option>
                         <option value="banned">محظور</option>
+                        <option value="deletion_requested">طلب حذف</option>
                     </select>
                      {canManage && (
                         <button onClick={onAdd} className="flex items-center justify-center gap-2 bg-cyan-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-cyan-600 transition-colors">
@@ -345,7 +348,8 @@ const UsersPage: React.FC = () => {
         const active = users.filter(u => u.status === 'active').length;
         const pending = users.filter(u => u.status === 'pending').length;
         const banned = users.filter(u => u.status === 'banned').length;
-        return { total, active, pending, banned };
+        const deletionRequested = users.filter(u => u.status === 'deletion_requested').length;
+        return { total, active, pending, banned, deletionRequested };
     }, [users]);
 
     const handleOpenUserModal = (user: AppUser | null) => {
@@ -396,10 +400,11 @@ const UsersPage: React.FC = () => {
             <div className="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl shadow-lg">
                 <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">إدارة المستخدمين</h1>
 
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
                     <KpiCard title="إجمالي المستخدمين" value={userStats.total.toString()} icon={<UserGroupIcon className="w-8 h-8 text-cyan-400"/>} />
                     <KpiCard title="المستخدمون النشطون" value={userStats.active.toString()} icon={<CheckCircleIcon className="w-8 h-8 text-green-400"/>} />
                     <KpiCard title="مستخدمون قيد المراجعة" value={userStats.pending.toString()} icon={<ClockIcon className="w-8 h-8 text-yellow-400"/>} />
+                    <KpiCard title="طلبات حذف" value={userStats.deletionRequested.toString()} icon={<UserMinusIcon className="w-8 h-8 text-orange-400"/>} />
                     <KpiCard title="المستخدمون المحظورون" value={userStats.banned.toString()} icon={<NoSymbolIcon className="w-8 h-8 text-red-400"/>} />
                 </div>
                 

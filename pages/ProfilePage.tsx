@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 // FIX: Replaced deprecated useAppContext with useData from DataContext.
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
-import { ArrowLeftIcon, UserCircleIcon, PencilIcon, StarIcon, ChatBubbleOvalLeftIcon, HeartIconSolid } from '../components/common/Icons';
+import { ArrowLeftIcon, UserCircleIcon, PencilIcon, StarIcon, ChatBubbleOvalLeftIcon, HeartIconSolid, TrashIcon } from '../components/common/Icons';
 import Modal from '../components/common/Modal';
 import ImageUploader from '../components/common/ImageUploader';
 import type { AppUser } from '../types';
@@ -41,10 +41,10 @@ const EditProfileForm: React.FC<{ user: AppUser; onSave: (data: Omit<AppUser, 'j
 
 const ProfilePage: React.FC = () => {
     const navigate = useNavigate();
-    const { currentPublicUser, updateProfile } = useAuth();
-    // FIX: Replaced deprecated useAppContext with useData.
-    const { services } = useData();
+    const { currentPublicUser, updateProfile, publicLogout } = useAuth();
+    const { services, requestAccountDeletion } = useData();
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const userReviews = useMemo(() => {
         if (!currentPublicUser) return [];
@@ -66,6 +66,18 @@ const ProfilePage: React.FC = () => {
     
     const handleSaveProfile = (data: Omit<AppUser, 'joinDate' | 'status'>) => {
         updateProfile({ ...currentPublicUser, ...data });
+    };
+
+    const handleConfirmDeletion = () => {
+        if (currentPublicUser) {
+            requestAccountDeletion(currentPublicUser.id);
+            setIsDeleteModalOpen(false);
+            // Logout and redirect after a short delay to allow the toast to be seen
+            setTimeout(() => {
+                publicLogout();
+                navigate('/');
+            }, 1000);
+        }
     };
 
     return (
@@ -105,7 +117,7 @@ const ProfilePage: React.FC = () => {
                             )}
                         </div>
 
-                        <div>
+                        <div className="mb-10">
                             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-3">
                                 <ChatBubbleOvalLeftIcon className="w-7 h-7"/>
                                 تقييماتي ({userReviews.length})
@@ -128,11 +140,47 @@ const ProfilePage: React.FC = () => {
                                 )) : <p className="text-center text-gray-500 py-8">لم تقم بإضافة أي تقييمات بعد.</p>}
                             </div>
                         </div>
+
+                        <div className="mt-10 pt-8 border-t border-red-500/30">
+                             <h2 className="text-xl font-bold text-red-600 dark:text-red-500 mb-4">حذف الحساب</h2>
+                             <p className="text-gray-600 dark:text-gray-400 mb-4">
+                                 عند طلب حذف حسابك، سيتم إرسال طلب إلى الإدارة لمراجعته. بمجرد الموافقة، سيتم حذف جميع بياناتك نهائياً. هذا الإجراء لا يمكن التراجع عنه.
+                             </p>
+                             <button 
+                                 onClick={() => setIsDeleteModalOpen(true)}
+                                 className="flex items-center gap-2 bg-red-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                             >
+                                 <TrashIcon className="w-5 h-5"/>
+                                 طلب حذف الحساب
+                             </button>
+                        </div>
                     </div>
                 </div>
             </div>
             <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title="تعديل الملف الشخصي">
                 <EditProfileForm user={currentPublicUser} onSave={handleSaveProfile} onClose={() => setIsEditModalOpen(false)} />
+            </Modal>
+            
+            <Modal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} title="تأكيد طلب حذف الحساب">
+                <div className="text-right">
+                    <p className="text-gray-700 dark:text-gray-300 mb-6">
+                        هل أنت متأكد أنك تريد المتابعة؟ سيتم إرسال طلبك إلى الإدارة، وبعد الموافقة سيتم حذف حسابك وبياناتك بشكل دائم.
+                    </p>
+                    <div className="flex justify-end gap-4">
+                        <button
+                            onClick={() => setIsDeleteModalOpen(false)}
+                            className="px-4 py-2 text-sm font-semibold bg-slate-100 dark:bg-slate-600 rounded-md hover:bg-slate-200 dark:hover:bg-slate-500"
+                        >
+                            إلغاء
+                        </button>
+                        <button
+                            onClick={handleConfirmDeletion}
+                            className="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-md hover:bg-red-700"
+                        >
+                            نعم، أرسل طلب الحذف
+                        </button>
+                    </div>
+                </div>
             </Modal>
         </div>
     );

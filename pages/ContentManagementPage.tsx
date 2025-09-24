@@ -2,8 +2,8 @@ import React, { useState, useCallback, ReactNode } from 'react';
 // FIX: Replaced deprecated useAppContext with useData from DataContext.
 import { useData } from '../context/DataContext';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeftIcon, HomeIcon, InformationCircleIcon, QuestionMarkCircleIcon, BookOpenIcon, PlusIcon, TrashIcon, PencilSquareIcon } from '../components/common/Icons';
-import type { HomePageContent, AboutPageContent, FaqPageContent, PolicyPageContent, PublicPagesContent } from '../types';
+import { ArrowLeftIcon, HomeIcon, InformationCircleIcon, QuestionMarkCircleIcon, BookOpenIcon, PlusIcon, TrashIcon, PencilSquareIcon, BuildingLibraryIcon } from '../components/common/Icons';
+import type { HomePageContent, AboutPageContent, FaqPageContent, PolicyPageContent, PublicPagesContent, AboutCityPageContent, BoardMember } from '../types';
 
 // Reusable Components
 const InputField: React.FC<{ label: string; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }> = ({ label, value, onChange }) => (
@@ -226,9 +226,129 @@ const PolicyPageForm: React.FC<{ content: PolicyPageContent; onSave: (data: Poli
     );
 };
 
+const AboutCityPageForm: React.FC<{ content: AboutCityPageContent; onSave: (data: AboutCityPageContent) => void }> = ({ content, onSave }) => {
+    const [data, setData] = useState(content);
+    const [isSaving, setIsSaving] = useState(false);
+    const [activeSubTab, setActiveSubTab] = useState<'city' | 'company' | 'board'>('city');
+
+    const handleSaveClick = () => {
+        setIsSaving(true);
+        onSave(data);
+        setTimeout(() => setIsSaving(false), 1000);
+    };
+
+    // FIX: Simplified generics and corrected array/object update logic to resolve type errors and runtime bugs.
+    const handleNestedChange = (
+        part: keyof AboutCityPageContent,
+        field: string,
+        value: any,
+        index?: number
+    ) => {
+        setData(prev => {
+            if (index !== undefined && Array.isArray(prev[part])) {
+                const newArray = [...(prev[part] as any[])];
+                if (typeof newArray[index] === 'object' && newArray[index] !== null) {
+                    newArray[index] = { ...newArray[index], [field]: value };
+                }
+                return { ...prev, [part]: newArray };
+            } else {
+                const newObject = { ...(prev[part] as object), [field]: value };
+                return { ...prev, [part]: newObject };
+            }
+        });
+    };
+    
+    const handleBoardDetailChange = (memberIndex: number, detailIndex: number, value: string) => {
+        setData(prev => {
+            const newBoard = [...prev.board];
+            newBoard[memberIndex].details[detailIndex] = value;
+            return { ...prev, board: newBoard };
+        });
+    };
+    const addBoardDetail = (memberIndex: number) => {
+        setData(prev => {
+            const newBoard = [...prev.board];
+            newBoard[memberIndex].details.push('');
+            return { ...prev, board: newBoard };
+        });
+    };
+    const removeBoardDetail = (memberIndex: number, detailIndex: number) => {
+        setData(prev => {
+            const newBoard = [...prev.board];
+            newBoard[memberIndex].details = newBoard[memberIndex].details.filter((_, i) => i !== detailIndex);
+            return { ...prev, board: newBoard };
+        });
+    };
+
+    const addBoardMember = () => {
+        setData(prev => ({ ...prev, board: [...prev.board, { name: 'عضو جديد', title: 'منصب', details: ['تفاصيل جديدة'] }] }));
+    };
+    const removeBoardMember = (index: number) => {
+        setData(prev => ({ ...prev, board: prev.board.filter((_, i) => i !== index) }));
+    };
+
+
+    const renderCityForm = () => (
+        <div className="space-y-4">
+            <TextareaField label="الفقرات الرئيسية (افصل بينها بسطر فارغ)" value={data.city.mainParagraphs.join('\n\n')} onChange={e => handleNestedChange('city', 'mainParagraphs', e.target.value.split('\n\n'))} rows={5}/>
+            <TextareaField label="محتوى قسم التخطيط" value={data.city.planning} onChange={e => handleNestedChange('city', 'planning', e.target.value)} rows={5}/>
+            <TextareaField label="محتوى قسم الطرق" value={data.city.roads} onChange={e => handleNestedChange('city', 'roads', e.target.value)} rows={4}/>
+            <TextareaField label="محتوى قسم المرافق" value={data.city.utilities} onChange={e => handleNestedChange('city', 'utilities', e.target.value)} rows={6}/>
+        </div>
+    );
+    const renderCompanyForm = () => (
+        <div className="space-y-4">
+             <TextareaField label="نبذة عن الشركة" value={data.company.about} onChange={e => handleNestedChange('company', 'about', e.target.value)} rows={5}/>
+             <TextareaField label="الرؤية" value={data.company.vision} onChange={e => handleNestedChange('company', 'vision', e.target.value)} rows={3}/>
+             <TextareaField label="الرسالة" value={data.company.mission} onChange={e => handleNestedChange('company', 'mission', e.target.value)} rows={4}/>
+        </div>
+    );
+    const renderBoardForm = () => (
+        <div className="space-y-4">
+            {data.board.map((member, index) => (
+                 <div key={index} className="p-4 border rounded-lg bg-slate-50 dark:bg-slate-700/50 space-y-3">
+                    <div className="flex justify-between items-center">
+                        <h4 className="font-semibold">عضو مجلس الإدارة #{index+1}</h4>
+                        <button onClick={() => removeBoardMember(index)} className="p-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-full"><TrashIcon className="w-5 h-5"/></button>
+                    </div>
+                    <InputField label="الاسم" value={member.name} onChange={e => handleNestedChange('board', 'name', e.target.value, index)} />
+                    <InputField label="المنصب" value={member.title} onChange={e => handleNestedChange('board', 'title', e.target.value, index)} />
+                    <InputField label="البريد الإلكتروني (اختياري)" value={member.email || ''} onChange={e => handleNestedChange('board', 'email', e.target.value, index)} />
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">التفاصيل</label>
+                        {member.details.map((detail, dIndex) => (
+                             <div key={dIndex} className="flex items-center gap-2 mb-2">
+                                <input type="text" value={detail} onChange={e => handleBoardDetailChange(index, dIndex, e.target.value)} className="w-full bg-white dark:bg-slate-800 rounded-md p-2 focus:ring-2 focus:ring-cyan-500"/>
+                                <button type="button" onClick={() => removeBoardDetail(index, dIndex)} className="p-2 text-red-500"><TrashIcon className="w-4 h-4"/></button>
+                            </div>
+                        ))}
+                        <button type="button" onClick={() => addBoardDetail(index)} className="text-sm text-cyan-600 flex items-center gap-1"><PlusIcon className="w-4 h-4"/>إضافة تفصيلة</button>
+                    </div>
+                 </div>
+            ))}
+            <button onClick={addBoardMember} className="flex items-center gap-2 text-sm font-semibold p-2 bg-cyan-100 dark:bg-cyan-900/50 rounded-md hover:bg-cyan-200"><PlusIcon className="w-5 h-5"/>إضافة عضو</button>
+        </div>
+    );
+
+    return (
+        <div className="space-y-6">
+            <h3 className="text-xl font-bold">محتوى صفحة "عن المدينة والشركة"</h3>
+            <div className="flex gap-2 p-1 bg-slate-100 dark:bg-slate-700 rounded-lg">
+                <button onClick={() => setActiveSubTab('city')} className={`flex-1 py-2 px-4 rounded-md text-sm font-semibold ${activeSubTab === 'city' ? 'bg-white dark:bg-slate-800 shadow' : ''}`}>المدينة</button>
+                <button onClick={() => setActiveSubTab('company')} className={`flex-1 py-2 px-4 rounded-md text-sm font-semibold ${activeSubTab === 'company' ? 'bg-white dark:bg-slate-800 shadow' : ''}`}>الشركة</button>
+                <button onClick={() => setActiveSubTab('board')} className={`flex-1 py-2 px-4 rounded-md text-sm font-semibold ${activeSubTab === 'board' ? 'bg-white dark:bg-slate-800 shadow' : ''}`}>مجلس الإدارة</button>
+            </div>
+            {activeSubTab === 'city' && renderCityForm()}
+            {activeSubTab === 'company' && renderCompanyForm()}
+            {activeSubTab === 'board' && renderBoardForm()}
+            <div className="flex justify-end pt-4"><SaveButton onClick={handleSaveClick} isSaving={isSaving} /></div>
+        </div>
+    );
+};
+
 
 // Main Component
-type Tab = 'home' | 'about' | 'faq' | 'privacy' | 'terms';
+type Tab = 'home' | 'about' | 'faq' | 'privacy' | 'terms' | 'aboutCity';
 
 const ContentManagementPage: React.FC = () => {
     const navigate = useNavigate();
@@ -256,6 +376,8 @@ const ContentManagementPage: React.FC = () => {
                 return <PolicyPageForm content={data.privacy} onSave={(d) => handleSave('privacy', d)} />;
             case 'terms':
                 return <PolicyPageForm content={data.terms} onSave={(d) => handleSave('terms', d)} />;
+            case 'aboutCity':
+                return <AboutCityPageForm content={data.aboutCity} onSave={(d) => handleSave('aboutCity', d)} />;
             default:
                 return null;
         }
@@ -284,6 +406,7 @@ const ContentManagementPage: React.FC = () => {
                     <div className="space-y-2">
                         <TabButton tab="home" label="الصفحة الرئيسية" icon={<HomeIcon className="w-6 h-6" />} />
                         <TabButton tab="about" label="حول التطبيق" icon={<InformationCircleIcon className="w-6 h-6" />} />
+                        <TabButton tab="aboutCity" label="عن المدينة والشركة" icon={<BuildingLibraryIcon className="w-6 h-6" />} />
                         <TabButton tab="faq" label="الأسئلة الشائعة" icon={<QuestionMarkCircleIcon className="w-6 h-6" />} />
                         <TabButton tab="privacy" label="سياسة الخصوصية" icon={<BookOpenIcon className="w-6 h-6" />} />
                         <TabButton tab="terms" label="شروط الاستخدام" icon={<BookOpenIcon className="w-6 h-6" />} />

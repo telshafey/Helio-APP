@@ -60,6 +60,7 @@ const CommunityManagementPage = lazy(() => import('./pages/CommunityManagementPa
 const FavoritesPage = lazy(() => import('./pages/FavoritesPage'));
 const UserNotificationsPage = lazy(() => import('./pages/UserNotificationsPage'));
 const PublicTransportationPage = lazy(() => import('./pages/PublicTransportationPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
 
 
 const App: React.FC = () => {
@@ -91,6 +92,7 @@ const App: React.FC = () => {
                   <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
                   <Route path="/faq" element={<FaqPage />} />
                   <Route path="/terms-of-use" element={<TermsOfUsePage />} />
+                  <Route path="/contact" element={<ContactPage />} />
                   <Route path="/services" element={<PublicServicesPage />} />
                   <Route path="/services/subcategory/:subCategoryId" element={<PublicServiceListPage />} />
                   <Route path="/service/:serviceId" element={<PublicServiceDetailPage />} />

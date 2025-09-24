@@ -95,7 +95,7 @@ const Sidebar: React.FC = () => {
             { name: "المستخدمون", icon: <UserGroupIcon className="w-6 h-6" />, to: "/users", roles: ['مدير عام'] },
             { name: "إدارة المحتوى", icon: <PencilSquareIcon className="w-6 h-6" />, to: "/content-management", roles: ['مدير عام'] },
             { name: "إدارة التقييمات", icon: <ChatBubbleOvalLeftIcon className="w-6 h-6" />, to: "/reviews", roles: serviceManagerRoles },
-            { name: "إدارة المجتمع", icon: <ChatBubbleOvalLeftEllipsisIcon className="w-6 h-6" />, to: "/community-management", roles: ['مدير عام', 'مسؤول الاخبار والاعلانات والاشعارات'] },
+            { name: "إدارة المجتمع", icon: <ChatBubbleOvalLeftEllipsisIcon className="w-6 h-6" />, to: "/community-management", roles: ['مدير عام', 'مسؤول الاخبار والاعلانات والاشعارات', 'مسؤول ادارة الخدمات'] },
             { name: "التقارير", icon: <DocumentChartBarIcon className="w-6 h-6" />, to: "/reports" },
             { name: "سجل التدقيق", icon: <ClipboardDocumentListIcon className="w-6 h-6" />, to: "/audit-log", roles: ['مدير عام'] }
         );

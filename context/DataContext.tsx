@@ -12,8 +12,7 @@ import type {
     EmergencyContact, ServiceGuide, AppUser, AdminUser,
     Driver, WeeklyScheduleItem, Supervisor, ExternalRoute,
     AuditLog, PublicPagesContent, Post, Comment,
-// FIX: Corrected the type import to use the newly defined DataContextType.
-    Advertisement, DataContextType
+    Advertisement, DataContextType, PollOption
 } from '../types';
 import { useAuth } from './AuthContext';
 import { useUI } from './UIContext';
@@ -457,7 +456,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }, [showToast]);
     
     // Community Forum
-    const addPost = useCallback((postData: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments'>) => {
+    const addPost = useCallback((postData: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments' | 'isPinned'>) => {
         if (!currentPublicUser) return;
         const newPost: Post = {
             id: Date.now(),
@@ -467,7 +466,9 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             date: new Date().toISOString(),
             likes: [],
             comments: [],
-            ...postData
+            isPinned: false,
+            ...postData,
+            pollOptions: postData.pollOptions ? postData.pollOptions.map(opt => ({ option: opt.option, votes: [] })) : undefined
         };
         setPosts(prev => [newPost, ...prev]);
         showToast('تم نشر منشورك بنجاح!');
@@ -475,10 +476,12 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const deletePost = useCallback((postId: number) => {
         if (window.confirm('هل أنت متأكد من حذف هذا المنشور؟')) {
+            const postTitle = posts.find(p => p.id === postId)?.title || 'منشور بدون عنوان';
             setPosts(prev => prev.filter(p => p.id !== postId));
+            logActivity('حذف منشور مجتمع', `تم حذف منشور: ${postTitle}`);
             showToast('تم حذف المنشور.');
         }
-    }, [showToast]);
+    }, [posts, logActivity, showToast]);
 
     const addComment = useCallback((postId: number, commentData: Omit<Comment, 'id' | 'date' | 'userId' | 'username' | 'avatar'>) => {
         if (!currentPublicUser) return;
@@ -492,6 +495,23 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         };
         setPosts(prev => prev.map(p => p.id === postId ? { ...p, comments: [newComment, ...p.comments] } : p));
     }, [currentPublicUser]);
+
+    const deleteComment = useCallback((postId: number, commentId: number) => {
+        if (window.confirm('هل أنت متأكد من حذف هذا التعليق؟')) {
+            let postTitle = '';
+            let commentContent = '';
+            setPosts(prev => prev.map(p => {
+                if (p.id === postId) {
+                    postTitle = p.title || 'منشور بدون عنوان';
+                    commentContent = p.comments.find(c => c.id === commentId)?.content || '';
+                    return { ...p, comments: p.comments.filter(c => c.id !== commentId) };
+                }
+                return p;
+            }));
+            logActivity('حذف تعليق', `حذف تعليق "${commentContent.substring(0, 20)}..." من منشور "${postTitle}"`);
+            showToast('تم حذف التعليق.');
+        }
+    }, [logActivity, showToast]);
 
     const toggleLikePost = useCallback((postId: number) => {
         if (!currentPublicUser) return;
@@ -507,30 +527,137 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }));
     }, [currentPublicUser]);
 
-    const value: DataContextType = {
-        categories, services, news, notifications, advertisements, properties, emergencyContacts, serviceGuides, users, admins, posts,
-        transportation: { internalSupervisor, externalSupervisor, internalDrivers, weeklySchedule, externalRoutes },
+    const requestAccountDeletion = useCallback((userId: number) => {
+        let userName = '';
+        setUsers(prev => prev.map(u => {
+            if (u.id === userId) {
+                userName = u.name;
+                return { ...u, status: 'deletion_requested' };
+            }
+            return u;
+        }));
+        logActivity('طلب حذف حساب', `المستخدم "${userName}" طلب حذف حسابه.`);
+        showToast('تم استلام طلب حذف حسابك بنجاح.');
+    }, [logActivity, showToast]);
+    
+    const togglePinPost = useCallback((postId: number) => {
+        let postTitle = '';
+        let isPinned: boolean | undefined = false;
+        setPosts(prev => prev.map(p => {
+            if (p.id === postId) {
+                postTitle = p.title || `منشور بواسطة ${p.username}`;
+                isPinned = !p.isPinned;
+                return { ...p, isPinned: !p.isPinned };
+            }
+            return p;
+        }));
+        logActivity(isPinned ? 'تثبيت منشور' : 'إلغاء تثبيت منشور', `تم ${isPinned ? 'تثبيت' : 'إلغاء تثبيت'} منشور: ${postTitle}`);
+        showToast(isPinned ? 'تم تثبيت المنشور بنجاح' : 'تم إلغاء تثبيت المنشور');
+    }, [logActivity, showToast]);
+    
+    const voteOnPoll = useCallback((postId: number, optionIndex: number) => {
+        if (!currentPublicUser) return;
+        const userId = currentPublicUser.id;
+        
+        setPosts(prev => prev.map(p => {
+            if (p.id !== postId || !p.pollOptions) {
+                return p;
+            }
+
+            const alreadyVotedForOption = p.pollOptions[optionIndex]?.votes.includes(userId);
+
+            const newPollOptions = p.pollOptions.map((option, idx) => {
+                // First, remove the user's vote from all options.
+                const newVotes = option.votes.filter(vId => vId !== userId);
+
+                // If this is the clicked option and the user wasn't already voting for it, add the vote back.
+                // This creates the toggle effect.
+                if (idx === optionIndex && !alreadyVotedForOption) {
+                    newVotes.push(userId);
+                }
+
+                return { ...option, votes: newVotes };
+            });
+
+            return { ...p, pollOptions: newPollOptions };
+        }));
+    }, [currentPublicUser]);
+
+    const value: DataContextType = useMemo(() => ({
+        categories,
+        services,
+        news,
+        notifications,
+        advertisements,
+        properties,
+        emergencyContacts,
+        serviceGuides,
+        users,
+        admins,
+        posts,
+        transportation: {
+            internalSupervisor,
+            externalSupervisor,
+            internalDrivers,
+            weeklySchedule,
+            externalRoutes,
+        },
         auditLogs,
         publicPagesContent,
         logActivity,
-        handleUpdateReview, handleDeleteReview, handleReplyToReview, handleToggleHelpfulReview, addReview,
-        handleSaveService, handleDeleteService, handleToggleFavorite,
-        handleSaveNews, handleDeleteNews,
-        handleSaveNotification, handleDeleteNotification,
-        handleSaveAdvertisement, handleDeleteAdvertisement,
-        handleSaveProperty, handleDeleteProperty,
-        handleSaveEmergencyContact, handleDeleteEmergencyContact,
-        handleSaveServiceGuide, handleDeleteServiceGuide,
-        handleSaveUser, handleDeleteUser,
-        handleSaveAdmin, handleDeleteAdmin,
-        handleSaveDriver, handleDeleteDriver,
-        handleSaveRoute, handleDeleteRoute,
+        handleUpdateReview,
+        handleDeleteReview,
+        handleReplyToReview,
+        handleToggleHelpfulReview,
+        addReview,
+        handleSaveService,
+        handleDeleteService,
+        handleToggleFavorite,
+        handleSaveNews,
+        handleDeleteNews,
+        handleSaveNotification,
+        handleDeleteNotification,
+        handleSaveAdvertisement,
+        handleDeleteAdvertisement,
+        handleSaveProperty,
+        handleDeleteProperty,
+        handleSaveEmergencyContact,
+        handleDeleteEmergencyContact,
+        handleSaveServiceGuide,
+        handleDeleteServiceGuide,
+        handleSaveUser,
+        handleDeleteUser,
+        handleSaveAdmin,
+        handleDeleteAdmin,
+        handleSaveDriver,
+        handleDeleteDriver,
+        handleSaveRoute,
+        handleDeleteRoute,
         handleSaveSchedule,
         handleSaveSupervisor,
         handleUpdatePublicPageContent,
-        addPost, deletePost, addComment, toggleLikePost,
-    };
-    
+        addPost,
+        deletePost,
+        addComment,
+        deleteComment,
+        toggleLikePost,
+        requestAccountDeletion,
+        togglePinPost,
+        voteOnPoll,
+    }), [
+        categories, services, news, notifications, advertisements, properties, emergencyContacts,
+        serviceGuides, users, admins, posts, internalSupervisor, externalSupervisor,
+        internalDrivers, weeklySchedule, externalRoutes, auditLogs, publicPagesContent,
+        logActivity, handleUpdateReview, handleDeleteReview, handleReplyToReview, handleToggleHelpfulReview, addReview,
+        handleSaveService, handleDeleteService, handleToggleFavorite, handleSaveNews, handleDeleteNews,
+        handleSaveNotification, handleDeleteNotification, handleSaveAdvertisement, handleDeleteAdvertisement,
+        handleSaveProperty, handleDeleteProperty, handleSaveEmergencyContact, handleDeleteEmergencyContact,
+        handleSaveServiceGuide, handleDeleteServiceGuide, handleSaveUser, handleDeleteUser, handleSaveAdmin,
+        handleDeleteAdmin, handleSaveDriver, handleDeleteDriver, handleSaveRoute, handleDeleteRoute,
+        handleSaveSchedule, handleSaveSupervisor, handleUpdatePublicPageContent, addPost, deletePost,
+        addComment, deleteComment, toggleLikePost, requestAccountDeletion, togglePinPost, voteOnPoll
+    ]);
+
     return (
         <DataContext.Provider value={value}>
             {children}

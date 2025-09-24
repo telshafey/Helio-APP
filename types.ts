@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import React from 'react';
 
 export interface User {
   id: string;
@@ -136,7 +136,7 @@ export interface ServiceGuide {
   attachmentType?: 'image' | 'pdf';
 }
 
-export type UserStatus = 'active' | 'pending' | 'banned';
+export type UserStatus = 'active' | 'pending' | 'banned' | 'deletion_requested';
 
 export interface AppUser {
   id: number;
@@ -240,12 +240,36 @@ export interface HomePageContent {
   infoLinksSectionTitle: string;
 }
 
+export interface BoardMember {
+  name: string;
+  title: string;
+  email?: string;
+  details: string[];
+}
+
+export interface AboutCityPageContent {
+  city: {
+    mainParagraphs: string[];
+    planning: string;
+    roads: string;
+    utilities: string;
+  };
+  company: {
+    about: string;
+    vision: string;
+    mission: string;
+    data: { label: string; value: string }[];
+  };
+  board: BoardMember[];
+}
+
 export interface PublicPagesContent {
   home: HomePageContent;
   about: AboutPageContent;
   faq: FaqPageContent;
   privacy: PolicyPageContent;
   terms: PolicyPageContent;
+  aboutCity: AboutCityPageContent;
 }
 
 export interface ToastMessage {
@@ -260,11 +284,11 @@ export interface SearchResult {
   title: string;
   subtitle?: string;
   link: string;
-  icon: ReactNode;
+  icon: React.ReactNode;
 }
 
 // Community Forum Types
-export type PostCategory = 'نقاش عام' | 'سؤال' | 'للبيع' | 'حدث';
+export type PostCategory = 'نقاش عام' | 'سؤال' | 'للبيع' | 'حدث' | 'استطلاع رأي';
 
 export interface Comment {
   id: number;
@@ -273,6 +297,11 @@ export interface Comment {
   avatar: string;
   content: string;
   date: string;
+}
+
+export interface PollOption {
+  option: string;
+  votes: number[]; // Array of user IDs who voted
 }
 
 export interface Post {
@@ -286,6 +315,8 @@ export interface Post {
   date: string;
   likes: number[]; // Array of user IDs who liked the post
   comments: Comment[];
+  isPinned?: boolean;
+  pollOptions?: PollOption[];
 }
 
 
@@ -364,8 +395,12 @@ export interface DataContextType {
   handleSaveSchedule: (schedule: WeeklyScheduleItem[]) => void;
   handleSaveSupervisor: (type: 'internal' | 'external', supervisor: Supervisor) => void;
   handleUpdatePublicPageContent: <K extends keyof PublicPagesContent>(page: K, newContent: PublicPagesContent[K]) => void;
-  addPost: (postData: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments'>) => void;
+  addPost: (postData: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments' | 'isPinned'>) => void;
   deletePost: (postId: number) => void;
   addComment: (postId: number, commentData: Omit<Comment, 'id' | 'date' | 'userId' | 'username' | 'avatar'>) => void;
   toggleLikePost: (postId: number) => void;
+  requestAccountDeletion: (userId: number) => void;
+  togglePinPost: (postId: number) => void;
+  deleteComment: (postId: number, commentId: number) => void;
+  voteOnPoll: (postId: number, optionIndex: number) => void;
 }
