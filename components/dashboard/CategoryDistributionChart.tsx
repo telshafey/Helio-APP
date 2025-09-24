@@ -1,12 +1,14 @@
 import React, { useMemo } from 'react';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { useAppContext } from '../../context/AppContext';
+// FIX: Replaced deprecated useAppContext with useData from DataContext.
+import { useData } from '../../context/DataContext';
 import { ChartPieIcon } from '../common/Icons';
 
 const COLORS = ['#06b6d4', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#ef4444'];
 
 const CategoryDistributionChart: React.FC = () => {
-    const { services, categories } = useAppContext();
+    // FIX: Replaced deprecated useAppContext with useData.
+    const { services, categories } = useData();
 
     const chartData = useMemo(() => {
         const serviceCounts: { [subCategoryId: number]: number } = {};

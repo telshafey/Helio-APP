@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import type { Activity } from '../../types';
-import { WrenchScrewdriverIcon, ShieldExclamationIcon, NewspaperIcon, BuildingOffice2Icon } from '../common/Icons';
-import { useAppContext } from '../../context/AppContext';
+import { WrenchScrewdriverIcon, ShieldExclamationIcon, NewspaperIcon, HomeModernIcon } from '../common/Icons';
+import { useData } from '../../context/DataContext';
 
 const formatRelativeTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -24,13 +24,13 @@ const ActivityIcon: React.FC<{ type: Activity['type'] }> = ({ type }) => {
     NEW_SERVICE: <WrenchScrewdriverIcon className={`${iconClasses} text-blue-500`} />,
     EMERGENCY_REPORT: <ShieldExclamationIcon className={`${iconClasses} text-red-500`} />,
     NEWS_PUBLISHED: <NewspaperIcon className={`${iconClasses} text-purple-500`} />,
-    NEW_PROPERTY: <BuildingOffice2Icon className={`${iconClasses} text-green-500`} />,
+    NEW_PROPERTY: <HomeModernIcon className={`${iconClasses} text-green-500`} />,
   };
   return <div className="p-2 bg-gray-100 dark:bg-slate-700 rounded-full">{typeMap[type]}</div>;
 };
 
 const RecentActivityTable: React.FC = () => {
-  const { services, properties, news } = useAppContext();
+  const { services, properties, news } = useData();
     
   const recentActivities = useMemo(() => {
       const serviceActivities: Activity[] = services.map(s => ({

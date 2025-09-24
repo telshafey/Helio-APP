@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon, PlusIcon, PencilSquareIcon, TrashIcon, NewspaperIcon } from '../components/common/Icons';
 import type { News } from '../types';
-import { useAppContext, useHasPermission } from '../context/AppContext';
+import { useData } from '../context/DataContext';
+import { useHasPermission } from '../context/AuthContext';
 import Modal from '../components/common/Modal';
 import ImageUploader from '../components/common/ImageUploader';
 import EmptyState from '../components/common/EmptyState';
@@ -102,7 +103,7 @@ const NewsCard: React.FC<{ newsItem: News; onEdit: () => void; onDelete: () => v
 
 const NewsPage: React.FC = () => {
     const navigate = useNavigate();
-    const { news, handleSaveNews, handleDeleteNews } = useAppContext();
+    const { news, handleSaveNews, handleDeleteNews } = useData();
     const canManage = useHasPermission(['مسؤول الاخبار والاعلانات والاشعارات']);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingNews, setEditingNews] = useState<News | null>(null);

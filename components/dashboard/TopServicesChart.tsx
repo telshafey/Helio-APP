@@ -1,10 +1,12 @@
 import React, { useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { useAppContext } from '../../context/AppContext';
+// FIX: Replaced deprecated useAppContext with useData from DataContext.
+import { useData } from '../../context/DataContext';
 import { EyeIcon } from '../common/Icons';
 
 const TopServicesChart: React.FC = () => {
-    const { services } = useAppContext();
+    // FIX: Replaced deprecated useAppContext with useData.
+    const { services } = useData();
 
     const topViewed = useMemo(() => 
         [...services]

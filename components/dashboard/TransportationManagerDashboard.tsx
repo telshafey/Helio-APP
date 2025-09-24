@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAppContext } from '../../context/AppContext';
+// FIX: Replaced deprecated useAppContext with useData from DataContext.
+import { useData } from '../../context/DataContext';
 import KpiCard from '../common/KpiCard';
 import { BusIcon, UserGroupIcon, MapIcon, PhoneIcon, UserCircleIcon, CalendarDaysIcon } from '../common/Icons';
 
 const TransportationManagerDashboard: React.FC = () => {
-    const { transportation } = useAppContext();
+    // FIX: Replaced deprecated useAppContext with useData.
+    const { transportation } = useData();
 
     const today = new Date().toLocaleDateString('ar-EG', { weekday: 'long' });
     const todaySchedule = transportation.weeklySchedule.find(d => d.day === today);

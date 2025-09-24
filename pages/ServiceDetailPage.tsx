@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import type { Review } from '../types';
 import { ArrowLeftIcon, StarIcon, PencilSquareIcon, TrashIcon, ChatBubbleLeftRightIcon } from '../components/common/Icons';
-import { useAppContext, useHasPermission } from '../context/AppContext';
+import { useData } from '../context/DataContext';
+import { useHasPermission } from '../context/AuthContext';
 import Modal from '../components/common/Modal';
 
 const Rating: React.FC<{ rating: number; size?: string }> = ({ rating, size = 'w-5 h-5' }) => (
@@ -48,7 +49,7 @@ const ServiceDetailPage: React.FC = () => {
     const { serviceId: serviceIdStr } = useParams<{ serviceId: string }>();
     const serviceId = Number(serviceIdStr);
     
-    const { services, handleUpdateReview, handleDeleteReview, handleReplyToReview } = useAppContext();
+    const { services, handleUpdateReview, handleDeleteReview, handleReplyToReview } = useData();
     const canManage = useHasPermission(['مسؤول ادارة الخدمات']);
     const service = services.find(s => s.id === serviceId);
 

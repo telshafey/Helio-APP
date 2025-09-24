@@ -7,7 +7,8 @@ import {
     ShoppingBagIcon,
     WrenchScrewdriverIcon
 } from '../components/common/Icons';
-import { useAppContext } from '../context/AppContext';
+// FIX: Replaced deprecated useAppContext with useData from DataContext.
+import { useData } from '../context/DataContext';
 import ServiceCard from '../components/common/ServiceCard';
 import AdSlider from '../components/common/AdSlider';
 import NewsCard from '../components/common/NewsCard';
@@ -23,7 +24,8 @@ const QuickAccessCard: React.FC<{ icon: React.ReactNode; title: string; to: stri
 );
 
 const PublicHomePage: React.FC = () => {
-    const { publicPagesContent, services, categories, advertisements, news, properties } = useAppContext();
+    // FIX: Replaced deprecated useAppContext with useData.
+    const { publicPagesContent, services, categories, advertisements, news, properties } = useData();
     const content = publicPagesContent.home;
 
     const sliderAds = React.useMemo(() => {

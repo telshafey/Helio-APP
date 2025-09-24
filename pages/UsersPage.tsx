@@ -1,11 +1,16 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeftIcon, MagnifyingGlassIcon, UserPlusIcon, PencilSquareIcon, TrashIcon, UserGroupIcon, UserCircleIcon } from '../components/common/Icons';
-import { useAppContext, useHasPermission } from '../context/AppContext';
+import { 
+    ArrowLeftIcon, MagnifyingGlassIcon, UserPlusIcon, PencilSquareIcon, 
+    TrashIcon, UserGroupIcon, UserCircleIcon, CheckCircleIcon, ClockIcon, NoSymbolIcon 
+} from '../components/common/Icons';
+import { useData } from '../context/DataContext';
+import { useHasPermission } from '../context/AuthContext';
 import type { AppUser, AdminUser, UserStatus } from '../types';
 import Modal from '../components/common/Modal';
 import ImageUploader from '../components/common/ImageUploader';
 import EmptyState from '../components/common/EmptyState';
+import KpiCard from '../components/common/KpiCard';
 
 const StatusBadge: React.FC<{ status: UserStatus }> = ({ status }) => {
     const statusMap = {
@@ -160,7 +165,7 @@ const AdminForm: React.FC<{
 };
 
 const RegularUsersTab: React.FC<{ onAdd: () => void; onEdit: (user: AppUser) => void; }> = ({ onAdd, onEdit }) => {
-    const { users, handleDeleteUser } = useAppContext();
+    const { users, handleDeleteUser } = useData();
     const canManage = useHasPermission(['مدير عام']);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<UserStatus | 'all'>('all');
@@ -239,11 +244,30 @@ const RegularUsersTab: React.FC<{ onAdd: () => void; onEdit: (user: AppUser) => 
 };
 
 const AdminUsersTab: React.FC<{ onAdd: () => void; onEdit: (admin: AdminUser) => void; }> = ({ onAdd, onEdit }) => {
-    const { admins, handleDeleteAdmin } = useAppContext();
+    const { admins, handleDeleteAdmin } = useData();
     const canManage = useHasPermission(['مدير عام']);
+
+    const roleCounts = useMemo(() => {
+        return admins.reduce((acc, admin) => {
+            acc[admin.role] = (acc[admin.role] || 0) + 1;
+            return acc;
+        }, {} as Record<AdminUser['role'], number>);
+    }, [admins]);
 
     return (
         <div className="animate-fade-in">
+            <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300">ملخص أدوار المديرين</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                    {Object.entries(roleCounts).map(([role, count]) => (
+                        <div key={role} className="bg-slate-100 dark:bg-slate-700 p-3 rounded-lg text-center">
+                            <p className="text-2xl font-bold text-cyan-500">{count}</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400">{role}</p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
              {canManage && (
                 <div className="flex justify-end mb-6">
                     <button onClick={onAdd} className="flex items-center justify-center gap-2 bg-cyan-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-cyan-600 transition-colors">
@@ -310,11 +334,19 @@ const AdminUsersTab: React.FC<{ onAdd: () => void; onEdit: (admin: AdminUser) =>
 
 const UsersPage: React.FC = () => {
     const navigate = useNavigate();
-    const { handleSaveUser, handleSaveAdmin } = useAppContext();
+    const { users, handleSaveUser, handleSaveAdmin } = useData();
     const [activeTab, setActiveTab] = useState<'users' | 'admins'>('users');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingUser, setEditingUser] = useState<AppUser | null>(null);
     const [editingAdmin, setEditingAdmin] = useState<AdminUser | null>(null);
+
+    const userStats = useMemo(() => {
+        const total = users.length;
+        const active = users.filter(u => u.status === 'active').length;
+        const pending = users.filter(u => u.status === 'pending').length;
+        const banned = users.filter(u => u.status === 'banned').length;
+        return { total, active, pending, banned };
+    }, [users]);
 
     const handleOpenUserModal = (user: AppUser | null) => {
         setEditingUser(user);
@@ -363,6 +395,13 @@ const UsersPage: React.FC = () => {
             </button>
             <div className="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl shadow-lg">
                 <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-6">إدارة المستخدمين</h1>
+
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <KpiCard title="إجمالي المستخدمين" value={userStats.total.toString()} icon={<UserGroupIcon className="w-8 h-8 text-cyan-400"/>} />
+                    <KpiCard title="المستخدمون النشطون" value={userStats.active.toString()} icon={<CheckCircleIcon className="w-8 h-8 text-green-400"/>} />
+                    <KpiCard title="مستخدمون قيد المراجعة" value={userStats.pending.toString()} icon={<ClockIcon className="w-8 h-8 text-yellow-400"/>} />
+                    <KpiCard title="المستخدمون المحظورون" value={userStats.banned.toString()} icon={<NoSymbolIcon className="w-8 h-8 text-red-400"/>} />
+                </div>
                 
                 <div className="flex gap-2 mb-6 border-b border-slate-200 dark:border-slate-700 pb-4">
                     <TabButton active={activeTab === 'users'} onClick={() => setActiveTab('users')} icon={<UserGroupIcon className="w-5 h-5" />}>المستخدمون</TabButton>

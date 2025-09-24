@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
+// FIX: Replaced deprecated useAppContext with useData from DataContext.
+import { useData } from '../context/DataContext';
+import { useAuth } from '../context/AuthContext';
 import { ArrowLeftIcon, StarIcon, PhoneIcon, ChatBubbleOvalLeftIcon, ChevronLeftIcon, ChevronRightIcon, HomeModernIcon, HandThumbUpIcon, HeartIcon, HeartIconSolid } from '../components/common/Icons';
 import Spinner from '../components/common/Spinner';
 
@@ -46,7 +48,8 @@ const ImageSlider: React.FC<{ images: string[] }> = ({ images }) => {
 }
 
 const AddReviewForm: React.FC<{ serviceId: number }> = ({ serviceId }) => {
-    const { addReview } = useAppContext();
+    // FIX: Replaced deprecated useAppContext with useData.
+    const { addReview } = useData();
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
     const navigate = useNavigate();
@@ -95,7 +98,9 @@ const AddReviewForm: React.FC<{ serviceId: number }> = ({ serviceId }) => {
 const PublicServiceDetailPage: React.FC = () => {
     const navigate = useNavigate();
     const { serviceId } = useParams<{ serviceId: string }>();
-    const { services, isPublicAuthenticated, handleToggleFavorite, handleToggleHelpfulReview } = useAppContext();
+    // FIX: Get data-related state from useData and auth state from useAuth.
+    const { services, handleToggleFavorite, handleToggleHelpfulReview } = useData();
+    const { isPublicAuthenticated } = useAuth();
 
     const [sortOrder, setSortOrder] = useState<'latest' | 'highest' | 'helpful'>('latest');
 

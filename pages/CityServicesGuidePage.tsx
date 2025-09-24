@@ -5,7 +5,8 @@ import {
     ChevronDownIcon, DocumentDuplicateIcon 
 } from '../components/common/Icons';
 import type { ServiceGuide } from '../types';
-import { useAppContext, useHasPermission } from '../context/AppContext';
+import { useData } from '../context/DataContext';
+import { useHasPermission } from '../context/AuthContext';
 import Modal from '../components/common/Modal';
 import AttachmentUploader from '../components/common/AttachmentUploader';
 import EmptyState from '../components/common/EmptyState';
@@ -96,7 +97,7 @@ const GuideForm: React.FC<{
 
 const CityServicesGuidePage: React.FC = () => {
     const navigate = useNavigate();
-    const { serviceGuides, handleSaveServiceGuide, handleDeleteServiceGuide } = useAppContext();
+    const { serviceGuides, handleSaveServiceGuide, handleDeleteServiceGuide } = useData();
     const canManage = useHasPermission(['مسؤول ادارة الخدمات']);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingGuide, setEditingGuide] = useState<ServiceGuide | null>(null);

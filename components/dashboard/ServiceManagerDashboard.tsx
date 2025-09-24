@@ -1,18 +1,22 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { useAppContext } from '../../context/AppContext';
+// FIX: Replaced deprecated useAppContext with useData from DataContext.
+import { useData } from '../../context/DataContext';
 import KpiCard from '../common/KpiCard';
-import { WrenchScrewdriverIcon, StarIcon, ChatBubbleOvalLeftIcon, ShieldExclamationIcon, RectangleGroupIcon, DocumentDuplicateIcon, EyeIcon, ChartPieIcon, ChartBarIcon } from '../common/Icons';
+import { WrenchScrewdriverIcon, StarIcon, ChatBubbleOvalLeftIcon, ShieldExclamationIcon, RectangleGroupIcon, DocumentDuplicateIcon, EyeIcon, ChartPieIcon } from '../common/Icons';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const ServiceManagerDashboard: React.FC = () => {
-    const { services, categories, emergencyContacts } = useAppContext();
+    // FIX: Replaced deprecated useAppContext with useData.
+    const { services, categories, emergencyContacts } = useData();
     const allReviews = useMemo(() => services.flatMap(s => s.reviews.map(r => ({...r, serviceName: s.name}))), [services]);
 
     const stats = useMemo(() => {
         const totalServices = services.length;
         const totalReviews = allReviews.length;
-        const averageRating = totalReviews > 0 ? (services.reduce((sum, s) => sum + (s.rating * s.reviews.length), 0) / totalReviews).toFixed(1) : '0.0';
+        const servicesWithReviews = services.filter(s => s.reviews.length > 0);
+        const totalReviewSum = servicesWithReviews.reduce((sum, s) => sum + s.rating * s.reviews.length, 0);
+        const averageRating = totalReviews > 0 ? (totalReviewSum / totalReviews).toFixed(1) : '0.0';
         const totalEmergency = emergencyContacts.length;
 
         const topViewedServices = [...services].sort((a,b) => b.views - a.views).slice(0, 5);
@@ -20,7 +24,7 @@ const ServiceManagerDashboard: React.FC = () => {
         const serviceCountsPerCategory: { [key: string]: number } = {};
         services.forEach(service => {
             const category = categories.find(c => c.subCategories.some(sc => sc.id === service.subCategoryId));
-            if (category) {
+            if (category && category.name !== "المدينة والجهاز") {
                 serviceCountsPerCategory[category.name] = (serviceCountsPerCategory[category.name] || 0) + 1;
             }
         });

@@ -1,11 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon, DocumentDuplicateIcon } from '../components/common/Icons';
-import { useAppContext } from '../context/AppContext';
+// FIX: Replaced deprecated useAppContext with useData from DataContext.
+import { useData } from '../context/DataContext';
 
 const TermsOfUsePage: React.FC = () => {
     const navigate = useNavigate();
-    const { publicPagesContent } = useAppContext();
+    // FIX: Replaced deprecated useAppContext with useData.
+    const { publicPagesContent } = useData();
     const content = publicPagesContent.terms;
 
     return (

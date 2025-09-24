@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
+// FIX: Replaced deprecated useAppContext with useData from DataContext.
+import { useData } from '../context/DataContext';
 import ServiceCard from '../components/common/ServiceCard';
 import { ArrowLeftIcon } from '../components/common/Icons';
 import Spinner from '../components/common/Spinner';
@@ -12,7 +13,8 @@ const PublicServiceListPage: React.FC = () => {
     const { subCategoryId: subCategoryIdStr } = useParams<{ subCategoryId: string }>();
     const subCategoryId = Number(subCategoryIdStr);
 
-    const { services, categories } = useAppContext();
+    // FIX: Replaced deprecated useAppContext with useData.
+    const { services, categories } = useData();
 
     const { categoryName, subCategoryName, filteredServices, categoryIcon } = useMemo(() => {
         let catName = '';

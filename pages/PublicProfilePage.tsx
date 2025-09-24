@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
+// FIX: Replaced deprecated useAppContext with useData from DataContext.
+import { useData } from '../context/DataContext';
 import { ArrowLeftIcon, StarIcon, ChatBubbleOvalLeftIcon } from '../components/common/Icons';
 import Spinner from '../components/common/Spinner';
 
@@ -16,7 +17,8 @@ const RatingDisplay: React.FC<{ rating: number; size?: string; }> = ({ rating, s
 const PublicProfilePage: React.FC = () => {
     const { userId } = useParams<{ userId: string }>();
     const navigate = useNavigate();
-    const { users, services } = useAppContext();
+    // FIX: Replaced deprecated useAppContext with useData.
+    const { users, services } = useData();
 
     const user = useMemo(() => users.find(u => u.id === Number(userId)), [users, userId]);
     

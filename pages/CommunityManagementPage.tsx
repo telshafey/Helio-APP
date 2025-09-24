@@ -1,12 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
+import { useData } from '../context/DataContext';
 import { ArrowLeftIcon, TrashIcon, ChatBubbleOvalLeftEllipsisIcon } from '../components/common/Icons';
 import EmptyState from '../components/common/EmptyState';
 
 const CommunityManagementPage: React.FC = () => {
     const navigate = useNavigate();
-    const { posts, deletePost } = useAppContext();
+    const { posts, deletePost } = useData();
 
     return (
         <div className="animate-fade-in">

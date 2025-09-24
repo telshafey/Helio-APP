@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
+// FIX: Replaced deprecated useAppContext with useData from DataContext.
+import { useData } from '../context/DataContext';
 // FIX: Import useAuth to get the admin login function.
 import { useAuth } from '../context/AuthContext';
 import type { AdminUser } from '../types';
@@ -8,7 +9,8 @@ import type { AdminUser } from '../types';
 const AdminLoginPage: React.FC = () => {
     // FIX: Destructure login from useAuth and admins from useAppContext.
     const { login } = useAuth();
-    const { admins } = useAppContext();
+    // FIX: Replaced deprecated useAppContext with useData.
+    const { admins } = useData();
     const navigate = useNavigate();
 
     const handleQuickLogin = (user: AdminUser) => {

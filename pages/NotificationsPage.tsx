@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon, PlusIcon, PencilSquareIcon, TrashIcon, BellAlertIcon } from '../components/common/Icons';
 import type { Notification, Service } from '../types';
-import { useAppContext, useHasPermission } from '../context/AppContext';
+import { useData } from '../context/DataContext';
+import { useHasPermission } from '../context/AuthContext';
 import Modal from '../components/common/Modal';
 import ImageUploader from '../components/common/ImageUploader';
 import EmptyState from '../components/common/EmptyState';
@@ -120,7 +121,7 @@ const StatusBadge: React.FC<{ startDate: string, endDate: string }> = ({ startDa
 
 const NotificationsPage: React.FC = () => {
     const navigate = useNavigate();
-    const { notifications, services, handleSaveNotification, handleDeleteNotification } = useAppContext();
+    const { notifications, services, handleSaveNotification, handleDeleteNotification } = useData();
     const canManage = useHasPermission(['مسؤول الاخبار والاعلانات والاشعارات']);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingNotification, setEditingNotification] = useState<Notification | null>(null);

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon, ChevronDownIcon, QuestionMarkCircleIcon } from '../components/common/Icons';
-import { useAppContext } from '../context/AppContext';
+// FIX: Replaced deprecated useAppContext with useData from DataContext.
+import { useData } from '../context/DataContext';
 
 interface FaqItemProps {
     question: string;
@@ -31,7 +32,8 @@ const FaqItem: React.FC<FaqItemProps> = ({ question, answer, isOpen, onClick }) 
 
 const FaqPage: React.FC = () => {
     const navigate = useNavigate();
-    const { publicPagesContent } = useAppContext();
+    // FIX: Replaced deprecated useAppContext with useData.
+    const { publicPagesContent } = useData();
     const content = publicPagesContent.faq;
     const [openFaqId, setOpenFaqId] = useState<string | null>(`c0-i0`); 
 

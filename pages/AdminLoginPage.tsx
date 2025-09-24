@@ -1,13 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
+// FIX: Replaced deprecated useAppContext with useData from DataContext.
+import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import type { AdminUser } from '../types';
 import Logo from '../components/common/Logo';
 
 const AdminLoginPage: React.FC = () => {
     const { login } = useAuth();
-    const { admins } = useAppContext();
+    // FIX: Replaced deprecated useAppContext with useData.
+    const { admins } = useData();
     const navigate = useNavigate();
 
     const handleQuickLogin = (user: AdminUser) => {

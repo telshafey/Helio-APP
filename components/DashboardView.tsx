@@ -1,30 +1,29 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import KpiCard from './KpiCard';
-import UserActivityChart from './UserActivityChart';
-import PropertyMap from './PropertyMap';
-import RecentActivityTable from './RecentInquiriesTable';
-import AlertsPanel from './AlertsPanel';
-import UsersToVerify from './UsersToVerify';
-import Footer from './Footer';
-// FIX: Corrected icon import path
+import KpiCard from './common/KpiCard';
+import UserActivityChart from './dashboard/UserActivityChart';
+import PropertyMap from './dashboard/PropertyMap';
+import RecentActivityTable from './dashboard/RecentActivityTable';
+import AlertsPanel from './dashboard/AlertsPanel';
+import UsersToVerify from './dashboard/UsersToVerify';
+import Footer from './common/Footer';
 import { UserIcon, MapIcon, WrenchScrewdriverIcon, ShieldExclamationIcon, HomeModernIcon, UserGroupIcon, BusIcon, NewspaperIcon, Bars3Icon } from './common/Icons';
-import { useAppContext } from '../context/AppContext';
+import { useData } from '../context/DataContext';
 
 const DashboardView: React.FC = () => {
-  const { categories, properties, news, notifications } = useAppContext();
+  const { categories, properties, news, notifications, users, emergencyContacts, services } = useData();
   
   const firstServiceLink = (categories.length > 0 && categories[0].subCategories.length > 0)
     ? `/services/subcategory/${categories[0].subCategories[0].id}`
     : '/';
 
   const kpiData = [
-    { title: "إجمالي الخدمات", value: "2,350", change: "+50", changeLabel: "أضيف هذا الشهر", icon: <WrenchScrewdriverIcon className="w-8 h-8 text-cyan-400" />, to: firstServiceLink, changeType: 'positive' as const },
-    { title: "إجمالي العقارات", value: properties.length.toString(), change: "+3", changeLabel: "أضيف هذا الشهر", icon: <HomeModernIcon className="w-8 h-8 text-amber-400" />, to: "/properties", changeType: 'positive' as const },
-    { title: "إجمالي المستخدمين", value: "850", change: "+80", changeLabel: "جديد هذا الشهر", icon: <UserGroupIcon className="w-8 h-8 text-lime-400" />, to: "/users", changeType: 'positive' as const },
+    { title: "إجمالي الخدمات", value: services.length.toString(), change: `+${services.filter(s => new Date(s.creationDate) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length}`, changeLabel: "آخر 30 يوم", icon: <WrenchScrewdriverIcon className="w-8 h-8 text-cyan-400" />, to: firstServiceLink, changeType: 'positive' as const },
+    { title: "إجمالي العقارات", value: properties.length.toString(), change: `+${properties.filter(p => new Date(p.creationDate) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length}`, changeLabel: "آخر 30 يوم", icon: <HomeModernIcon className="w-8 h-8 text-amber-400" />, to: "/properties", changeType: 'positive' as const },
+    { title: "إجمالي المستخدمين", value: users.length.toString(), change: `+${users.filter(u => new Date(u.joinDate) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length}`, changeLabel: "آخر 30 يوم", icon: <UserGroupIcon className="w-8 h-8 text-lime-400" />, to: "/users", changeType: 'positive' as const },
     { title: "استخدام الباصات", value: "1,240 رحلة", change: "+150", changeLabel: "هذا الأسبوع", icon: <BusIcon className="w-8 h-8 text-purple-400" />, to: "/transportation", changeType: 'positive' as const },
     { title: "الأخبار والإشعارات", value: (news.length + notifications.length).toString(), change: "+5", changeLabel: "هذا الأسبوع", icon: <NewspaperIcon className="w-8 h-8 text-indigo-400" />, to: "/news", changeType: 'positive' as const },
-    { title: "بلاغات الطوارئ", value: "28 بلاغ", change: "قبل 12 د", changeLabel: "آخر بلاغ", icon: <ShieldExclamationIcon className="w-8 h-8 text-rose-400" />, to: "/emergency", changeType: 'neutral' as const },
+    { title: "أرقام الطوارئ", value: emergencyContacts.length.toString(), change: "جاهزة للاستخدام", changeLabel: "", icon: <ShieldExclamationIcon className="w-8 h-8 text-rose-400" />, to: "/emergency", changeType: 'neutral' as const },
   ];
 
   return (

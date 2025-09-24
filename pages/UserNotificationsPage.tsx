@@ -1,13 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
+import { useData } from '../context/DataContext';
 import { ArrowLeftIcon, BellIcon } from '../components/common/Icons';
 import EmptyState from '../components/common/EmptyState';
 import PageBanner from '../components/common/PageBanner';
 
 const UserNotificationsPage: React.FC = () => {
     const navigate = useNavigate();
-    const { notifications, services } = useAppContext();
+    const { notifications, services } = useData();
 
     const getServiceName = (serviceId?: number) => {
         if (!serviceId) return null;

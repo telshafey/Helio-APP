@@ -2,7 +2,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeftIcon, PlusIcon, StarIcon, StarIconOutline, EyeIcon, PencilSquareIcon, TrashIcon, WrenchScrewdriverIcon } from '../components/common/Icons';
 import type { Service } from '../types';
-import { useAppContext, useHasPermission } from '../context/AppContext';
+import { useData } from '../context/DataContext';
+import { useHasPermission } from '../context/AuthContext';
 import Modal from '../components/common/Modal';
 import ImageUploader from '../components/common/ImageUploader';
 import EmptyState from '../components/common/EmptyState';
@@ -127,7 +128,7 @@ const ServiceForm: React.FC<{
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <MultiInputField label="أرقام الهاتف" values={phones} onChange={setPhones} placeholder="0123456789" />
-                <MultiInputField label="أرقام واتساب" values={whatsapps} onChange={setWhatsapps} placeholder="966501234567" />
+                <MultiInputField label="أرقام واتساب" values={whatsapps} onChange={setWhatsapps} placeholder="966509876543" />
             </div>
 
             <TextareaField name="workingHours" label="مواعيد العمل (اختياري)" value={formData.workingHours} onChange={handleChange} rows={2} placeholder="مثال: السبت - الخميس: 9ص - 10م..." />
@@ -163,7 +164,7 @@ const ServicePage: React.FC = () => {
     const { subCategoryId: subCategoryIdStr } = useParams<{ subCategoryId: string }>();
     const subCategoryId = Number(subCategoryIdStr);
     
-    const { services, categories, handleSaveService, handleDeleteService, handleToggleFavorite } = useAppContext();
+    const { services, categories, handleSaveService, handleDeleteService, handleToggleFavorite } = useData();
     const canManage = useHasPermission(['مسؤول ادارة الخدمات']);
 
     const [isModalOpen, setIsModalOpen] = useState(false);

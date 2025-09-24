@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
+// FIX: Replaced deprecated useAppContext with useData from DataContext.
+import { useData } from '../context/DataContext';
 import { ChevronDownIcon, DocumentDuplicateIcon } from '../components/common/Icons';
 import EmptyState from '../components/common/EmptyState';
 import PageBanner from '../components/common/PageBanner';
 
 const PublicCityServicesGuidePage: React.FC = () => {
-    const { serviceGuides } = useAppContext();
+    // FIX: Replaced deprecated useAppContext with useData.
+    const { serviceGuides } = useData();
     const [openGuideId, setOpenGuideId] = useState<number | null>(serviceGuides.length > 0 ? serviceGuides[0].id : null);
 
     const handleToggleGuide = (id: number) => {

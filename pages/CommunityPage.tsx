@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
+// FIX: Replaced deprecated useAppContext with useData from DataContext.
+import { useData } from '../context/DataContext';
+import { useAuth } from '../context/AuthContext';
 import type { Post, PostCategory } from '../types';
 import { PlusIcon, ChatBubbleOvalLeftEllipsisIcon, HandThumbUpIcon, UserCircleIcon } from '../components/common/Icons';
 import Modal from '../components/common/Modal';
@@ -8,7 +10,9 @@ import EmptyState from '../components/common/EmptyState';
 import PageBanner from '../components/common/PageBanner';
 
 const PostCard: React.FC<{ post: Post }> = ({ post }) => {
-    const { currentPublicUser, toggleLikePost } = useAppContext();
+    // FIX: Get data-related state from useData and auth state from useAuth.
+    const { toggleLikePost } = useData();
+    const { currentPublicUser } = useAuth();
     const isLiked = currentPublicUser ? post.likes.includes(currentPublicUser.id) : false;
 
     const handleLikeClick = (e: React.MouseEvent) => {
@@ -46,7 +50,8 @@ const PostCard: React.FC<{ post: Post }> = ({ post }) => {
 };
 
 const NewPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-    const { addPost } = useAppContext();
+    // FIX: Replaced deprecated useAppContext with useData.
+    const { addPost } = useData();
     const [category, setCategory] = useState<PostCategory>('نقاش عام');
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -86,7 +91,9 @@ const NewPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 };
 
 const CommunityPage: React.FC = () => {
-    const { posts, isPublicAuthenticated } = useAppContext();
+    // FIX: Get data-related state from useData and auth state from useAuth.
+    const { posts } = useData();
+    const { isPublicAuthenticated } = useAuth();
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [sortOrder, setSortOrder] = useState<'latest' | 'popular'>('latest');

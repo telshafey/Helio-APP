@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useState } from 'react';
+import React, { lazy, Suspense, useState, useRef } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/common/Sidebar';
 import Header from './components/common/Header';
@@ -36,10 +36,12 @@ const FaqPage = lazy(() => import('./pages/FaqPage'));
 const TermsOfUsePage = lazy(() => import('./pages/TermsOfUsePage'));
 const AuditLogPage = lazy(() => import('./pages/AuditLogPage'));
 const ContentManagementPage = lazy(() => import('./pages/ContentManagementPage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
+
 
 // New Public/Auth Pages
 const PublicHomePage = lazy(() => import('./pages/PublicHomePage'));
-const AdminLoginPage = lazy(() => import('./pages/AdminLoginPage'));
+const AdminLoginPage = lazy(() => import('./pages/LoginPage'));
 const PublicLoginPage = lazy(() => import('./pages/PublicLoginPage'));
 const RegisterPage = lazy(() => import('./pages/RegisterPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
@@ -51,7 +53,6 @@ const PublicNewsPage = lazy(() => import('./pages/PublicNewsPage'));
 const PublicNewsDetailPage = lazy(() => import('./pages/PublicNewsDetailPage'));
 const PublicCityServicesGuidePage = lazy(() => import('./pages/PublicCityServicesGuidePage'));
 const AboutCityPage = lazy(() => import('./pages/AboutCityPage'));
-const AboutCompanyPage = lazy(() => import('./pages/AboutCompanyPage'));
 const PublicProfilePage = lazy(() => import('./pages/PublicProfilePage'));
 const CommunityPage = lazy(() => import('./pages/CommunityPage'));
 const PostDetailPage = lazy(() => import('./pages/PostDetailPage'));
@@ -64,10 +65,11 @@ const PublicTransportationPage = lazy(() => import('./pages/PublicTransportation
 const App: React.FC = () => {
   const { isAuthenticated, isPublicAuthenticated } = useAuth();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const mainContentRef = useRef<HTMLElement>(null);
 
   return (
     <>
-      <ScrollToTop />
+      <ScrollToTop mainContentRef={mainContentRef} />
       {!isAuthenticated ? (
         <>
           <div className="bg-slate-100 dark:bg-slate-900 text-gray-800 dark:text-gray-200 min-h-screen font-sans flex flex-col" dir="rtl">
@@ -119,7 +121,7 @@ const App: React.FC = () => {
             <Sidebar />
             <div className="flex-1 flex flex-col overflow-hidden">
               <Header />
-              <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-100 dark:bg-slate-900 p-4 sm:p-6">
+              <main ref={mainContentRef} className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-100 dark:bg-slate-900 p-4 sm:p-6">
                 <div className="h-full w-full">
                   <Breadcrumbs />
                   <Suspense fallback={<Spinner />}>
@@ -143,7 +145,8 @@ const App: React.FC = () => {
                       <Route path="/content-management" element={<ContentManagementPage />} />
                       <Route path="/community-management" element={<CommunityManagementPage />} />
                       <Route path="/about-city" element={<AboutCityPage />} />
-                      <Route path="/about-company" element={<AboutCompanyPage />} />
+                      <Route path="/settings" element={<SettingsPage />} />
+
 
                       {/* Redirect old public paths to dashboard home if logged in */}
                       <Route path="/about" element={<Navigate to="/" />} />

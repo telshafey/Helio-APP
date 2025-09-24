@@ -12,7 +12,7 @@ import {
     ChatBubbleOvalLeftEllipsisIcon,
     PhotoIcon
 } from './Icons';
-import { useAppContext } from '../../context/AppContext';
+import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
 import type { AdminUser } from '../../types';
 import Logo from './Logo';
@@ -45,7 +45,7 @@ const filterNavItemsBySearch = (items: NavItemData[], query: string): NavItemDat
 };
 
 const Sidebar: React.FC = () => {
-    const { categories } = useAppContext();
+    const { categories } = useData();
     const { logout, currentUser } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({ 'الخدمات الرئيسية': true });
@@ -73,8 +73,7 @@ const Sidebar: React.FC = () => {
             { name: "نظرة عامة", icon: <HomeIcon className="w-6 h-6" />, to: "/" },
             { name: "هيكل الخدمات", icon: <RectangleGroupIcon className="w-6 h-6" />, to: "/services-overview", roles: serviceManagerRoles },
             { name: "خدمات جهاز المدينة", icon: <DocumentDuplicateIcon className="w-6 h-6 text-sky-400" />, to: "/city-services-guide", roles: serviceManagerRoles },
-            { name: "عن هليوبوليس الجديدة", icon: <BuildingLibraryIcon className="w-6 h-6 text-green-400" />, to: "/about-city", roles: ['مدير عام'] },
-            { name: "عن الشركة المالكة", icon: <BuildingOffice2Icon className="w-6 h-6 text-purple-400" />, to: "/about-company", roles: ['مدير عام'] },
+            { name: "عن المدينة والشركة", icon: <BuildingLibraryIcon className="w-6 h-6 text-green-400" />, to: "/about-city", roles: ['مدير عام'] },
         ];
         
         if (serviceNavItems.length > 0) {
@@ -234,6 +233,10 @@ const Sidebar: React.FC = () => {
                 </nav>
 
                 <div className="p-4 border-t border-slate-200 dark:border-slate-700">
+                    <Link to="/settings" className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition-colors mb-2">
+                        <Cog6ToothIcon className="w-6 h-6" />
+                        <span className="font-semibold">الإعدادات</span>
+                    </Link>
                     <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors">
                         <ArrowLeftOnRectangleIcon className="w-6 h-6" />
                         <span className="font-semibold">تسجيل الخروج</span>

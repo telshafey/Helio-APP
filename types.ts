@@ -298,8 +298,6 @@ export interface UIContextType {
   dismissToast: (id: number) => void;
 }
 
-export type UseUIContextType = () => UIContextType;
-
 export interface AuthContextType {
   currentUser: AdminUser | null;
   isAuthenticated: boolean;
@@ -312,8 +310,6 @@ export interface AuthContextType {
   register: (user: Omit<AppUser, 'id' | 'joinDate' | 'avatar' | 'status'>) => boolean;
   updateProfile: (user: Omit<AppUser, 'joinDate'>) => void;
 }
-
-export type UseAuthContextType = () => AuthContextType;
 
 export interface DataContextType {
   categories: Category[];
@@ -353,7 +349,7 @@ export interface DataContextType {
   handleDeleteAdvertisement: (id: number) => void;
   handleSaveProperty: (property: Omit<Property, 'id' | 'views' | 'creationDate'> & { id?: number }) => void;
   handleDeleteProperty: (id: number) => void;
-  handleSaveEmergencyContact: (contact: Omit<EmergencyContact, 'id' | 'type'> & { id?: number; type?: 'city' | 'national' }) => void;
+  handleSaveEmergencyContact: (contact: Omit<EmergencyContact, 'id'>) => void;
   handleDeleteEmergencyContact: (id: number) => void;
   handleSaveServiceGuide: (guide: Omit<ServiceGuide, 'id'> & { id?: number }) => void;
   handleDeleteServiceGuide: (id: number) => void;
@@ -372,9 +368,4 @@ export interface DataContextType {
   deletePost: (postId: number) => void;
   addComment: (postId: number, commentData: Omit<Comment, 'id' | 'date' | 'userId' | 'username' | 'avatar'>) => void;
   toggleLikePost: (postId: number) => void;
-}
-
-
-export interface AppContextType extends DataContextType {
-  // Now AppContext only contains DataContextType properties
 }

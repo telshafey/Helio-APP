@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import { mockUsers, mockAdmins } from '../data/mock-data';
-// FIX: Corrected the type import to use the newly defined AuthContextType.
 import type { AppUser, AdminUser, AuthContextType } from '../types';
 import { useUI } from './UIContext';
 
@@ -110,4 +109,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             {children}
         </AuthContext.Provider>
     );
+};
+
+/**
+ * A custom hook to check if the current admin user has the required permissions.
+ * @param allowedRoles - An array of roles that are allowed to perform the action.
+ * @returns `true` if the user has permission, otherwise `false`.
+ * The 'مدير عام' role has all permissions by default.
+ */
+export const useHasPermission = (allowedRoles: (AdminUser['role'])[]): boolean => {
+    const { currentUser } = useAuth();
+    
+    // No user, no permissions.
+    if (!currentUser) {
+        return false;
+    }
+    
+    // Super admin ('مدير عام') has all permissions.
+    if (currentUser.role === 'مدير عام') {
+        return true;
+    }
+    
+    // Check if the user's role is in the allowed list.
+    return allowedRoles.includes(currentUser.role);
 };

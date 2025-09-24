@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { useAppContext } from '../../context/AppContext';
+import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
 import { BellIcon } from './Icons';
 import ProfileDropDown from './ProfileDropDown';
@@ -8,7 +8,7 @@ import Logo from './Logo';
 
 const PublicHeader: React.FC = () => {
     const { isPublicAuthenticated, currentPublicUser } = useAuth();
-    const { notifications } = useAppContext();
+    const { notifications } = useData();
     const unreadCount = notifications.length; // Simple count for now
 
     const navLinkClasses = ({ isActive }: { isActive: boolean }) =>

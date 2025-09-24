@@ -5,7 +5,8 @@ import {
     MagnifyingGlassIcon, HomeModernIcon, MapPinIcon, PhoneIcon
 } from '../components/common/Icons';
 import type { Property } from '../types';
-import { useAppContext, useHasPermission } from '../context/AppContext';
+import { useData } from '../context/DataContext';
+import { useHasPermission } from '../context/AuthContext';
 import Modal from '../components/common/Modal';
 import ImageUploader from '../components/common/ImageUploader';
 import EmptyState from '../components/common/EmptyState';
@@ -136,7 +137,7 @@ const PropertyCard: React.FC<{ property: Property; onEdit: () => void; onDelete:
 
 const PropertiesPage: React.FC = () => {
     const navigate = useNavigate();
-    const { properties, handleSaveProperty, handleDeleteProperty } = useAppContext();
+    const { properties, handleSaveProperty, handleDeleteProperty } = useData();
     const canManage = useHasPermission(['مسؤول العقارات']);
 
     const [isModalOpen, setIsModalOpen] = useState(false);

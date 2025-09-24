@@ -2,16 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon, PhoneIcon, PencilSquareIcon, TrashIcon, PlusIcon, ShieldExclamationIcon } from '../components/common/Icons';
 import type { EmergencyContact } from '../types';
-// FIX: Import useHasPermission for role checks.
-import { useAppContext, useHasPermission } from '../context/AppContext';
+import { useData } from '../context/DataContext';
 import Modal from '../components/common/Modal';
 import EmptyState from '../components/common/EmptyState';
 import PageBanner from '../components/common/PageBanner';
-// FIX: Import useAuth for authentication state.
-import { useAuth } from '../context/AuthContext';
+import { useAuth, useHasPermission } from '../context/AuthContext';
 
 const EmergencyCard: React.FC<{ contact: EmergencyContact; onEdit: (contact: EmergencyContact) => void; onDelete: (id: number) => void; }> = ({ contact, onEdit, onDelete }) => {
-    // FIX: Get isAuthenticated from useAuth instead of useAppContext.
     const { isAuthenticated } = useAuth();
     const canManage = useHasPermission(['مسؤول ادارة الخدمات']);
 
@@ -44,7 +41,6 @@ const EmergencyCard: React.FC<{ contact: EmergencyContact; onEdit: (contact: Eme
 };
 
 const EmergencyListItem: React.FC<{ contact: EmergencyContact; onEdit: (contact: EmergencyContact) => void; onDelete: (id: number) => void; }> = ({ contact, onEdit, onDelete }) => {
-    // FIX: Get isAuthenticated from useAuth instead of useAppContext.
     const { isAuthenticated } = useAuth();
     const canManage = useHasPermission(['مسؤول ادارة الخدمات']);
 
@@ -143,8 +139,7 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; children: Reac
 
 const EmergencyPage: React.FC = () => {
     const navigate = useNavigate();
-    const { emergencyContacts, handleSaveEmergencyContact, handleDeleteEmergencyContact } = useAppContext();
-    // FIX: Get isAuthenticated from useAuth instead of useAppContext.
+    const { emergencyContacts, handleSaveEmergencyContact, handleDeleteEmergencyContact } = useData();
     const { isAuthenticated } = useAuth();
     const canManage = useHasPermission(['مسؤول ادارة الخدمات']);
     const [isModalOpen, setIsModalOpen] = useState(false);

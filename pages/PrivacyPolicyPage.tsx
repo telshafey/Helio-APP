@@ -1,11 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon, BookOpenIcon } from '../components/common/Icons';
-import { useAppContext } from '../context/AppContext';
+import { useData } from '../context/DataContext';
 
 const PrivacyPolicyPage: React.FC = () => {
     const navigate = useNavigate();
-    const { publicPagesContent } = useAppContext();
+    const { publicPagesContent } = useData();
     const content = publicPagesContent.privacy;
 
     return (

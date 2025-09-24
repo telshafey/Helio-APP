@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
+// FIX: Replaced deprecated useAppContext with useData from DataContext.
+import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import Logo from '../components/common/Logo';
 import type { AdminUser } from '../types';
 
 const PublicLoginPage: React.FC = () => {
     const { publicLogin, login } = useAuth();
-    const { admins } = useAppContext();
+    // FIX: Replaced deprecated useAppContext with useData.
+    const { admins } = useData();
     const navigate = useNavigate();
     const [email, setEmail] = useState('test@test.com');
     const [password, setPassword] = useState('password');

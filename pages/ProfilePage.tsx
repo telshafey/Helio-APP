@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
+// FIX: Replaced deprecated useAppContext with useData from DataContext.
+import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import { ArrowLeftIcon, UserCircleIcon, PencilIcon, StarIcon, ChatBubbleOvalLeftIcon, HeartIconSolid } from '../components/common/Icons';
 import Modal from '../components/common/Modal';
@@ -41,7 +42,8 @@ const EditProfileForm: React.FC<{ user: AppUser; onSave: (data: Omit<AppUser, 'j
 const ProfilePage: React.FC = () => {
     const navigate = useNavigate();
     const { currentPublicUser, updateProfile } = useAuth();
-    const { services } = useAppContext();
+    // FIX: Replaced deprecated useAppContext with useData.
+    const { services } = useData();
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     const userReviews = useMemo(() => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon, PlusIcon, PencilSquareIcon, TrashIcon, PhotoIcon } from '../components/common/Icons';
 import type { Advertisement, Service } from '../types';
-import { useAppContext } from '../context/AppContext';
+import { useData } from '../context/DataContext';
 import Modal from '../components/common/Modal';
 import ImageUploader from '../components/common/ImageUploader';
 
@@ -114,7 +114,7 @@ const StatusBadge: React.FC<{ startDate: string, endDate: string }> = ({ startDa
 
 const AdvertisementsPage: React.FC = () => {
     const navigate = useNavigate();
-    const { advertisements, services, handleSaveAdvertisement, handleDeleteAdvertisement } = useAppContext();
+    const { advertisements, services, handleSaveAdvertisement, handleDeleteAdvertisement } = useData();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingAd, setEditingAd] = useState<Advertisement | null>(null);
 

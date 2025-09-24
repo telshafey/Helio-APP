@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useAppContext } from '../context/AppContext';
+// FIX: Replaced deprecated useAppContext with useData from DataContext.
+import { useData } from '../context/DataContext';
 import { PhoneIcon, UserCircleIcon, BusIcon, CalendarDaysIcon, MapPinIcon } from '../components/common/Icons';
 import PageBanner from '../components/common/PageBanner';
 
@@ -37,7 +38,8 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; children: Reac
 );
 
 const PublicTransportationPage: React.FC = () => {
-    const { transportation } = useAppContext();
+    // FIX: Replaced deprecated useAppContext with useData.
+    const { transportation } = useData();
     const [activeTab, setActiveTab] = useState<'internal' | 'external'>('internal');
     const [showWeeklySchedule, setShowWeeklySchedule] = useState(false);
 
