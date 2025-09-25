@@ -41,10 +41,10 @@ const PublicTransportationPage: React.FC = () => {
     // FIX: Replaced deprecated useAppContext with useData.
     const { transportation } = useData();
     const [activeTab, setActiveTab] = useState<'internal' | 'external'>('internal');
-    const [showWeeklySchedule, setShowWeeklySchedule] = useState(false);
 
-    const today = new Date().toLocaleDateString('ar-EG', { weekday: 'long' });
-    const todaySchedule = transportation.weeklySchedule.find(d => d.day === today);
+    // FIX: Use full date for logic and day name for display. The 'day' property did not exist on WeeklyScheduleItem.
+    const todayDate = new Date();
+    const todayDayName = todayDate.toLocaleDateString('ar-EG', { weekday: 'long' });
 
     return (
         <div className="animate-fade-in bg-slate-100 dark:bg-slate-900" dir="rtl">
@@ -66,45 +66,30 @@ const PublicTransportationPage: React.FC = () => {
                         <div className="space-y-8 animate-fade-in max-w-4xl mx-auto">
                             <SupervisorCard name={transportation.internalSupervisor.name} phone={transportation.internalSupervisor.phone} title="مشرف الباصات الداخلية" iconColor="text-cyan-500"/>
                             
-                            <div>
-                                <h2 className="text-2xl font-bold mb-4 text-center">مناوبة اليوم ({today})</h2>
-                                <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md space-y-3">
-                                    {todaySchedule && todaySchedule.drivers.length > 0 ? (
-                                        todaySchedule.drivers.map((driver, index) => (
-                                            <div key={index} className="flex items-center justify-center p-2 rounded-md">
-                                                <div className="flex items-center gap-3 text-lg">
-                                                    <BusIcon className="w-6 h-6 text-cyan-500"/>
-                                                    <span className="font-semibold text-gray-800 dark:text-white">{driver.name}</span>
+                            <div className="animate-fade-in">
+                                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2 justify-center"><CalendarDaysIcon className="w-6 h-6" /> الجدول الأسبوعي</h2>
+                                <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md space-y-2">
+                                    {transportation.weeklySchedule.map(item => {
+                                        const dayName = new Date(`${item.date}T00:00:00`).toLocaleDateString('ar-EG', { weekday: 'long' });
+                                        const isToday = dayName === todayDayName;
+
+                                        return (
+                                             <div key={item.date} className={`p-4 rounded-lg flex flex-col sm:flex-row justify-between sm:items-center gap-2 transition-colors ${isToday ? 'bg-cyan-50 dark:bg-cyan-900/50 border-r-4 border-cyan-500' : ''}`}>
+                                                <div className="flex items-baseline gap-3 w-full sm:w-auto">
+                                                    <span className={`w-16 font-bold text-lg ${isToday ? 'text-cyan-600 dark:text-cyan-300' : 'text-gray-800 dark:text-white'}`}>{dayName}</span>
+                                                    <span className="text-sm font-mono text-gray-500">{item.date}</span>
+                                                </div>
+                                                <div className="w-full sm:w-auto sm:text-left pr-4 sm:pr-0">
+                                                    {item.drivers.length > 0 
+                                                        ? item.drivers.map((d, i) => <p key={i} className="text-gray-700 dark:text-gray-300 leading-relaxed">{d.name}</p>) 
+                                                        : <p className="text-sm text-gray-400">لا يوجد</p>
+                                                    }
                                                 </div>
                                             </div>
-                                        ))
-                                    ) : (
-                                        <p className="text-center text-gray-500 py-4">لا يوجد سائقين مناوبين اليوم.</p>
-                                    )}
+                                        );
+                                    })}
                                 </div>
                             </div>
-
-                            <div className="text-center mt-6">
-                                <button onClick={() => setShowWeeklySchedule(!showWeeklySchedule)} className="px-6 py-2 text-cyan-600 dark:text-cyan-400 font-semibold border-2 border-cyan-500 rounded-full hover:bg-cyan-50 dark:hover:bg-cyan-900/50 transition-colors">
-                                    {showWeeklySchedule ? 'إخفاء جدول الأسبوع' : 'إظهار جدول الأسبوع'}
-                                </button>
-                            </div>
-
-                            {showWeeklySchedule && (
-                                <div className="mt-6 animate-fade-in">
-                                    <h2 className="text-2xl font-bold mb-4 flex items-center gap-2 justify-center"><CalendarDaysIcon className="w-6 h-6" /> الجدول الأسبوعي</h2>
-                                    <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md space-y-2">
-                                        {transportation.weeklySchedule.map(item => (
-                                            <div key={item.day} className={`p-3 rounded-md flex justify-between items-center ${item.day === today ? 'bg-cyan-50 dark:bg-cyan-900/50' : ''}`}>
-                                                <span className={`font-semibold ${item.day === today ? 'text-cyan-600 dark:text-cyan-300' : 'text-gray-800 dark:text-white'}`}>{item.day}</span>
-                                                <div className="text-left">
-                                                    {item.drivers.length > 0 ? item.drivers.map((d, i) => <p key={i} className="text-sm text-gray-600 dark:text-gray-300">{d.name}</p>) : <p className="text-sm text-gray-400">لا يوجد</p>}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
                         </div>
                     )}
                     {activeTab === 'external' && (

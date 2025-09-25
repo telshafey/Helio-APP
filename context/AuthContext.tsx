@@ -16,6 +16,7 @@ export const useAuth = (): AuthContextType => {
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const { showToast } = useUI(); // Dependent on UIContext for toasts
     const [users, setUsers] = useState<AppUser[]>(mockUsers); // Keep user list here for auth purposes
+    const [admins, setAdmins] = useState<AdminUser[]>(mockAdmins);
     
     const [currentUser, setCurrentUser] = useState<AdminUser | null>(() => {
         const storedUser = sessionStorage.getItem('currentUser');
@@ -29,10 +30,20 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const isAuthenticated = !!currentUser;
     const isPublicAuthenticated = !!currentPublicUser;
 
-    const login = useCallback((user: AdminUser) => {
-        sessionStorage.setItem('currentUser', JSON.stringify(user));
-        setCurrentUser(user);
-    }, []);
+    const login = useCallback((email: string, password?: string): boolean => {
+        const adminUser = admins.find(u => u.email.toLowerCase() === email.toLowerCase());
+        if (adminUser) {
+            if (adminUser.password !== password) {
+                showToast('البريد الإلكتروني أو كلمة المرور غير صحيحة.', 'error');
+                return false;
+            }
+            sessionStorage.setItem('currentUser', JSON.stringify(adminUser));
+            setCurrentUser(adminUser);
+            return true;
+        }
+        showToast('البريد الإلكتروني أو كلمة المرور غير صحيحة.', 'error');
+        return false;
+    }, [admins, showToast]);
 
     const logout = useCallback(() => {
         sessionStorage.removeItem('currentUser');
@@ -42,8 +53,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const publicLogin = useCallback((email: string, password?: string): boolean => {
         const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
         if (user) {
-            if (user.password && user.password !== password) {
-                showToast('كلمة المرور غير صحيحة.', 'error');
+            if (user.password !== password) {
+                showToast('البريد الإلكتروني أو كلمة المرور غير صحيحة.', 'error');
+                return false;
+            }
+            if (user.status === 'banned') {
+                showToast('هذا الحساب محظور ولا يمكنه تسجيل الدخول.', 'error');
                 return false;
             }
             sessionStorage.setItem('currentPublicUser', JSON.stringify(user));
@@ -51,7 +66,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             showToast(`أهلاً بعودتك، ${user.name}!`);
             return true;
         }
-        showToast('البريد الإلكتروني غير موجود.', 'error');
+        showToast('البريد الإلكتروني أو كلمة المرور غير صحيحة.', 'error');
         return false;
     }, [users, showToast]);
 

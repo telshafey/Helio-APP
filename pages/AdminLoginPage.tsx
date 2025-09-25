@@ -13,8 +13,10 @@ const AdminLoginPage: React.FC = () => {
     const navigate = useNavigate();
 
     const handleQuickLogin = (user: AdminUser) => {
-        login(user);
-        navigate('/');
+        // FIX: The login function now expects email and password, not the user object.
+        if (login(user.email, user.password)) {
+            navigate('/');
+        }
     };
 
     return (

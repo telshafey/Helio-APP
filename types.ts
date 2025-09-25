@@ -152,6 +152,7 @@ export interface AdminUser {
   id: number;
   name: string;
   email: string;
+  password?: string;
   avatar: string;
   role: 'مسؤول العقارات' | 'مسؤول الاخبار والاعلانات والاشعارات' | 'مسؤول الباصات' | 'مسؤول ادارة الخدمات' | 'مدير عام';
 }
@@ -168,7 +169,7 @@ export interface ScheduleDriver {
     phone: string;
 }
 export interface WeeklyScheduleItem {
-    day: string;
+    date: string; // YYYY-MM-DD format
     drivers: ScheduleDriver[];
 }
 export interface ExternalRoute {
@@ -332,7 +333,7 @@ export interface UIContextType {
 export interface AuthContextType {
   currentUser: AdminUser | null;
   isAuthenticated: boolean;
-  login: (user: AdminUser) => void;
+  login: (email: string, password?: string) => boolean;
   logout: () => void;
   currentPublicUser: AppUser | null;
   isPublicAuthenticated: boolean;
@@ -396,6 +397,7 @@ export interface DataContextType {
   handleSaveSupervisor: (type: 'internal' | 'external', supervisor: Supervisor) => void;
   handleUpdatePublicPageContent: <K extends keyof PublicPagesContent>(page: K, newContent: PublicPagesContent[K]) => void;
   addPost: (postData: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments' | 'isPinned'>) => void;
+  editPost: (postId: number, postData: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments' | 'isPinned'>) => void;
   deletePost: (postId: number) => void;
   addComment: (postId: number, commentData: Omit<Comment, 'id' | 'date' | 'userId' | 'username' | 'avatar'>) => void;
   toggleLikePost: (postId: number) => void;

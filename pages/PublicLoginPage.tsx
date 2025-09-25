@@ -1,18 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-// FIX: Replaced deprecated useAppContext with useData from DataContext.
-import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import Logo from '../components/common/Logo';
-import type { AdminUser } from '../types';
 
 const PublicLoginPage: React.FC = () => {
-    const { publicLogin, login } = useAuth();
-    // FIX: Replaced deprecated useAppContext with useData.
-    const { admins } = useData();
+    const { publicLogin } = useAuth();
     const navigate = useNavigate();
-    const [email, setEmail] = useState('test@test.com');
-    const [password, setPassword] = useState('password');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -24,11 +19,6 @@ const PublicLoginPage: React.FC = () => {
         } else {
             setError('البريد الإلكتروني أو كلمة المرور غير صحيحة.');
         }
-    };
-
-    const handleAdminLogin = (user: AdminUser) => {
-        login(user);
-        navigate('/');
     };
 
     return (
@@ -48,7 +38,7 @@ const PublicLoginPage: React.FC = () => {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
-                                placeholder="test@test.com"
+                                placeholder="you@example.com"
                                 className="mt-1 block w-full px-4 py-2 bg-slate-100 dark:bg-slate-700 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                             />
                         </div>
@@ -60,7 +50,7 @@ const PublicLoginPage: React.FC = () => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                placeholder="password"
+                                placeholder="••••••••"
                                 className="mt-1 block w-full px-4 py-2 bg-slate-100 dark:bg-slate-700 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                             />
                         </div>
@@ -82,27 +72,6 @@ const PublicLoginPage: React.FC = () => {
                         </Link>
                     </p>
                 </div>
-            </div>
-
-            <div className="w-full max-w-md mt-8">
-                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 animate-fade-in-up">
-                     <h3 className="text-center text-lg font-medium text-gray-600 dark:text-gray-400 mb-4">دخول سريع للمسؤولين (للتطوير)</h3>
-                     <div className="space-y-3">
-                        {admins.map(admin => (
-                            <button
-                                key={admin.id}
-                                onClick={() => handleAdminLogin(admin)}
-                                className="w-full flex items-center text-left gap-4 p-3 bg-slate-100 dark:bg-slate-700 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 dark:focus:ring-offset-slate-800"
-                            >
-                                <img src={admin.avatar} alt={admin.name} className="w-10 h-10 rounded-full object-cover" />
-                                <div>
-                                    <p className="font-bold text-sm text-gray-800 dark:text-white">{admin.name}</p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">{admin.role}</p>
-                                </div>
-                            </button>
-                        ))}
-                     </div>
-                 </div>
             </div>
         </div>
     );

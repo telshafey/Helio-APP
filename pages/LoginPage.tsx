@@ -1,49 +1,71 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// FIX: Replaced deprecated useAppContext with useData from DataContext.
-import { useData } from '../context/DataContext';
-// FIX: Import useAuth to get the admin login function.
 import { useAuth } from '../context/AuthContext';
-import type { AdminUser } from '../types';
+import Logo from '../components/common/Logo';
 
 const AdminLoginPage: React.FC = () => {
-    // FIX: Destructure login from useAuth and admins from useAppContext.
     const { login } = useAuth();
-    // FIX: Replaced deprecated useAppContext with useData.
-    const { admins } = useData();
     const navigate = useNavigate();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
-    const handleQuickLogin = (user: AdminUser) => {
-        login(user);
-        navigate('/');
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+        const success = login(email, password);
+        if (success) {
+            navigate('/');
+        } else {
+            setError('البريد الإلكتروني أو كلمة المرور غير صحيحة.');
+        }
     };
 
     return (
         <div className="flex items-center justify-center min-h-[calc(100vh-8rem)] bg-slate-100 dark:bg-slate-900 px-4 py-8">
-            <div className="w-full max-w-md text-center">
+            <div className="w-full max-w-md">
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 sm:p-12 animate-fade-in-up">
-                    <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400 tracking-wider mb-4">Helio</h1>
-                    <h2 className="text-2xl font-semibold text-gray-700 dark:text-gray-200 mb-2">لوحة تحكم المدير</h2>
-                    <p className="text-gray-500 dark:text-gray-400 mb-8">
-                        اختر حسابًا لتسجيل الدخول.
+                    <Logo className="h-16 mx-auto mb-4" />
+                    <h2 className="text-2xl font-semibold text-center text-gray-700 dark:text-gray-200 mb-2">لوحة تحكم المدير</h2>
+                    <p className="text-center text-gray-500 dark:text-gray-400 mb-8">
+                        يرجى تسجيل الدخول للمتابعة.
                     </p>
 
-                    <div className="mt-8 space-y-4">
-                        <h3 className="text-lg font-medium text-gray-600 dark:text-gray-400">تسجيل دخول سريع (للتطوير)</h3>
-                        {admins.map(admin => (
-                            <button
-                                key={admin.id}
-                                onClick={() => handleQuickLogin(admin)}
-                                className="w-full flex items-center text-left gap-4 p-4 bg-slate-100 dark:bg-slate-700 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 dark:focus:ring-offset-slate-800"
-                            >
-                                <img src={admin.avatar} alt={admin.name} className="w-12 h-12 rounded-full object-cover" />
-                                <div>
-                                    <p className="font-bold text-gray-800 dark:text-white">{admin.name}</p>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">{admin.role}</p>
-                                </div>
-                            </button>
-                        ))}
-                    </div>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">البريد الإلكتروني</label>
+                            <input
+                                id="email"
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                                placeholder="admin@helio.com"
+                                className="mt-1 block w-full px-4 py-2 bg-slate-100 dark:bg-slate-700 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">كلمة المرور</label>
+                            <input
+                                id="password"
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                placeholder="••••••••"
+                                className="mt-1 block w-full px-4 py-2 bg-slate-100 dark:bg-slate-700 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                            />
+                        </div>
+
+                        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
+                        <button
+                            type="submit"
+                            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-cyan-500 hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
+                        >
+                            دخول
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

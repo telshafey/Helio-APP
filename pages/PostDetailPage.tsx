@@ -5,6 +5,59 @@ import { useAuth } from '../context/AuthContext';
 import Spinner from '../components/common/Spinner';
 import { ArrowLeftIcon, HandThumbUpIcon, ChatBubbleOvalLeftEllipsisIcon } from '../components/common/Icons';
 import PageBanner from '../components/common/PageBanner';
+import type { Post } from '../types';
+
+const PollDisplay: React.FC<{ post: Post }> = ({ post }) => {
+    // FIX: `currentPublicUser` is part of AuthContext, not DataContext.
+    const { voteOnPoll } = useData();
+    const { currentPublicUser } = useAuth();
+    const navigate = useNavigate();
+
+    const totalVotes = useMemo(() => {
+        if (!post.pollOptions) return 0;
+        const allVoters = new Set<number>();
+        post.pollOptions.forEach(opt => opt.votes.forEach(voterId => allVoters.add(voterId)));
+        return allVoters.size;
+    }, [post.pollOptions]);
+
+    const handleVote = (optionIndex: number) => {
+        if (!currentPublicUser) {
+            navigate('/login-user');
+            return;
+        }
+        voteOnPoll(post.id, optionIndex);
+    };
+
+    if (!post.pollOptions) return null;
+
+    return (
+        <div className="mt-8 space-y-4">
+            <h3 className="text-xl font-bold">نتائج الاستطلاع</h3>
+            {post.pollOptions.map((option, index) => {
+                const percentage = totalVotes > 0 ? (option.votes.length / totalVotes) * 100 : 0;
+                const userVotedForThis = currentPublicUser ? option.votes.includes(currentPublicUser.id) : false;
+
+                return (
+                    <button 
+                        key={index} 
+                        onClick={() => handleVote(index)}
+                        className={`w-full text-right p-3 border-2 rounded-lg transition-all ${userVotedForThis ? 'border-cyan-500 bg-cyan-50 dark:bg-cyan-900/30' : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/30 hover:border-cyan-400'}`}
+                    >
+                        <div className="flex justify-between items-center font-semibold mb-2">
+                            <span>{option.option}</span>
+                            <span>{option.votes.length} صوت</span>
+                        </div>
+                        <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
+                            <div className="bg-cyan-500 h-2.5 rounded-full" style={{ width: `${percentage}%` }}></div>
+                        </div>
+                    </button>
+                );
+            })}
+             <p className="text-sm text-center text-gray-500 dark:text-gray-400">إجمالي المصوتين: {totalVotes}</p>
+        </div>
+    );
+};
+
 
 const PostDetailPage: React.FC = () => {
     const { postId } = useParams<{ postId: string }>();
@@ -71,6 +124,8 @@ const PostDetailPage: React.FC = () => {
                         <div className="prose dark:prose-invert max-w-none text-gray-700 dark:text-gray-300">
                             <p>{post.content}</p>
                         </div>
+                        
+                        {post.category === 'استطلاع رأي' && <PollDisplay post={post} />}
 
                         <div className="flex items-center justify-between mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
                             <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">

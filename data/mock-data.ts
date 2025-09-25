@@ -405,20 +405,20 @@ export const mockServiceGuides: ServiceGuide[] = [
 
 export const mockUsers: AppUser[] = [
   { id: 1, name: 'أحمد محمود', email: 'ahmed.masri@example.com', password: 'password', avatar: 'https://picsum.photos/101', status: 'active', joinDate: '2023-05-12' },
-  { id: 2, name: 'فاطمة الزهراء', email: 'fatima.z@example.com', avatar: 'https://picsum.photos/102', status: 'active', joinDate: '2023-06-20' },
-  { id: 3, name: 'خالد العتيبي', email: 'khaled.a@example.com', avatar: 'https://picsum.photos/103', status: 'pending', joinDate: '2024-01-10' },
-  { id: 4, name: 'سارة عبدالله', email: 'sara.ibrahim@example.com', avatar: 'https://picsum.photos/106', status: 'banned', joinDate: '2023-03-15' },
-  { id: 5, name: 'محمد حسين', email: 'mohamed.h@example.com', avatar: 'https://picsum.photos/200/200?random=5', status: 'active', joinDate: '2023-09-01' },
-  { id: 6, name: 'نور الهدى', email: 'nour.h@example.com', avatar: 'https://picsum.photos/200/200?random=6', status: 'pending', joinDate: '2024-02-05' },
+  { id: 2, name: 'فاطمة الزهراء', email: 'fatima.z@example.com', password: 'password', avatar: 'https://picsum.photos/102', status: 'active', joinDate: '2023-06-20' },
+  { id: 3, name: 'خالد العتيبي', email: 'khaled.a@example.com', password: 'password', avatar: 'https://picsum.photos/103', status: 'pending', joinDate: '2024-01-10' },
+  { id: 4, name: 'سارة عبدالله', email: 'sara.ibrahim@example.com', password: 'password', avatar: 'https://picsum.photos/106', status: 'banned', joinDate: '2023-03-15' },
+  { id: 5, name: 'محمد حسين', email: 'mohamed.h@example.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=5', status: 'active', joinDate: '2023-09-01' },
+  { id: 6, name: 'نور الهدى', email: 'nour.h@example.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=6', status: 'pending', joinDate: '2024-02-05' },
   { id: 7, name: 'مستخدم تجريبي', email: 'test@test.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=7', status: 'active', joinDate: '2024-01-01' },
 ];
 
 export const mockAdmins: AdminUser[] = [
-  { id: 1, name: 'علي حسن', email: 'ali.hassan@helio.com', avatar: 'https://picsum.photos/200/200?random=11', role: 'مسؤول العقارات' },
-  { id: 2, name: 'مريم أحمد', email: 'mariam.ahmed@helio.com', avatar: 'https://picsum.photos/200/200?random=12', role: 'مسؤول الاخبار والاعلانات والاشعارات' },
-  { id: 3, name: 'يوسف خالد', email: 'youssef.khaled@helio.com', avatar: 'https://picsum.photos/200/200?random=13', role: 'مسؤول الباصات' },
-  { id: 4, name: 'هند سالم', email: 'hind.salem@helio.com', avatar: 'https://picsum.photos/200/200?random=14', role: 'مسؤول ادارة الخدمات' },
-  { id: 5, name: 'مدير عام', email: 'super@helio.com', avatar: 'https://picsum.photos/200/200?random=15', role: 'مدير عام' },
+  { id: 1, name: 'علي حسن', email: 'ali.hassan@helio.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=11', role: 'مسؤول العقارات' },
+  { id: 2, name: 'مريم أحمد', email: 'mariam.ahmed@helio.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=12', role: 'مسؤول الاخبار والاعلانات والاشعارات' },
+  { id: 3, name: 'يوسف خالد', email: 'youssef.khaled@helio.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=13', role: 'مسؤول الباصات' },
+  { id: 4, name: 'هند سالم', email: 'hind.salem@helio.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=14', role: 'مسؤول ادارة الخدمات' },
+  { id: 5, name: 'مدير عام', email: 'super@helio.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=15', role: 'مدير عام' },
 ];
 
 export const mockPosts: Post[] = [
@@ -493,15 +493,46 @@ export const mockInternalDrivers: Driver[] = [
     { id: 3, name: 'ياسر القحطاني', phone: '015-3333-4444', avatar: 'https://picsum.photos/200/200?random=7' },
     { id: 4, name: 'سعيد العويران', phone: '012-4444-5555', avatar: 'https://picsum.photos/200/200?random=8' },
 ];
-export const mockWeeklySchedule: WeeklyScheduleItem[] = [
-    { day: 'الأحد', drivers: [{ name: 'أحمد المصري', phone: '010-1111-2222' }] },
-    { day: 'الإثنين', drivers: [{ name: 'خالد عبدالله', phone: '011-2222-3333' }, { name: 'سعيد العويران', phone: '012-4444-5555' }] },
-    { day: 'الثلاثاء', drivers: [{ name: 'ياسر القحطاني', phone: '015-3333-4444' }] },
-    { day: 'الأربعاء', drivers: [{ name: 'سعيد العويران', phone: '012-4444-5555' }] },
-    { day: 'الخميس', drivers: [{ name: 'أحمد المصري', phone: '010-1111-2222' }, { name: 'ياسر القحطاني', phone: '015-3333-4444' }] },
-    { day: 'الجمعة', drivers: [{ name: 'خالد عبدالله', phone: '011-2222-3333' }] },
-    { day: 'السبت', drivers: [{ name: 'ياسر القحطاني', phone: '015-3333-4444' }] },
-];
+
+const formatDate = (date: Date) => {
+    return date.toISOString().split('T')[0];
+};
+
+const getStartOfWeek = (date: Date) => {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1) -1; // Adjust to Sunday as start of week
+    return new Date(d.setDate(diff));
+};
+
+export const generateWeeklySchedule = (startDate: Date): WeeklyScheduleItem[] => {
+    const schedule: WeeklyScheduleItem[] = [];
+    const drivers = [
+        { name: 'أحمد المصري', phone: '010-1111-2222' },
+        { name: 'خالد عبدالله', phone: '011-2222-3333' },
+        { name: 'ياسر القحطاني', phone: '015-3333-4444' },
+        { name: 'سعيد العويران', phone: '012-4444-5555' }
+    ];
+    for (let i = 0; i < 7; i++) {
+        const currentDate = new Date(startDate);
+        currentDate.setDate(startDate.getDate() + i);
+        
+        let assignedDrivers: { name: string, phone: string }[] = [];
+        // Simple logic to assign some drivers based on day of week
+        if (i % 3 === 0) assignedDrivers.push(drivers[0]);
+        if (i % 3 === 1) assignedDrivers.push(drivers[1], drivers[3]);
+        if (i % 3 === 2) assignedDrivers.push(drivers[2]);
+        
+        schedule.push({
+            date: formatDate(currentDate),
+            drivers: assignedDrivers,
+        });
+    }
+    return schedule;
+};
+
+export const mockWeeklySchedule: WeeklyScheduleItem[] = generateWeeklySchedule(getStartOfWeek(new Date()));
+
 export const mockExternalRoutes: ExternalRoute[] = [
     { id: 1, name: 'هليوبوليس الجديدة <> ميدان رمسيس', timings: ['07:00 ص', '09:00 ص', '02:00 م', '05:00 م'], waitingPoint: 'أمام البوابة الرئيسية للمدينة' },
     { id: 2, name: 'هليوبوليس الجديدة <> التجمع الخامس', timings: ['08:00 ص', '11:00 ص', '03:00 م', '06:00 م'], waitingPoint: 'بجوار مول سيتي بلازا' },

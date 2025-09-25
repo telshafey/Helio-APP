@@ -473,6 +473,36 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setPosts(prev => [newPost, ...prev]);
         showToast('تم نشر منشورك بنجاح!');
     }, [currentPublicUser, showToast]);
+    
+    const editPost = useCallback((postId: number, postData: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments' | 'isPinned'>) => {
+        setPosts(prev => prev.map(p => {
+            if (p.id === postId) {
+                const updatedPost = { ...p, ...postData };
+
+                // Preserve votes when editing poll options
+                if (postData.pollOptions && p.pollOptions) {
+                    updatedPost.pollOptions = postData.pollOptions.map((newOpt, index) => {
+                        const oldOpt = p.pollOptions?.[index];
+                        return {
+                            option: newOpt.option,
+                            votes: oldOpt ? oldOpt.votes : [] // Preserve votes for existing options at the same index
+                        };
+                    });
+                } else if (postData.pollOptions && !p.pollOptions) {
+                     // Adding poll to a non-poll post (category changed)
+                     updatedPost.pollOptions = postData.pollOptions.map(opt => ({ option: opt.option, votes: [] }));
+                } else if (!postData.pollOptions && p.pollOptions) {
+                    // Removing poll from a post (category changed)
+                    updatedPost.pollOptions = undefined;
+                }
+
+                return updatedPost;
+            }
+            return p;
+        }));
+        logActivity('تعديل منشور', `تم تعديل منشور: "${postData.title || `منشور #${postId}`}"`);
+        showToast('تم تعديل المنشور بنجاح!');
+    }, [logActivity, showToast]);
 
     const deletePost = useCallback((postId: number) => {
         if (window.confirm('هل أنت متأكد من حذف هذا المنشور؟')) {
@@ -637,6 +667,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         handleSaveSupervisor,
         handleUpdatePublicPageContent,
         addPost,
+        editPost,
         deletePost,
         addComment,
         deleteComment,
@@ -654,7 +685,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         handleSaveProperty, handleDeleteProperty, handleSaveEmergencyContact, handleDeleteEmergencyContact,
         handleSaveServiceGuide, handleDeleteServiceGuide, handleSaveUser, handleDeleteUser, handleSaveAdmin,
         handleDeleteAdmin, handleSaveDriver, handleDeleteDriver, handleSaveRoute, handleDeleteRoute,
-        handleSaveSchedule, handleSaveSupervisor, handleUpdatePublicPageContent, addPost, deletePost,
+        handleSaveSchedule, handleSaveSupervisor, handleUpdatePublicPageContent, addPost, editPost, deletePost,
         addComment, deleteComment, toggleLikePost, requestAccountDeletion, togglePinPost, voteOnPoll
     ]);
 

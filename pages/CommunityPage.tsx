@@ -1,16 +1,86 @@
 import React, { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-// FIX: Replaced deprecated useAppContext with useData from DataContext.
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import type { Post, PostCategory } from '../types';
-import { PlusIcon, ChatBubbleOvalLeftEllipsisIcon, HandThumbUpIcon, UserCircleIcon } from '../components/common/Icons';
+// FIX: Imported TrashIcon to resolve missing component error.
+import { PlusIcon, ChatBubbleOvalLeftEllipsisIcon, HandThumbUpIcon, UserCircleIcon, PinIcon, TagIcon, UsersIcon, TrashIcon } from '../components/common/Icons';
 import Modal from '../components/common/Modal';
 import EmptyState from '../components/common/EmptyState';
 import PageBanner from '../components/common/PageBanner';
 
+// Reusable component for Polls within a PostCard on the main feed
+const PollInCard: React.FC<{ post: Post }> = ({ post }) => {
+    const { voteOnPoll } = useData();
+    const { currentPublicUser } = useAuth();
+    const navigate = useNavigate();
+
+    const { totalVotes, userVoteIndex } = useMemo(() => {
+        if (!post.pollOptions) return { totalVotes: 0, userVoteIndex: -1 };
+        const allVoters = new Set<number>();
+        let voteIndex = -1;
+        post.pollOptions.forEach((opt, index) => {
+            opt.votes.forEach(voterId => {
+                allVoters.add(voterId);
+                if (currentPublicUser && voterId === currentPublicUser.id) {
+                    voteIndex = index;
+                }
+            });
+        });
+        return { totalVotes: allVoters.size, userVoteIndex: voteIndex };
+    }, [post.pollOptions, currentPublicUser]);
+    
+    const hasVoted = userVoteIndex > -1;
+
+    const handleVote = (e: React.MouseEvent, optionIndex: number) => {
+        e.stopPropagation();
+        e.preventDefault();
+        if (!currentPublicUser) {
+            navigate('/login-user');
+            return;
+        }
+        voteOnPoll(post.id, optionIndex);
+    };
+
+    if (!post.pollOptions) return null;
+
+    return (
+        <div className="mt-4 space-y-3">
+            {hasVoted ? (
+                // Results View
+                post.pollOptions.map((option, index) => {
+                    const percentage = totalVotes > 0 ? (option.votes.length / totalVotes) * 100 : 0;
+                    const isUserChoice = index === userVoteIndex;
+                    return (
+                        <div key={index} className={`p-2 border-2 rounded-lg ${isUserChoice ? 'border-cyan-500 bg-cyan-50 dark:bg-cyan-900/30' : 'border-slate-200 dark:border-slate-700'}`}>
+                            <div className="flex justify-between items-center font-semibold text-sm mb-1">
+                                <span className={isUserChoice ? 'text-cyan-700 dark:text-cyan-300' : ''}>{option.option}</span>
+                                <span>{Math.round(percentage)}%</span>
+                            </div>
+                            <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                                <div className="bg-cyan-500 h-2 rounded-full" style={{ width: `${percentage}%` }}></div>
+                            </div>
+                        </div>
+                    );
+                })
+            ) : (
+                // Voting View
+                post.pollOptions.map((option, index) => (
+                    <button 
+                        key={index} 
+                        onClick={(e) => handleVote(e, index)}
+                        className="w-full text-right p-3 font-semibold bg-slate-100 dark:bg-slate-700/50 rounded-lg hover:bg-cyan-100 dark:hover:bg-cyan-900/50 border border-transparent hover:border-cyan-400 transition"
+                    >
+                        {option.option}
+                    </button>
+                ))
+            )}
+        </div>
+    );
+};
+
+
 const PostCard: React.FC<{ post: Post }> = ({ post }) => {
-    // FIX: Get data-related state from useData and auth state from useAuth.
     const { toggleLikePost } = useData();
     const { currentPublicUser } = useAuth();
     const isLiked = currentPublicUser ? post.likes.includes(currentPublicUser.id) : false;
@@ -23,7 +93,13 @@ const PostCard: React.FC<{ post: Post }> = ({ post }) => {
     };
 
     return (
-        <Link to={`/post/${post.id}`} className="block bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+        <Link to={`/post/${post.id}`} className={`block bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${post.isPinned ? 'ring-2 ring-cyan-400 bg-cyan-50/50 dark:bg-cyan-900/10' : ''}`}>
+            {post.isPinned && (
+                <div className="flex items-center gap-2 text-sm font-semibold text-cyan-600 dark:text-cyan-400 mb-3">
+                    <PinIcon className="w-5 h-5"/>
+                    <span>مثبت</span>
+                </div>
+            )}
             <div className="flex items-center gap-4 mb-4">
                 <img src={post.avatar} alt={post.username} className="w-12 h-12 rounded-full object-cover" />
                 <div>
@@ -32,7 +108,10 @@ const PostCard: React.FC<{ post: Post }> = ({ post }) => {
                 </div>
             </div>
             {post.title && <h3 className="text-lg font-bold mb-2">{post.title}</h3>}
-            <p className="text-gray-600 dark:text-gray-300 line-clamp-4">{post.content}</p>
+            <p className="text-gray-600 dark:text-gray-300 line-clamp-3">{post.content}</p>
+
+            {post.category === 'استطلاع رأي' && <PollInCard post={post} />}
+            
             <div className="flex justify-between items-center mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
                 <div className="flex items-center gap-4 text-gray-500 dark:text-gray-400">
                     <div className="flex items-center gap-1.5">
@@ -40,7 +119,7 @@ const PostCard: React.FC<{ post: Post }> = ({ post }) => {
                         <span>{post.comments.length}</span>
                     </div>
                 </div>
-                <button onClick={handleLikeClick} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-colors ${isLiked ? 'text-red-500 bg-red-100 dark:bg-red-900/50' : 'hover:bg-slate-200 dark:hover:bg-slate-700'}`}>
+                <button onClick={handleLikeClick} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-colors ${isLiked ? 'text-red-500 bg-red-100 dark:bg-red-900/50' : 'text-gray-600 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-slate-700'}`}>
                     <HandThumbUpIcon className="w-5 h-5"/>
                     <span className="font-semibold">{post.likes.length}</span>
                 </button>
@@ -50,38 +129,72 @@ const PostCard: React.FC<{ post: Post }> = ({ post }) => {
 };
 
 const NewPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-    // FIX: Replaced deprecated useAppContext with useData.
     const { addPost } = useData();
     const [category, setCategory] = useState<PostCategory>('نقاش عام');
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [pollOptions, setPollOptions] = useState(['', '']);
+
+    const handlePollOptionChange = (index: number, value: string) => {
+        const newOptions = [...pollOptions];
+        newOptions[index] = value;
+        setPollOptions(newOptions);
+    };
+
+    const addPollOption = () => setPollOptions([...pollOptions, '']);
+    const removePollOption = (index: number) => setPollOptions(pollOptions.filter((_, i) => i !== index));
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!content.trim()) return;
-        addPost({ category, title: title.trim() || undefined, content });
+        
+        let postData: any = { category, title: title.trim() || undefined, content };
+        
+        if (category === 'استطلاع رأي') {
+            const validOptions = pollOptions.map(opt => ({ option: opt.trim(), votes: [] })).filter(opt => opt.option);
+            if (validOptions.length < 2) {
+                alert('يجب أن يحتوي الاستطلاع على خيارين على الأقل.');
+                return;
+            }
+            postData.pollOptions = validOptions;
+        }
+
+        addPost(postData);
         onClose();
     };
+
+    const postCategories: PostCategory[] = ['نقاش عام', 'سؤال', 'للبيع', 'حدث', 'استطلاع رأي'];
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             <div>
                 <label className="block text-sm font-medium mb-1">الفئة</label>
                 <select value={category} onChange={e => setCategory(e.target.value as PostCategory)} className="w-full bg-slate-100 dark:bg-slate-700 rounded-md p-2">
-                    <option value="نقاش عام">نقاش عام</option>
-                    <option value="سؤال">سؤال</option>
-                    <option value="للبيع">للبيع</option>
-                    <option value="حدث">حدث</option>
+                    {postCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                 </select>
             </div>
             <div>
-                <label className="block text-sm font-medium mb-1">العنوان (اختياري)</label>
-                <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="مثال: تجمع ملاك الحي الأول" className="w-full bg-slate-100 dark:bg-slate-700 rounded-md p-2" />
+                <label className="block text-sm font-medium mb-1">{category === 'استطلاع رأي' ? 'السؤال الرئيسي للاستطلاع' : 'العنوان (اختياري)'}</label>
+                <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder={category === 'استطلاع رأي' ? 'ما هو سؤالك؟' : 'مثال: تجمع ملاك الحي الأول'} required={category === 'استطلاع رأي'} className="w-full bg-slate-100 dark:bg-slate-700 rounded-md p-2" />
             </div>
             <div>
                 <label className="block text-sm font-medium mb-1">المحتوى</label>
-                <textarea value={content} onChange={e => setContent(e.target.value)} required rows={6} placeholder="اكتب ما يدور في ذهنك..." className="w-full bg-slate-100 dark:bg-slate-700 rounded-md p-2"></textarea>
+                <textarea value={content} onChange={e => setContent(e.target.value)} required rows={4} placeholder="اكتب ما يدور في ذهنك..." className="w-full bg-slate-100 dark:bg-slate-700 rounded-md p-2"></textarea>
             </div>
+            
+            {category === 'استطلاع رأي' && (
+                <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-700">
+                    <label className="block text-sm font-medium">خيارات الاستطلاع</label>
+                    {pollOptions.map((option, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                            <input type="text" value={option} onChange={e => handlePollOptionChange(index, e.target.value)} placeholder={`خيار ${index + 1}`} className="w-full bg-slate-100 dark:bg-slate-700 rounded-md p-2" />
+                            {pollOptions.length > 2 && <button type="button" onClick={() => removePollOption(index)} className="p-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-full"><TrashIcon className="w-4 h-4"/></button>}
+                        </div>
+                    ))}
+                    <button type="button" onClick={addPollOption} className="text-sm text-cyan-600 font-semibold flex items-center gap-1"><PlusIcon className="w-4 h-4"/>إضافة خيار</button>
+                </div>
+            )}
+
             <div className="flex justify-end gap-3 pt-4">
                 <button type="button" onClick={onClose} className="px-4 py-2 bg-slate-100 dark:bg-slate-600 rounded-md">إلغاء</button>
                 <button type="submit" className="px-4 py-2 bg-cyan-500 text-white rounded-md hover:bg-cyan-600">نشر</button>
@@ -91,22 +204,35 @@ const NewPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 };
 
 const CommunityPage: React.FC = () => {
-    // FIX: Get data-related state from useData and auth state from useAuth.
-    const { posts } = useData();
-    const { isPublicAuthenticated } = useAuth();
+    const { posts, users } = useData();
+    const { isPublicAuthenticated, currentPublicUser } = useAuth();
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [sortOrder, setSortOrder] = useState<'latest' | 'popular'>('latest');
+    const [filter, setFilter] = useState<PostCategory | 'all'>('all');
 
-    const sortedPosts = useMemo(() => {
-        const sorted = [...posts];
-        if (sortOrder === 'popular') {
-            sorted.sort((a, b) => (b.likes.length + b.comments.length) - (a.likes.length + a.comments.length));
-        } else {
-            sorted.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const postCategories: PostCategory[] = ['نقاش عام', 'سؤال', 'للبيع', 'حدث', 'استطلاع رأي'];
+
+    const sortedAndFilteredPosts = useMemo(() => {
+        let processedPosts = [...posts];
+
+        // Filter
+        if (filter !== 'all') {
+            processedPosts = processedPosts.filter(p => p.category === filter);
         }
-        return sorted;
-    }, [posts, sortOrder]);
+
+        // Sort
+        if (sortOrder === 'popular') {
+            processedPosts.sort((a, b) => (b.likes.length + b.comments.length) - (a.likes.length + a.comments.length));
+        } else {
+            processedPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        }
+        
+        // Pinned posts to top
+        processedPosts.sort((a, b) => (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0));
+
+        return processedPosts;
+    }, [posts, sortOrder, filter]);
 
     const handleNewPostClick = () => {
         if (isPublicAuthenticated) {
@@ -124,36 +250,66 @@ const CommunityPage: React.FC = () => {
                 icon={<ChatBubbleOvalLeftEllipsisIcon className="w-12 h-12 text-teal-500" />}
             />
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
-                <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
-                    <div className="flex items-center gap-4">
-                        <label htmlFor="sortOrder" className="font-semibold">ترتيب حسب:</label>
-                        <select id="sortOrder" value={sortOrder} onChange={e => setSortOrder(e.target.value as 'latest' | 'popular')} className="bg-white dark:bg-slate-800 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                            <option value="latest">الأحدث</option>
-                            <option value="popular">الأكثر تفاعلاً</option>
-                        </select>
-                    </div>
-                    <button onClick={handleNewPostClick} className="flex items-center gap-2 bg-cyan-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-cyan-600 transition-colors">
-                        <PlusIcon className="w-5 h-5"/>
-                        <span>منشور جديد</span>
-                    </button>
-                </div>
+                <div className="grid lg:grid-cols-12 gap-8">
+                    {/* Sidebar */}
+                    <aside className="lg:col-span-4 xl:col-span-3 space-y-6">
+                        <div className="p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-lg text-center">
+                            {currentPublicUser ? (
+                                <>
+                                    <img src={currentPublicUser.avatar} alt={currentPublicUser.name} className="w-20 h-20 rounded-full object-cover mx-auto ring-4 ring-cyan-500/50" />
+                                    <h3 className="mt-4 text-xl font-bold">مرحباً، {currentPublicUser.name}!</h3>
+                                </>
+                            ) : (
+                                <h3 className="text-xl font-bold">مرحباً في مجتمع هليوبوليس</h3>
+                            )}
+                             <div className="mt-4 flex justify-around text-sm">
+                                <div className="text-gray-500 dark:text-gray-400"><strong className="block text-lg text-gray-800 dark:text-white">{posts.length}</strong> منشور</div>
+                                <div className="text-gray-500 dark:text-gray-400"><strong className="block text-lg text-gray-800 dark:text-white">{users.length}</strong> عضو</div>
+                            </div>
+                             <button onClick={handleNewPostClick} className="w-full mt-6 flex items-center justify-center gap-2 bg-cyan-500 text-white font-semibold px-4 py-3 rounded-lg hover:bg-cyan-600 transition-transform hover:scale-105">
+                                <PlusIcon className="w-5 h-5"/>
+                                <span>أضف منشوراً جديداً</span>
+                            </button>
+                        </div>
 
-                {sortedPosts.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {sortedPosts.map(post => <PostCard key={post.id} post={post} />)}
-                    </div>
-                ) : (
-                    <EmptyState
-                        icon={<ChatBubbleOvalLeftEllipsisIcon className="w-16 h-16 text-slate-400" />}
-                        title="لا توجد منشورات بعد"
-                        message="كن أول من يبدأ نقاشاً في مجتمع هليوبوليس الجديدة!"
-                    >
-                         <button onClick={handleNewPostClick} className="flex items-center justify-center gap-2 bg-cyan-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-cyan-600 transition-colors">
-                            <PlusIcon className="w-5 h-5"/>
-                            <span>أضف أول منشور</span>
-                        </button>
-                    </EmptyState>
-                )}
+                         <div className="p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-lg">
+                            <h3 className="font-bold mb-4 flex items-center gap-2"><TagIcon className="w-5 h-5"/> الفئات</h3>
+                            <div className="space-y-2">
+                                <button onClick={() => setFilter('all')} className={`w-full text-right p-2 rounded-md font-semibold transition ${filter === 'all' ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300' : 'hover:bg-slate-100 dark:hover:bg-slate-700'}`}>الكل</button>
+                                {postCategories.map(cat => (
+                                    <button key={cat} onClick={() => setFilter(cat)} className={`w-full text-right p-2 rounded-md font-semibold transition ${filter === cat ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300' : 'hover:bg-slate-100 dark:hover:bg-slate-700'}`}>{cat}</button>
+                                ))}
+                            </div>
+                        </div>
+                    </aside>
+
+                    {/* Main Feed */}
+                    <main className="lg:col-span-8 xl:col-span-9">
+                        <div className="flex justify-end items-center mb-6">
+                             <div className="flex items-center gap-2">
+                                <label htmlFor="sortOrder" className="font-semibold text-sm">ترتيب حسب:</label>
+                                <select id="sortOrder" value={sortOrder} onChange={e => setSortOrder(e.target.value as 'latest' | 'popular')} className="bg-white dark:bg-slate-800 rounded-lg py-1.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                                    <option value="latest">الأحدث</option>
+                                    <option value="popular">الأكثر تفاعلاً</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {sortedAndFilteredPosts.length > 0 ? (
+                            <div className="space-y-6">
+                                {sortedAndFilteredPosts.map(post => <PostCard key={post.id} post={post} />)}
+                            </div>
+                        ) : (
+                             <div className="mt-10">
+                                <EmptyState
+                                    icon={<ChatBubbleOvalLeftEllipsisIcon className="w-16 h-16 text-slate-400" />}
+                                    title="لا توجد منشورات تطابق بحثك"
+                                    message="حاول تغيير الفلتر أو كن أول من يضيف منشوراً في هذه الفئة!"
+                                />
+                             </div>
+                        )}
+                    </main>
+                </div>
 
                 <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="إنشاء منشور جديد">
                     <NewPostForm onClose={() => setIsModalOpen(false)} />

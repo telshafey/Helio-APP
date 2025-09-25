@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 // FIX: Replaced deprecated useAppContext with useData from DataContext.
 import { useData } from '../../context/DataContext';
@@ -9,8 +9,11 @@ const TransportationManagerDashboard: React.FC = () => {
     // FIX: Replaced deprecated useAppContext with useData.
     const { transportation } = useData();
 
-    const today = new Date().toLocaleDateString('ar-EG', { weekday: 'long' });
-    const todaySchedule = transportation.weeklySchedule.find(d => d.day === today);
+    // FIX: Use full date for logic and day name for display.
+    const todayDate = new Date();
+    const todayDayName = todayDate.toLocaleDateString('ar-EG', { weekday: 'long' });
+    const todayString = todayDate.toISOString().split('T')[0];
+    const todaySchedule = transportation.weeklySchedule.find(d => d.date === todayString);
 
     return (
         <div className="space-y-6 animate-fade-in">
@@ -64,7 +67,7 @@ const TransportationManagerDashboard: React.FC = () => {
                     </div>
                     {/* Today's Schedule */}
                      <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg">
-                        <h3 className="font-semibold mb-4 text-gray-700 dark:text-gray-300">مناوبة اليوم: {today}</h3>
+                        <h3 className="font-semibold mb-4 text-gray-700 dark:text-gray-300">مناوبة اليوم: {todayDayName}</h3>
                         {todaySchedule && todaySchedule.drivers.length > 0 ? (
                             <ul className="space-y-3">
                                 {todaySchedule.drivers.map((driver, index) => (
