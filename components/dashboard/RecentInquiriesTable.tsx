@@ -4,6 +4,7 @@ import { WrenchScrewdriverIcon, ShieldExclamationIcon, NewspaperIcon, HomeModern
 import { useData } from '../../context/DataContext';
 // FIX: Imported useServices to get services data.
 import { useServices } from '../../context/ServicesContext';
+import { useProperties } from '../../context/PropertiesContext';
 
 const formatRelativeTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -34,7 +35,9 @@ const ActivityIcon: React.FC<{ type: Activity['type'] }> = ({ type }) => {
 const RecentActivityTable: React.FC = () => {
   // FIX: Destructured services from useServices and properties, news from useData.
   const { services } = useServices();
-  const { properties, news } = useData();
+  // FIX: 'properties' are not in DataContext. They should be destructured from useProperties.
+  const { properties } = useProperties();
+  const { news } = useData();
     
   const recentActivities = useMemo(() => {
       const serviceActivities: Activity[] = services.map(s => ({

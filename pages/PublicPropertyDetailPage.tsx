@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useData } from '../context/DataContext';
+import { useProperties } from '../context/PropertiesContext';
 import Spinner from '../components/common/Spinner';
 import { ArrowLeftIcon, MapPinIcon, PhoneIcon, HomeModernIcon, CheckCircleIcon, ChevronLeftIcon, ChevronRightIcon } from '../components/common/Icons';
 import PageBanner from '../components/common/PageBanner';
@@ -33,7 +33,7 @@ const ImageSlider: React.FC<{ images: string[] }> = ({ images }) => {
 const PublicPropertyDetailPage: React.FC = () => {
     const navigate = useNavigate();
     const { propertyId } = useParams<{ propertyId: string }>();
-    const { properties } = useData();
+    const { properties } = useProperties();
 
     const property = useMemo(() => properties.find(p => p.id === Number(propertyId)), [properties, propertyId]);
 

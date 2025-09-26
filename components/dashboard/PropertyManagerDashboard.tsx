@@ -1,14 +1,12 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-// FIX: Replaced deprecated useAppContext with useData from DataContext.
-import { useData } from '../../context/DataContext';
+import { useProperties } from '../../context/PropertiesContext';
 import KpiCard from '../common/KpiCard';
 import { HomeModernIcon, ChartPieIcon, EyeIcon, ArrowTrendingUpIcon, PlusIcon, ChartBarIcon } from '../common/Icons';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const PropertyManagerDashboard: React.FC = () => {
-    // FIX: Replaced deprecated useAppContext with useData.
-    const { properties } = useData();
+    const { properties } = useProperties();
 
     const stats = useMemo(() => {
         const thirtyDaysAgo = new Date();

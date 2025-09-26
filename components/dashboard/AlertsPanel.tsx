@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import type { Alert } from '../../types';
 import { BellAlertIcon, UserPlusIcon, BuildingStorefrontIcon } from '../common/Icons';
-// FIX: Replaced deprecated useAppContext with useData from DataContext.
 import { useData } from '../../context/DataContext';
+import { useProperties } from '../../context/PropertiesContext';
 
 const formatRelativeTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -32,8 +32,8 @@ const AlertIcon: React.FC<{ type: Alert['type'] }> = ({ type }) => {
 }
 
 const AlertsPanel: React.FC = () => {
-    // FIX: Replaced deprecated useAppContext with useData.
-    const { users, properties } = useData();
+    const { users } = useData();
+    const { properties } = useProperties();
 
     const alerts = useMemo(() => {
         const sortedUsers = [...users].sort((a,b) => new Date(b.joinDate).getTime() - new Date(a.joinDate).getTime());

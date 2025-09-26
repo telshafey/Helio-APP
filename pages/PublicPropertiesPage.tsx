@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-// FIX: Replaced deprecated useAppContext with useData from DataContext.
-import { useData } from '../context/DataContext';
+import { useProperties } from '../context/PropertiesContext';
 import { MagnifyingGlassIcon, HomeModernIcon, ArrowLeftIcon } from '../components/common/Icons';
 import PropertyCard from '../components/common/PropertyCard';
 import EmptyState from '../components/common/EmptyState';
@@ -9,8 +8,7 @@ import PageBanner from '../components/common/PageBanner';
 
 const PublicPropertiesPage: React.FC = () => {
     const navigate = useNavigate();
-    // FIX: Replaced deprecated useAppContext with useData.
-    const { properties } = useData();
+    const { properties } = useProperties();
 
     const [searchTerm, setSearchTerm] = useState('');
     const [typeFilter, setTypeFilter] = useState<'all' | 'sale' | 'rent'>('all');

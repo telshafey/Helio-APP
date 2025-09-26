@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback, useMemo } from 'react';
 import { 
     mockNews, mockNotifications, 
-    mockProperties, mockEmergencyContacts, mockServiceGuides,
+    mockEmergencyContacts, mockServiceGuides,
     mockUsers,
     mockInternalSupervisor, mockExternalSupervisor, mockInternalDrivers, mockWeeklySchedule, mockExternalRoutes,
     mockPublicPagesContent,
@@ -36,7 +36,6 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [news, setNews] = useState<News[]>(mockNews);
     const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
     const [advertisements, setAdvertisements] = useState<Advertisement[]>(mockAdvertisements);
-    const [properties, setProperties] = useState<Property[]>(mockProperties);
     const [emergencyContacts, setEmergencyContacts] = useState<EmergencyContact[]>(mockEmergencyContacts);
     const [serviceGuides, setServiceGuides] = useState<ServiceGuide[]>(mockServiceGuides);
     const [users, setUsers] = useState<AppUser[]>(mockUsers);
@@ -138,12 +137,6 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     const handleDeleteAdvertisement = useCallback((adId: number) => genericDelete(setAdvertisements, adId, 'الإعلان'), [showToast]);
     
-    const handleSaveProperty = useCallback((property: Omit<Property, 'id' | 'views' | 'creationDate'> & { id?: number }) => {
-        genericSave<Property>(properties, setProperties, property, {views: 0, creationDate: new Date().toISOString().split('T')[0]}, 'العقار');
-    }, [properties, showToast]);
-    
-    const handleDeleteProperty = useCallback((propertyId: number) => genericDelete(setProperties, propertyId, 'العقار'), [showToast]);
-
     const handleSaveEmergencyContact = useCallback((contact: Omit<EmergencyContact, 'id'> & { id?: number }) => genericSave<EmergencyContact>(emergencyContacts, setEmergencyContacts, contact, {}, 'رقم الطوارئ'), [emergencyContacts, showToast]);
     
     const handleDeleteEmergencyContact = useCallback((contactId: number) => genericDelete(setEmergencyContacts, contactId, 'رقم الطوارئ'), [showToast]);
@@ -178,7 +171,7 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
 
     const value: DataContextType = useMemo(() => ({
-        news, notifications, advertisements, properties,
+        news, notifications, advertisements,
         emergencyContacts, serviceGuides, users, admins, auditLogs,
         transportation: {
             internalSupervisor, externalSupervisor, internalDrivers,
@@ -188,18 +181,18 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         requestAccountDeletion, handleSaveUser, handleDeleteUser,
         handleSaveAdmin, handleDeleteAdmin, handleSaveNews, handleDeleteNews,
         handleSaveNotification, handleDeleteNotification, handleSaveAdvertisement, handleDeleteAdvertisement,
-        handleSaveProperty, handleDeleteProperty, handleSaveEmergencyContact, handleDeleteEmergencyContact,
+        handleSaveEmergencyContact, handleDeleteEmergencyContact,
         handleSaveServiceGuide, handleDeleteServiceGuide, handleSaveSupervisor,
         handleSaveDriver, handleDeleteDriver, handleSaveRoute, handleDeleteRoute,
         handleSaveSchedule, handleUpdatePublicPageContent,
     }), [
-        news, notifications, advertisements, properties, emergencyContacts,
+        news, notifications, advertisements, emergencyContacts,
         serviceGuides, users, admins, auditLogs, internalSupervisor, externalSupervisor,
         internalDrivers, weeklySchedule, externalRoutes, publicPagesContent,
         requestAccountDeletion,
         handleSaveUser, handleDeleteUser, handleSaveAdmin, handleDeleteAdmin, handleSaveNews, handleDeleteNews,
         handleSaveNotification, handleDeleteNotification, handleSaveAdvertisement, handleDeleteAdvertisement,
-        handleSaveProperty, handleDeleteProperty, handleSaveEmergencyContact, handleDeleteEmergencyContact,
+        handleSaveEmergencyContact, handleDeleteEmergencyContact,
         handleSaveServiceGuide, handleDeleteServiceGuide, handleSaveSupervisor, handleSaveDriver,
         handleDeleteDriver, handleSaveRoute, handleDeleteRoute, handleSaveSchedule, handleUpdatePublicPageContent
     ]);

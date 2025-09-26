@@ -382,12 +382,17 @@ export interface ServicesContextType {
   handleReplyToReview: (serviceId: number, reviewId: number, reply: string) => void;
 }
 
+export interface PropertiesContextType {
+  properties: Property[];
+  handleSaveProperty: (property: Omit<Property, 'id' | 'views' | 'creationDate'> & { id?: number }) => void;
+  handleDeleteProperty: (propertyId: number) => void;
+}
+
 // FIX: Added all missing state and handler methods to the context type.
 export interface DataContextType {
   news: News[];
   notifications: Notification[];
   advertisements: Advertisement[];
-  properties: Property[];
   emergencyContacts: EmergencyContact[];
   serviceGuides: ServiceGuide[];
   users: AppUser[];
@@ -419,8 +424,6 @@ export interface DataContextType {
   handleDeleteNotification: (notificationId: number) => void;
   handleSaveAdvertisement: (ad: Omit<Advertisement, 'id'> & { id?: number }) => void;
   handleDeleteAdvertisement: (adId: number) => void;
-  handleSaveProperty: (property: Omit<Property, 'id' | 'views' | 'creationDate'> & { id?: number }) => void;
-  handleDeleteProperty: (propertyId: number) => void;
   handleSaveEmergencyContact: (contact: Omit<EmergencyContact, 'id'> & { id?: number }) => void;
   handleDeleteEmergencyContact: (contactId: number) => void;
   handleSaveServiceGuide: (guide: Omit<ServiceGuide, 'id'> & { id?: number }) => void;

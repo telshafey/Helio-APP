@@ -10,10 +10,12 @@ import Footer from './common/Footer';
 import { UserIcon, MapIcon, WrenchScrewdriverIcon, ShieldExclamationIcon, HomeModernIcon, UserGroupIcon, BusIcon, NewspaperIcon, Bars3Icon } from './common/Icons';
 import { useData } from '../context/DataContext';
 import { useServices } from '../context/ServicesContext';
+import { useProperties } from '../context/PropertiesContext';
 
 const DashboardView: React.FC = () => {
   const { categories, services } = useServices();
-  const { properties, news, notifications, users, emergencyContacts } = useData();
+  const { properties } = useProperties();
+  const { news, notifications, users, emergencyContacts } = useData();
   
   const firstServiceLink = (categories.length > 0 && categories[0].subCategories.length > 0)
     ? `/services/subcategory/${categories[0].subCategories[0].id}`
