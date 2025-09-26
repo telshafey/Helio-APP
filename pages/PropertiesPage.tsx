@@ -6,7 +6,8 @@ import {
 } from '../components/common/Icons';
 import type { Property } from '../types';
 import { useData } from '../context/DataContext';
-import { useHasPermission } from '../context/AuthContext';
+// FIX: Changed import from `useHasPermission` to `useAuth`.
+import { useAuth } from '../context/AuthContext';
 import Modal from '../components/common/Modal';
 import ImageUploader from '../components/common/ImageUploader';
 import EmptyState from '../components/common/EmptyState';
@@ -103,7 +104,9 @@ const TextareaField: React.FC<{ label: string; value: string; onChange: (val: st
 
 
 const PropertyCard: React.FC<{ property: Property; onEdit: () => void; onDelete: () => void; }> = ({ property, onEdit, onDelete }) => {
-    const canManage = useHasPermission(['مسؤول العقارات']);
+    // FIX: Use `useAuth` to get `hasPermission`.
+    const { hasPermission } = useAuth();
+    const canManage = hasPermission(['مسؤول العقارات']);
     return (
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 group">
             <div className="relative">
@@ -137,8 +140,11 @@ const PropertyCard: React.FC<{ property: Property; onEdit: () => void; onDelete:
 
 const PropertiesPage: React.FC = () => {
     const navigate = useNavigate();
+    // FIX: Replaced non-existent properties with correct ones from DataContext.
     const { properties, handleSaveProperty, handleDeleteProperty } = useData();
-    const canManage = useHasPermission(['مسؤول العقارات']);
+    // FIX: Use `useAuth` to get `hasPermission`.
+    const { hasPermission } = useAuth();
+    const canManage = hasPermission(['مسؤول العقارات']);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProperty, setEditingProperty] = useState<Property | null>(null);

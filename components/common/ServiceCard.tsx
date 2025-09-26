@@ -2,9 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import type { Service } from '../../types';
 import { StarIcon, HeartIcon, HeartIconSolid } from './Icons';
-// FIX: Replaced deprecated useAppContext with useData from DataContext.
-import { useData } from '../../context/DataContext';
-// FIX: Import useAuth to check public authentication status.
+import { useServices } from '../../context/ServicesContext';
 import { useAuth } from '../../context/AuthContext';
 
 const Rating: React.FC<{ rating: number }> = ({ rating }) => (
@@ -19,8 +17,7 @@ const Rating: React.FC<{ rating: number }> = ({ rating }) => (
 );
 
 const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
-    // FIX: Get data-related functions from useData and auth state from useAuth.
-    const { handleToggleFavorite } = useData();
+    const { handleToggleFavorite } = useServices();
     const { isPublicAuthenticated } = useAuth();
 
     const onFavoriteClick = (e: React.MouseEvent) => {

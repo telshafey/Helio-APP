@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-// FIX: Replaced deprecated useAppContext with useData from DataContext.
 import { useData } from '../context/DataContext';
-import { PhoneIcon, UserCircleIcon, BusIcon, CalendarDaysIcon, MapPinIcon } from '../components/common/Icons';
+import { PhoneIcon, UserCircleIcon, BusIcon, CalendarDaysIcon, MapPinIcon, ChevronDownIcon } from '../components/common/Icons';
 import PageBanner from '../components/common/PageBanner';
 
 const CallButton: React.FC<{ phone: string }> = ({ phone }) => (
@@ -38,12 +37,13 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; children: Reac
 );
 
 const PublicTransportationPage: React.FC = () => {
-    // FIX: Replaced deprecated useAppContext with useData.
     const { transportation } = useData();
     const [activeTab, setActiveTab] = useState<'internal' | 'external'>('internal');
+    const [showFullWeek, setShowFullWeek] = useState(false);
 
-    // FIX: Use full date for logic and day name for display. The 'day' property did not exist on WeeklyScheduleItem.
     const todayDate = new Date();
+    const todayString = todayDate.toISOString().split('T')[0];
+    const todaySchedule = transportation.weeklySchedule.find(d => d.date === todayString);
     const todayDayName = todayDate.toLocaleDateString('ar-EG', { weekday: 'long' });
 
     return (
@@ -66,30 +66,70 @@ const PublicTransportationPage: React.FC = () => {
                         <div className="space-y-8 animate-fade-in max-w-4xl mx-auto">
                             <SupervisorCard name={transportation.internalSupervisor.name} phone={transportation.internalSupervisor.phone} title="مشرف الباصات الداخلية" iconColor="text-cyan-500"/>
                             
-                            <div className="animate-fade-in">
-                                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2 justify-center"><CalendarDaysIcon className="w-6 h-6" /> الجدول الأسبوعي</h2>
-                                <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md space-y-2">
-                                    {transportation.weeklySchedule.map(item => {
-                                        const dayName = new Date(`${item.date}T00:00:00`).toLocaleDateString('ar-EG', { weekday: 'long' });
-                                        const isToday = dayName === todayDayName;
-
-                                        return (
-                                             <div key={item.date} className={`p-4 rounded-lg flex flex-col sm:flex-row justify-between sm:items-center gap-2 transition-colors ${isToday ? 'bg-cyan-50 dark:bg-cyan-900/50 border-r-4 border-cyan-500' : ''}`}>
-                                                <div className="flex items-baseline gap-3 w-full sm:w-auto">
-                                                    <span className={`w-16 font-bold text-lg ${isToday ? 'text-cyan-600 dark:text-cyan-300' : 'text-gray-800 dark:text-white'}`}>{dayName}</span>
-                                                    <span className="text-sm font-mono text-gray-500">{item.date}</span>
+                            <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md">
+                                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2 justify-center">
+                                    <CalendarDaysIcon className="w-6 h-6" />
+                                    مناوبة اليوم: {todayDayName}
+                                </h2>
+                                {todaySchedule && todaySchedule.drivers.length > 0 ? (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        {todaySchedule.drivers.map(driver => {
+                                            const driverDetails = transportation.internalDrivers.find(d => d.name === driver.name);
+                                            return (
+                                                <div key={driver.name} className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-lg flex items-center justify-between">
+                                                    <div className="flex items-center gap-3">
+                                                        <img src={driverDetails?.avatar || `https://i.pravatar.cc/150?u=${driver.name}`} alt={driver.name} className="w-12 h-12 rounded-full object-cover"/>
+                                                        <div>
+                                                            <p className="font-bold text-gray-800 dark:text-white">{driver.name}</p>
+                                                            <p className="text-sm text-gray-500 dark:text-gray-400 font-mono">{driver.phone}</p>
+                                                        </div>
+                                                    </div>
+                                                    <CallButton phone={driver.phone} />
                                                 </div>
-                                                <div className="w-full sm:w-auto sm:text-left pr-4 sm:pr-0">
-                                                    {item.drivers.length > 0 
-                                                        ? item.drivers.map((d, i) => <p key={i} className="text-gray-700 dark:text-gray-300 leading-relaxed">{d.name}</p>) 
-                                                        : <p className="text-sm text-gray-400">لا يوجد</p>
-                                                    }
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <p className="text-center text-gray-500 dark:text-gray-400 py-4">لا يوجد سائقون مناوبون اليوم.</p>
+                                )}
                             </div>
+
+                            <div className="text-center">
+                                <button
+                                    onClick={() => setShowFullWeek(!showFullWeek)}
+                                    className="flex items-center gap-2 mx-auto px-4 py-2 font-semibold text-cyan-600 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/50 rounded-lg transition-colors"
+                                >
+                                    <span>{showFullWeek ? 'إخفاء جدول الأسبوع' : 'عرض جدول الأسبوع بالكامل'}</span>
+                                    <ChevronDownIcon className={`w-5 h-5 transition-transform ${showFullWeek ? 'rotate-180' : ''}`} />
+                                </button>
+                            </div>
+
+                            {showFullWeek && (
+                                <div className="animate-fade-in">
+                                    <h2 className="text-2xl font-bold mb-4 flex items-center gap-2 justify-center"><CalendarDaysIcon className="w-6 h-6" /> الجدول الأسبوعي الكامل</h2>
+                                    <div className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-md space-y-2">
+                                        {transportation.weeklySchedule.map(item => {
+                                            const dayName = new Date(`${item.date}T00:00:00`).toLocaleDateString('ar-EG', { weekday: 'long' });
+                                            const isToday = dayName === todayDayName;
+
+                                            return (
+                                                 <div key={item.date} className={`p-4 rounded-lg flex flex-col sm:flex-row justify-between sm:items-center gap-2 transition-colors ${isToday ? 'bg-cyan-50 dark:bg-cyan-900/50 border-r-4 border-cyan-500' : ''}`}>
+                                                    <div className="flex items-baseline gap-3 w-full sm:w-auto">
+                                                        <span className={`w-16 font-bold text-lg ${isToday ? 'text-cyan-600 dark:text-cyan-300' : 'text-gray-800 dark:text-white'}`}>{dayName}</span>
+                                                        <span className="text-sm font-mono text-gray-500">{item.date}</span>
+                                                    </div>
+                                                    <div className="w-full sm:w-auto sm:text-left pr-4 sm:pr-0">
+                                                        {item.drivers.length > 0 
+                                                            ? item.drivers.map((d, i) => <p key={i} className="text-gray-700 dark:text-gray-300 leading-relaxed">{d.name}</p>) 
+                                                            : <p className="text-sm text-gray-400">لا يوجد</p>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
                     {activeTab === 'external' && (

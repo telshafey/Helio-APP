@@ -1,15 +1,16 @@
 import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import Spinner from '../components/common/Spinner';
 import { ArrowLeftIcon, HandThumbUpIcon, ChatBubbleOvalLeftEllipsisIcon } from '../components/common/Icons';
 import PageBanner from '../components/common/PageBanner';
 import type { Post } from '../types';
+import ShareButton from '../components/common/ShareButton';
+import { useCommunity } from '../context/AppContext';
 
 const PollDisplay: React.FC<{ post: Post }> = ({ post }) => {
     // FIX: `currentPublicUser` is part of AuthContext, not DataContext.
-    const { voteOnPoll } = useData();
+    const { voteOnPoll } = useCommunity();
     const { currentPublicUser } = useAuth();
     const navigate = useNavigate();
 
@@ -62,7 +63,7 @@ const PollDisplay: React.FC<{ post: Post }> = ({ post }) => {
 const PostDetailPage: React.FC = () => {
     const { postId } = useParams<{ postId: string }>();
     const navigate = useNavigate();
-    const { posts, toggleLikePost, addComment } = useData();
+    const { posts, toggleLikePost, addComment } = useCommunity();
     const { currentPublicUser } = useAuth();
     const [newComment, setNewComment] = useState('');
 
@@ -127,15 +128,22 @@ const PostDetailPage: React.FC = () => {
                         
                         {post.category === 'استطلاع رأي' && <PollDisplay post={post} />}
 
-                        <div className="flex items-center justify-between mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
-                            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
-                                <ChatBubbleOvalLeftEllipsisIcon className="w-5 h-5" />
-                                <span>{post.comments.length} تعليقات</span>
+                        <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row gap-4 items-center justify-between">
+                            <div className="flex items-center gap-4 text-gray-500 dark:text-gray-400">
+                                <div className="flex items-center gap-1.5">
+                                    <ChatBubbleOvalLeftEllipsisIcon className="w-5 h-5" />
+                                    <span>{post.comments.length} تعليقات</span>
+                                </div>
+                                 <button onClick={handleLikeClick} className={`flex items-center gap-1.5 transition-colors ${isLiked ? 'text-red-500' : 'text-gray-600 dark:text-gray-300'}`}>
+                                    <HandThumbUpIcon className="w-5 h-5"/>
+                                    <span className="font-semibold">{post.likes.length} إعجاب</span>
+                                </button>
                             </div>
-                            <button onClick={handleLikeClick} className={`flex items-center gap-1.5 px-4 py-2 rounded-full font-semibold transition-colors ${isLiked ? 'text-red-500 bg-red-100 dark:bg-red-900/50' : 'text-gray-600 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-slate-700'}`}>
-                                <HandThumbUpIcon className="w-5 h-5"/>
-                                <span>{post.likes.length} إعجاب</span>
-                            </button>
+                             <ShareButton
+                                title={post.title || `منشور بواسطة ${post.username}`}
+                                text={post.content.substring(0, 100) + '...'}
+                                className="!py-2 !px-4 !font-semibold"
+                            />
                         </div>
                     </article>
 

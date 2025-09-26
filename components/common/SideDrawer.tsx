@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import Logo from './Logo';
 import { 
     XMarkIcon, TruckIcon, ShieldExclamationIcon, BuildingLibraryIcon,
-    DocumentDuplicateIcon, QuestionMarkCircleIcon, BookOpenIcon, ArrowLeftOnRectangleIcon, KeyIcon, InformationCircleIcon,
+    DocumentDuplicateIcon, QuestionMarkCircleIcon, BookOpenIcon, ArrowLeftOnRectangleIcon, InformationCircleIcon,
     HeartIcon, ChatBubbleOvalLeftEllipsisIcon, NewspaperIcon, PhoneIcon
 } from './Icons';
 
@@ -77,7 +77,7 @@ const SideDrawer: React.FC<SideDrawerProps> = ({ isOpen, onClose }) => {
                         <NavLink to="/community" onClick={onClose} className={navLinkClasses}><ChatBubbleOvalLeftEllipsisIcon className="w-6 h-6 text-teal-500"/><span>المجتمع</span></NavLink>
                         
                         <hr className="border-slate-200 dark:border-slate-700 my-3" />
-
+                        
                         <h3 className="px-4 text-sm font-semibold text-gray-400">المدينة</h3>
                         <NavLink to="/transportation" onClick={onClose} className={navLinkClasses}><TruckIcon className="w-6 h-6 text-purple-500"/><span>المواصلات</span></NavLink>
                         <NavLink to="/city-services-guide" onClick={onClose} className={navLinkClasses}><DocumentDuplicateIcon className="w-6 h-6 text-sky-500"/><span>خدمات جهاز المدينة</span></NavLink>
@@ -100,10 +100,6 @@ const SideDrawer: React.FC<SideDrawerProps> = ({ isOpen, onClose }) => {
                      <NavLink to="/terms-of-use" onClick={onClose} className="flex items-center gap-3 px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-cyan-500">
                         <BookOpenIcon className="w-5 h-5"/>
                         <span>شروط الاستخدام</span>
-                    </NavLink>
-                    <NavLink to="/admin-login" onClick={onClose} className="flex items-center gap-3 px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:text-cyan-500">
-                        <KeyIcon className="w-5 h-5 text-amber-500"/>
-                        <span>دخول المسؤولين</span>
                     </NavLink>
                     {isPublicAuthenticated && (
                          <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors">

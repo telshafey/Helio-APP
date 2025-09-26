@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useData } from '../context/DataContext';
+import { useServices } from '../context/ServicesContext';
 import ServiceCard from '../components/common/ServiceCard';
 import EmptyState from '../components/common/EmptyState';
 import { HeartIconSolid } from '../components/common/Icons';
 import PageBanner from '../components/common/PageBanner';
 
 const FavoritesPage: React.FC = () => {
-    const { services } = useData();
+    const { services } = useServices();
     
     // The route in App.tsx already protects this page, so we can assume the user is authenticated.
     const favoriteServices = services.filter(s => s.isFavorite);

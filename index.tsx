@@ -5,6 +5,8 @@ import App from './App';
 import { DataProvider } from './context/DataContext';
 import { UIProvider } from './context/UIContext';
 import { AuthProvider } from './context/AuthContext';
+import { CommunityProvider } from './context/AppContext';
+import { ServicesProvider } from './context/ServicesContext';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -18,7 +20,11 @@ root.render(
       <UIProvider>
         <AuthProvider>
           <DataProvider>
-            <App />
+            <CommunityProvider>
+              <ServicesProvider>
+                <App />
+              </ServicesProvider>
+            </CommunityProvider>
           </DataProvider>
         </AuthProvider>
       </UIProvider>

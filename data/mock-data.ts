@@ -1,4 +1,5 @@
-import type { Category, Service, Review, News, Notification, Property, EmergencyContact, ServiceGuide, AppUser, AdminUser, Supervisor, Driver, WeeklyScheduleItem, ExternalRoute, PublicPagesContent, Post, Advertisement, AboutCityPageContent } from '../types';
+// FIX: Added AdminUser and AuditLog to imports
+import type { Category, Service, Review, News, Notification, Property, EmergencyContact, ServiceGuide, AppUser, Supervisor, Driver, WeeklyScheduleItem, ExternalRoute, PublicPagesContent, Post, Advertisement, AboutCityPageContent, AdminUser, AuditLog } from '../types';
 
 export const mockReviews: Review[] = [
     { id: 1, userId: 1, username: 'أحمد محمود', avatar: 'https://picsum.photos/101', rating: 5, comment: 'خدمة ممتازة وتجربة رائعة! أنصح به بشدة.', date: '2024-07-10', adminReply: 'شكراً لتقييمك! نسعد بخدمتك دائماً.', helpfulCount: 12 },
@@ -413,13 +414,23 @@ export const mockUsers: AppUser[] = [
   { id: 7, name: 'مستخدم تجريبي', email: 'test@test.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=7', status: 'active', joinDate: '2024-01-01' },
 ];
 
+// FIX: Added mock admin users.
 export const mockAdmins: AdminUser[] = [
-  { id: 1, name: 'علي حسن', email: 'ali.hassan@helio.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=11', role: 'مسؤول العقارات' },
-  { id: 2, name: 'مريم أحمد', email: 'mariam.ahmed@helio.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=12', role: 'مسؤول الاخبار والاعلانات والاشعارات' },
-  { id: 3, name: 'يوسف خالد', email: 'youssef.khaled@helio.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=13', role: 'مسؤول الباصات' },
-  { id: 4, name: 'هند سالم', email: 'hind.salem@helio.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=14', role: 'مسؤول ادارة الخدمات' },
-  { id: 5, name: 'مدير عام', email: 'super@helio.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=15', role: 'مدير عام' },
+    { id: 1, name: 'المدير العام', email: 'admin@helio.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=99', role: 'مدير عام' },
+    { id: 2, name: 'مسؤول الخدمات', email: 'services@helio.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=98', role: 'مسؤول ادارة الخدمات' },
+    { id: 3, name: 'مسؤول العقارات', email: 'properties@helio.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=97', role: 'مسؤول العقارات' },
+    { id: 4, name: 'مسؤول الأخبار', email: 'news@helio.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=96', role: 'مسؤول الاخبار والاعلانات والاشعارات' },
+    { id: 5, name: 'مسؤول الباصات', email: 'transport@helio.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=95', role: 'مسؤول الباصات' },
 ];
+
+// FIX: Added mock audit logs.
+export const mockAuditLogs: AuditLog[] = [
+    { id: 1, user: 'المدير العام', action: 'إنشاء خدمة', details: 'أضاف خدمة جديدة: مطعم ومقهى هيليو', timestamp: '2024-07-28T10:00:00Z' },
+    { id: 2, user: 'مسؤول العقارات', action: 'حذف عقار', details: 'حذف عقار: شقة فاخرة للبيع في كمبوند لايف بارك', timestamp: '2024-07-28T09:30:00Z' },
+    { id: 3, user: 'مسؤول الاخبار والاعلانات والاشعارات', action: 'تحديث خبر', details: 'تحديث خبر: افتتاح المرحلة الأولى من النادي', timestamp: '2024-07-27T15:20:00Z' },
+    { id: 4, user: 'المدير العام', action: 'تعديل مستخدم', details: 'قام بتغيير حالة المستخدم خالد العتيبي إلى "مفعل"', timestamp: '2024-07-27T11:05:00Z' },
+];
+
 
 export const mockPosts: Post[] = [
   {

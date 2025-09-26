@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon, PlusIcon, PencilSquareIcon, TrashIcon, NewspaperIcon } from '../components/common/Icons';
 import type { News } from '../types';
 import { useData } from '../context/DataContext';
-import { useHasPermission } from '../context/AuthContext';
+// FIX: Changed import from `useHasPermission` to `useAuth`.
+import { useAuth } from '../context/AuthContext';
 import Modal from '../components/common/Modal';
 import ImageUploader from '../components/common/ImageUploader';
 import EmptyState from '../components/common/EmptyState';
@@ -75,7 +76,9 @@ const NewsForm: React.FC<{
 };
 
 const NewsCard: React.FC<{ newsItem: News; onEdit: () => void; onDelete: () => void; }> = ({ newsItem, onEdit, onDelete }) => {
-    const canManage = useHasPermission(['مسؤول الاخبار والاعلانات والاشعارات']);
+    // FIX: Use `useAuth` to get `hasPermission`.
+    const { hasPermission } = useAuth();
+    const canManage = hasPermission(['مسؤول الاخبار والاعلانات والاشعارات']);
     return (
         <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 group">
             <div className="relative">
@@ -103,8 +106,11 @@ const NewsCard: React.FC<{ newsItem: News; onEdit: () => void; onDelete: () => v
 
 const NewsPage: React.FC = () => {
     const navigate = useNavigate();
+    // FIX: Replaced non-existent properties with correct ones from DataContext.
     const { news, handleSaveNews, handleDeleteNews } = useData();
-    const canManage = useHasPermission(['مسؤول الاخبار والاعلانات والاشعارات']);
+    // FIX: Use `useAuth` to get `hasPermission`.
+    const { hasPermission } = useAuth();
+    const canManage = hasPermission(['مسؤول الاخبار والاعلانات والاشعارات']);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingNews, setEditingNews] = useState<News | null>(null);
 

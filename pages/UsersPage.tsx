@@ -5,7 +5,9 @@ import {
     TrashIcon, UserGroupIcon, UserCircleIcon, CheckCircleIcon, ClockIcon, NoSymbolIcon, UserMinusIcon 
 } from '../components/common/Icons';
 import { useData } from '../context/DataContext';
-import { useHasPermission } from '../context/AuthContext';
+// FIX: Changed import from `useHasPermission` to `useAuth`.
+import { useAuth } from '../context/AuthContext';
+// FIX: Imported AdminUser type.
 import type { AppUser, AdminUser, UserStatus } from '../types';
 import Modal from '../components/common/Modal';
 import ImageUploader from '../components/common/ImageUploader';
@@ -39,6 +41,7 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; children: Reac
 
 const UserForm: React.FC<{
     user: AppUser | null;
+    // FIX: Corrected type to match what's passed from handleSubmit.
     onSave: (user: Omit<AppUser, 'id' | 'joinDate'> & { id?: number }) => void;
     onClose: () => void;
 }> = ({ user, onSave, onClose }) => {
@@ -167,8 +170,11 @@ const AdminForm: React.FC<{
 };
 
 const RegularUsersTab: React.FC<{ onAdd: () => void; onEdit: (user: AppUser) => void; }> = ({ onAdd, onEdit }) => {
+    // FIX: Replaced non-existent property with correct one from DataContext.
     const { users, handleDeleteUser } = useData();
-    const canManage = useHasPermission(['مدير عام']);
+    // FIX: Use `useAuth` to get `hasPermission`.
+    const { hasPermission } = useAuth();
+    const canManage = hasPermission(['مدير عام']);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<UserStatus | 'all'>('all');
 
@@ -247,8 +253,11 @@ const RegularUsersTab: React.FC<{ onAdd: () => void; onEdit: (user: AppUser) => 
 };
 
 const AdminUsersTab: React.FC<{ onAdd: () => void; onEdit: (admin: AdminUser) => void; }> = ({ onAdd, onEdit }) => {
+    // FIX: Replaced non-existent properties with correct ones from DataContext.
     const { admins, handleDeleteAdmin } = useData();
-    const canManage = useHasPermission(['مدير عام']);
+    // FIX: Use `useAuth` to get `hasPermission`.
+    const { hasPermission } = useAuth();
+    const canManage = hasPermission(['مدير عام']);
 
     const roleCounts = useMemo(() => {
         return admins.reduce((acc, admin) => {
@@ -264,7 +273,7 @@ const AdminUsersTab: React.FC<{ onAdd: () => void; onEdit: (admin: AdminUser) =>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
                     {Object.entries(roleCounts).map(([role, count]) => (
                         <div key={role} className="bg-slate-100 dark:bg-slate-700 p-3 rounded-lg text-center">
-                            <p className="text-2xl font-bold text-cyan-500">{count}</p>
+                            <p className="text-2xl font-bold text-cyan-500">{count as React.ReactNode}</p>
                             <p className="text-xs text-gray-600 dark:text-gray-400">{role}</p>
                         </div>
                     ))}
@@ -337,6 +346,7 @@ const AdminUsersTab: React.FC<{ onAdd: () => void; onEdit: (admin: AdminUser) =>
 
 const UsersPage: React.FC = () => {
     const navigate = useNavigate();
+    // FIX: Replaced non-existent properties with correct ones from DataContext.
     const { users, handleSaveUser, handleSaveAdmin } = useData();
     const [activeTab, setActiveTab] = useState<'users' | 'admins'>('users');
     const [isModalOpen, setIsModalOpen] = useState(false);

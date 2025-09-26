@@ -6,6 +6,7 @@ import GlobalSearchModal from './GlobalSearchModal';
 
 const Header: React.FC = () => {
   const { isDarkMode, toggleDarkMode } = useUI();
+  // FIX: Replaced non-existent property with the correct 'currentUser' from AuthContext.
   const { currentUser } = useAuth();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   

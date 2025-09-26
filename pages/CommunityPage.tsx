@@ -8,10 +8,11 @@ import { PlusIcon, ChatBubbleOvalLeftEllipsisIcon, HandThumbUpIcon, UserCircleIc
 import Modal from '../components/common/Modal';
 import EmptyState from '../components/common/EmptyState';
 import PageBanner from '../components/common/PageBanner';
+import { useCommunity } from '../context/AppContext';
 
 // Reusable component for Polls within a PostCard on the main feed
 const PollInCard: React.FC<{ post: Post }> = ({ post }) => {
-    const { voteOnPoll } = useData();
+    const { voteOnPoll } = useCommunity();
     const { currentPublicUser } = useAuth();
     const navigate = useNavigate();
 
@@ -81,7 +82,7 @@ const PollInCard: React.FC<{ post: Post }> = ({ post }) => {
 
 
 const PostCard: React.FC<{ post: Post }> = ({ post }) => {
-    const { toggleLikePost } = useData();
+    const { toggleLikePost } = useCommunity();
     const { currentPublicUser } = useAuth();
     const isLiked = currentPublicUser ? post.likes.includes(currentPublicUser.id) : false;
 
@@ -129,7 +130,7 @@ const PostCard: React.FC<{ post: Post }> = ({ post }) => {
 };
 
 const NewPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-    const { addPost } = useData();
+    const { addPost } = useCommunity();
     const [category, setCategory] = useState<PostCategory>('نقاش عام');
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -204,7 +205,8 @@ const NewPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 };
 
 const CommunityPage: React.FC = () => {
-    const { posts, users } = useData();
+    const { users } = useData();
+    const { posts } = useCommunity();
     const { isPublicAuthenticated, currentPublicUser } = useAuth();
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);

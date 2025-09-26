@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+// FIX: Added mockAdmins import and AdminUser type.
 import { mockUsers, mockAdmins } from '../data/mock-data';
-import type { AppUser, AdminUser, AuthContextType } from '../types';
+import type { AppUser, AuthContextType, AdminUser } from '../types';
 import { useUI } from './UIContext';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -16,12 +17,14 @@ export const useAuth = (): AuthContextType => {
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const { showToast } = useUI(); // Dependent on UIContext for toasts
     const [users, setUsers] = useState<AppUser[]>(mockUsers); // Keep user list here for auth purposes
-    const [admins, setAdmins] = useState<AdminUser[]>(mockAdmins);
     
+    // FIX: Added state and logic for admin authentication.
+    const [admins] = useState<AdminUser[]>(mockAdmins);
     const [currentUser, setCurrentUser] = useState<AdminUser | null>(() => {
         const storedUser = sessionStorage.getItem('currentUser');
         return storedUser ? JSON.parse(storedUser) : null;
     });
+
     const [currentPublicUser, setCurrentPublicUser] = useState<AppUser | null>(() => {
         const storedUser = sessionStorage.getItem('currentPublicUser');
         return storedUser ? JSON.parse(storedUser) : null;
@@ -31,24 +34,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const isPublicAuthenticated = !!currentPublicUser;
 
     const login = useCallback((email: string, password?: string): boolean => {
-        const adminUser = admins.find(u => u.email.toLowerCase() === email.toLowerCase());
-        if (adminUser) {
-            if (adminUser.password !== password) {
-                showToast('البريد الإلكتروني أو كلمة المرور غير صحيحة.', 'error');
-                return false;
-            }
-            sessionStorage.setItem('currentUser', JSON.stringify(adminUser));
-            setCurrentUser(adminUser);
+        const admin = admins.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+        if (admin) {
+            sessionStorage.setItem('currentUser', JSON.stringify(admin));
+            setCurrentUser(admin);
+            showToast(`أهلاً بعودتك، ${admin.name}!`);
             return true;
         }
-        showToast('البريد الإلكتروني أو كلمة المرور غير صحيحة.', 'error');
         return false;
     }, [admins, showToast]);
 
     const logout = useCallback(() => {
         sessionStorage.removeItem('currentUser');
         setCurrentUser(null);
-    }, []);
+        showToast('تم تسجيل خروجك بنجاح.');
+    }, [showToast]);
+
+    const hasPermission = useCallback((roles: Array<AdminUser['role']>) => {
+        if (!currentUser) return false;
+        return roles.includes(currentUser.role);
+    }, [currentUser]);
+
 
     const publicLogin = useCallback((email: string, password?: string): boolean => {
         const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
@@ -97,20 +103,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return true;
     }, [users, showToast]);
 
-    const updateProfile = useCallback((updatedUser: Omit<AppUser, 'joinDate'>) => {
-        setUsers(prev => prev.map(u => u.id === updatedUser.id ? { ...u, ...updatedUser } : u));
-        setCurrentPublicUser(prev => prev ? { ...prev, ...updatedUser } : null);
+    const updateProfile = useCallback((updatedUser: Omit<AppUser, 'joinDate' | 'status' | 'password'>) => {
+        const userToUpdate = users.find(u => u.id === updatedUser.id);
+        if (!userToUpdate) return;
+        const finalUser = { ...userToUpdate, ...updatedUser };
+
+        setUsers(prev => prev.map(u => u.id === updatedUser.id ? finalUser : u));
+        setCurrentPublicUser(prev => prev ? finalUser : null);
         if (currentPublicUser) {
-            sessionStorage.setItem('currentPublicUser', JSON.stringify({ ...currentPublicUser, ...updatedUser }));
+            sessionStorage.setItem('currentPublicUser', JSON.stringify(finalUser));
         }
         showToast('تم تحديث ملفك الشخصي بنجاح!');
-    }, [currentPublicUser, showToast]);
+    }, [users, currentPublicUser, showToast]);
 
+    // FIX: Added all missing admin and public auth properties to the context value.
     const value: AuthContextType = {
         currentUser,
         isAuthenticated,
         login,
         logout,
+        hasPermission,
         currentPublicUser,
         isPublicAuthenticated,
         publicLogin,
@@ -124,27 +136,4 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             {children}
         </AuthContext.Provider>
     );
-};
-
-/**
- * A custom hook to check if the current admin user has the required permissions.
- * @param allowedRoles - An array of roles that are allowed to perform the action.
- * @returns `true` if the user has permission, otherwise `false`.
- * The 'مدير عام' role has all permissions by default.
- */
-export const useHasPermission = (allowedRoles: (AdminUser['role'])[]): boolean => {
-    const { currentUser } = useAuth();
-    
-    // No user, no permissions.
-    if (!currentUser) {
-        return false;
-    }
-    
-    // Super admin ('مدير عام') has all permissions.
-    if (currentUser.role === 'مدير عام') {
-        return true;
-    }
-    
-    // Check if the user's role is in the allowed list.
-    return allowedRoles.includes(currentUser.role);
 };

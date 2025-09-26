@@ -5,6 +5,7 @@ import { useData } from '../context/DataContext';
 import Spinner from '../components/common/Spinner';
 import { ArrowLeftIcon, CalendarDaysIcon, UserCircleIcon, NewspaperIcon } from '../components/common/Icons';
 import PageBanner from '../components/common/PageBanner';
+import ShareButton from '../components/common/ShareButton';
 
 const PublicNewsDetailPage: React.FC = () => {
     const { newsId } = useParams<{ newsId: string }>();
@@ -37,13 +38,18 @@ const PublicNewsDetailPage: React.FC = () => {
                     <div className="prose dark:prose-invert max-w-none text-lg leading-relaxed text-gray-700 dark:text-gray-300">
                        <p>{newsItem.content}</p>
                     </div>
-                     {newsItem.externalUrl && (
-                         <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
-                            <a href={newsItem.externalUrl} target="_blank" rel="noopener noreferrer" className="inline-block bg-cyan-500 text-white font-semibold px-6 py-3 rounded-lg hover:bg-cyan-600 transition-colors">
+
+                    <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row gap-4 items-center">
+                        <ShareButton
+                            title={newsItem.title}
+                            text={newsItem.content.substring(0, 100) + '...'}
+                        />
+                        {newsItem.externalUrl && (
+                             <a href={newsItem.externalUrl} target="_blank" rel="noopener noreferrer" className="inline-block bg-cyan-500 text-white font-semibold px-6 py-3 rounded-lg hover:bg-cyan-600 transition-colors w-full sm:w-auto text-center">
                                 قراءة المزيد من المصدر
                             </a>
-                         </div>
-                     )}
+                        )}
+                    </div>
                 </article>
             </div>
         </div>

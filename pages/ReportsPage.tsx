@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
+import { useServices } from '../context/ServicesContext';
 import { ArrowLeftIcon, StarIcon, EyeIcon, ChatBubbleOvalLeftIcon, WrenchScrewdriverIcon, ChartPieIcon, ChartBarIcon, HomeModernIcon, NewspaperIcon, MagnifyingGlassIcon, StarIconOutline, ArrowTrendingUpIcon } from '../components/common/Icons';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { Service, Property, News, Category } from '../types';
@@ -290,7 +291,8 @@ const NewsReports: React.FC<{ data: News[] }> = ({ data }) => {
 
 const ReportsPage: React.FC = () => {
     const navigate = useNavigate();
-    const { services, categories, properties, news } = useData();
+    const { properties, news } = useData();
+    const { services, categories } = useServices();
     const [activeTab, setActiveTab] = useState<'services' | 'properties' | 'news'>('services');
 
     const renderContent = () => {

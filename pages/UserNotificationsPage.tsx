@@ -4,10 +4,14 @@ import { useData } from '../context/DataContext';
 import { ArrowLeftIcon, BellIcon } from '../components/common/Icons';
 import EmptyState from '../components/common/EmptyState';
 import PageBanner from '../components/common/PageBanner';
+// FIX: Imported useServices to get services data.
+import { useServices } from '../context/ServicesContext';
 
 const UserNotificationsPage: React.FC = () => {
     const navigate = useNavigate();
-    const { notifications, services } = useData();
+    // FIX: Destructured notifications from useData and services from useServices.
+    const { notifications } = useData();
+    const { services } = useServices();
 
     const getServiceName = (serviceId?: number) => {
         if (!serviceId) return null;

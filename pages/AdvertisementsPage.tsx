@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon, PlusIcon, PencilSquareIcon, TrashIcon, PhotoIcon } from '../components/common/Icons';
 import type { Advertisement, Service } from '../types';
 import { useData } from '../context/DataContext';
+import { useServices } from '../context/ServicesContext';
 import Modal from '../components/common/Modal';
 import ImageUploader from '../components/common/ImageUploader';
 
@@ -114,7 +115,8 @@ const StatusBadge: React.FC<{ startDate: string, endDate: string }> = ({ startDa
 
 const AdvertisementsPage: React.FC = () => {
     const navigate = useNavigate();
-    const { advertisements, services, handleSaveAdvertisement, handleDeleteAdvertisement } = useData();
+    const { advertisements, handleSaveAdvertisement, handleDeleteAdvertisement } = useData();
+    const { services } = useServices();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingAd, setEditingAd] = useState<Advertisement | null>(null);
 

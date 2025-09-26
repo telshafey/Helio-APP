@@ -148,14 +148,25 @@ export interface AppUser {
   joinDate: string;
 }
 
+// FIX: Added AdminUser type for admin panel authentication and roles.
 export interface AdminUser {
   id: number;
   name: string;
   email: string;
   password?: string;
   avatar: string;
-  role: 'مسؤول العقارات' | 'مسؤول الاخبار والاعلانات والاشعارات' | 'مسؤول الباصات' | 'مسؤول ادارة الخدمات' | 'مدير عام';
+  role: 'مدير عام' | 'مسؤول ادارة الخدمات' | 'مسؤول العقارات' | 'مسؤول الاخبار والاعلانات والاشعارات' | 'مسؤول الباصات';
 }
+
+// FIX: Added AuditLog type for tracking admin actions.
+export interface AuditLog {
+    id: number;
+    user: string;
+    action: string;
+    details: string;
+    timestamp: string;
+}
+
 
 // Transportation Types
 export interface Driver {
@@ -181,14 +192,6 @@ export interface ExternalRoute {
 export interface Supervisor {
     name: string;
     phone: string;
-}
-
-export interface AuditLog {
-  id: number;
-  timestamp: string;
-  user: string;
-  action: string;
-  details: string;
 }
 
 // New Types for Public Page Content Management
@@ -330,22 +333,57 @@ export interface UIContextType {
   dismissToast: (id: number) => void;
 }
 
+// FIX: Added admin auth state and methods to the context type.
 export interface AuthContextType {
+  // Admin auth
   currentUser: AdminUser | null;
   isAuthenticated: boolean;
   login: (email: string, password?: string) => boolean;
   logout: () => void;
+  // FIX: Corrected type for hasPermission to accept an array of roles.
+  hasPermission: (roles: Array<AdminUser['role']>) => boolean;
+
+  // Public user auth
   currentPublicUser: AppUser | null;
   isPublicAuthenticated: boolean;
   publicLogin: (email: string, password?: string) => boolean;
   publicLogout: () => void;
   register: (user: Omit<AppUser, 'id' | 'joinDate' | 'avatar' | 'status'>) => boolean;
-  updateProfile: (user: Omit<AppUser, 'joinDate'>) => void;
+  // FIX: updateProfile should not require password, status, etc.
+  updateProfile: (user: Omit<AppUser, 'joinDate' | 'status' | 'password'>) => void;
 }
 
-export interface DataContextType {
+export interface CommunityContextType {
+  posts: Post[];
+  addPost: (postData: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments' | 'isPinned'>) => void;
+  addComment: (postId: number, commentData: Omit<Comment, 'id' | 'date' | 'userId' | 'username' | 'avatar'>) => void;
+  toggleLikePost: (postId: number) => void;
+  voteOnPoll: (postId: number, optionIndex: number) => void;
+  deletePost: (postId: number) => void;
+  deleteComment: (postId: number, commentId: number) => void;
+  togglePinPost: (postId: number) => void;
+  editPost: (postId: number, data: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments' | 'isPinned'>) => void;
+}
+
+export interface ServicesContextType {
   categories: Category[];
   services: Service[];
+  
+  // Service methods
+  handleSaveService: (serviceData: Omit<Service, 'id' | 'rating' | 'reviews' | 'isFavorite' | 'views' | 'creationDate'> & { id?: number }) => void;
+  handleDeleteService: (serviceId: number) => void;
+  handleToggleFavorite: (serviceId: number) => void;
+  
+  // Review methods
+  handleToggleHelpfulReview: (serviceId: number, reviewId: number) => void;
+  addReview: (serviceId: number, reviewData: Omit<Review, 'id' | 'date' | 'adminReply' | 'username' | 'avatar' | 'userId'>) => void;
+  handleUpdateReview: (serviceId: number, reviewId: number, comment: string) => void;
+  handleDeleteReview: (serviceId: number, reviewId: number) => void;
+  handleReplyToReview: (serviceId: number, reviewId: number, reply: string) => void;
+}
+
+// FIX: Added all missing state and handler methods to the context type.
+export interface DataContextType {
   news: News[];
   notifications: Notification[];
   advertisements: Advertisement[];
@@ -354,7 +392,7 @@ export interface DataContextType {
   serviceGuides: ServiceGuide[];
   users: AppUser[];
   admins: AdminUser[];
-  posts: Post[];
+  auditLogs: AuditLog[];
   transportation: {
       internalSupervisor: Supervisor;
       externalSupervisor: Supervisor;
@@ -362,47 +400,40 @@ export interface DataContextType {
       weeklySchedule: WeeklyScheduleItem[];
       externalRoutes: ExternalRoute[];
   };
-  auditLogs: AuditLog[];
   publicPagesContent: PublicPagesContent;
-  logActivity: (action: string, details: string) => void;
-  handleUpdateReview: (serviceId: number, reviewId: number, newComment: string) => void;
-  handleDeleteReview: (serviceId: number, reviewId: number) => void;
-  handleReplyToReview: (serviceId: number, reviewId: number, reply: string) => void;
-  handleToggleHelpfulReview: (serviceId: number, reviewId: number) => void;
-  addReview: (serviceId: number, reviewData: Omit<Review, 'id' | 'date' | 'adminReply' | 'username' | 'avatar' | 'userId'>) => void;
-  handleSaveService: (service: Omit<Service, 'id' | 'rating' | 'reviews' | 'isFavorite' | 'views' | 'creationDate'> & { id?: number }) => void;
-  handleDeleteService: (id: number) => void;
-  handleToggleFavorite: (serviceId: number) => void;
-  handleSaveNews: (newsItem: Omit<News, 'id' | 'date' | 'author' | 'views'> & { id?: number }) => void;
-  handleDeleteNews: (id: number) => void;
-  handleSaveNotification: (notification: Omit<Notification, 'id'> & { id?: number }) => void;
-  handleDeleteNotification: (id: number) => void;
-  handleSaveAdvertisement: (ad: Omit<Advertisement, 'id'> & { id?: number }) => void;
-  handleDeleteAdvertisement: (id: number) => void;
-  handleSaveProperty: (property: Omit<Property, 'id' | 'views' | 'creationDate'> & { id?: number }) => void;
-  handleDeleteProperty: (id: number) => void;
-  handleSaveEmergencyContact: (contact: Omit<EmergencyContact, 'id'>) => void;
-  handleDeleteEmergencyContact: (id: number) => void;
-  handleSaveServiceGuide: (guide: Omit<ServiceGuide, 'id'> & { id?: number }) => void;
-  handleDeleteServiceGuide: (id: number) => void;
-  handleSaveUser: (user: Omit<AppUser, 'id' | 'joinDate'> & { id?: number }) => void;
-  handleDeleteUser: (id: number) => void;
-  handleSaveAdmin: (admin: Omit<AdminUser, 'id'> & { id?: number }) => void;
-  handleDeleteAdmin: (id: number) => void;
-  handleSaveDriver: (driver: Omit<Driver, 'id'> & { id?: number }) => void;
-  handleDeleteDriver: (id: number) => void;
-  handleSaveRoute: (route: Omit<ExternalRoute, 'id'> & { id?: number }) => void;
-  handleDeleteRoute: (id: number) => void;
-  handleSaveSchedule: (schedule: WeeklyScheduleItem[]) => void;
-  handleSaveSupervisor: (type: 'internal' | 'external', supervisor: Supervisor) => void;
-  handleUpdatePublicPageContent: <K extends keyof PublicPagesContent>(page: K, newContent: PublicPagesContent[K]) => void;
-  addPost: (postData: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments' | 'isPinned'>) => void;
-  editPost: (postId: number, postData: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments' | 'isPinned'>) => void;
-  deletePost: (postId: number) => void;
-  addComment: (postId: number, commentData: Omit<Comment, 'id' | 'date' | 'userId' | 'username' | 'avatar'>) => void;
-  toggleLikePost: (postId: number) => void;
+
+  // User methods
   requestAccountDeletion: (userId: number) => void;
-  togglePinPost: (postId: number) => void;
-  deleteComment: (postId: number, commentId: number) => void;
-  voteOnPoll: (postId: number, optionIndex: number) => void;
+  // FIX: Corrected type for handleSaveUser to accept optional id.
+  handleSaveUser: (userData: Omit<AppUser, 'id' | 'joinDate'> & { id?: number }) => void;
+  handleDeleteUser: (userId: number) => void;
+
+  // Admin methods
+  handleSaveAdmin: (adminData: Omit<AdminUser, 'id'> & { id?: number }) => void;
+  handleDeleteAdmin: (adminId: number) => void;
+
+  // Other entity methods
+  handleSaveNews: (newsItem: Omit<News, 'id' | 'date' | 'author' | 'views'> & { id?: number }) => void;
+  handleDeleteNews: (newsId: number) => void;
+  handleSaveNotification: (notification: Omit<Notification, 'id'> & { id?: number }) => void;
+  handleDeleteNotification: (notificationId: number) => void;
+  handleSaveAdvertisement: (ad: Omit<Advertisement, 'id'> & { id?: number }) => void;
+  handleDeleteAdvertisement: (adId: number) => void;
+  handleSaveProperty: (property: Omit<Property, 'id' | 'views' | 'creationDate'> & { id?: number }) => void;
+  handleDeleteProperty: (propertyId: number) => void;
+  handleSaveEmergencyContact: (contact: Omit<EmergencyContact, 'id'> & { id?: number }) => void;
+  handleDeleteEmergencyContact: (contactId: number) => void;
+  handleSaveServiceGuide: (guide: Omit<ServiceGuide, 'id'> & { id?: number }) => void;
+  handleDeleteServiceGuide: (guideId: number) => void;
+
+  // Transportation methods
+  handleSaveSupervisor: (type: 'internal' | 'external', supervisor: Supervisor) => void;
+  handleSaveDriver: (driver: Omit<Driver, 'id'> & { id?: number }) => void;
+  handleDeleteDriver: (driverId: number) => void;
+  handleSaveRoute: (route: Omit<ExternalRoute, 'id'> & { id?: number }) => void;
+  handleDeleteRoute: (routeId: number) => void;
+  handleSaveSchedule: (schedule: WeeklyScheduleItem[]) => void;
+  
+  // Content Management methods
+  handleUpdatePublicPageContent: <K extends keyof PublicPagesContent>(page: K, content: PublicPagesContent[K]) => void;
 }

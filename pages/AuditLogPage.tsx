@@ -6,7 +6,7 @@ import { useData } from '../context/DataContext';
 
 const AuditLogPage: React.FC = () => {
     const navigate = useNavigate();
-    // FIX: Replaced deprecated useAppContext with useData.
+    // FIX: Replaced deprecated useAppContext with useData to get auditLogs.
     const { auditLogs } = useData();
 
     const [searchTerm, setSearchTerm] = useState('');

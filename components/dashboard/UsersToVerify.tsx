@@ -4,7 +4,7 @@ import { UserCircleIcon, CheckCircleIcon } from '../common/Icons';
 import { useData } from '../../context/DataContext';
 
 const UsersToVerify: React.FC = () => {
-    // FIX: Replaced deprecated useAppContext with useData.
+    // FIX: Replaced deprecated useAppContext with useData and added handleSaveUser.
     const { users, handleSaveUser } = useData();
 
     const pendingUsers = users.filter(user => user.status === 'pending').slice(0, 3);

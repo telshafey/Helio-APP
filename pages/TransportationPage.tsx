@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-import { useHasPermission } from '../context/AuthContext';
+// FIX: Changed import from `useHasPermission` to `useAuth`.
+import { useAuth } from '../context/AuthContext';
 import type { Driver, ExternalRoute, Supervisor, WeeklyScheduleItem } from '../types';
 import { ArrowLeftIcon, PlusIcon, PencilSquareIcon, TrashIcon, BusIcon, UserCircleIcon, MapIcon, CalendarDaysIcon } from '../components/common/Icons';
 import Modal from '../components/common/Modal';
@@ -139,8 +140,11 @@ const ScheduleEditor: React.FC<{ schedule: WeeklyScheduleItem[]; drivers: Driver
 
 const TransportationPage: React.FC = () => {
     const navigate = useNavigate();
+    // FIX: Replaced non-existent properties with correct ones from DataContext.
     const { transportation, handleSaveDriver, handleDeleteDriver, handleSaveRoute, handleDeleteRoute, handleSaveSchedule, handleSaveSupervisor } = useData();
-    const canManage = useHasPermission(['مسؤول الباصات']);
+    // FIX: Use `useAuth` to get `hasPermission`.
+    const { hasPermission } = useAuth();
+    const canManage = hasPermission(['مسؤول الباصات']);
     
     const [modal, setModal] = useState<'supervisor' | 'driver' | 'route' | null>(null);
     const [editingData, setEditingData] = useState<any>(null);

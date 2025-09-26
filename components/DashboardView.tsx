@@ -9,9 +9,11 @@ import UsersToVerify from './dashboard/UsersToVerify';
 import Footer from './common/Footer';
 import { UserIcon, MapIcon, WrenchScrewdriverIcon, ShieldExclamationIcon, HomeModernIcon, UserGroupIcon, BusIcon, NewspaperIcon, Bars3Icon } from './common/Icons';
 import { useData } from '../context/DataContext';
+import { useServices } from '../context/ServicesContext';
 
 const DashboardView: React.FC = () => {
-  const { categories, properties, news, notifications, users, emergencyContacts, services } = useData();
+  const { categories, services } = useServices();
+  const { properties, news, notifications, users, emergencyContacts } = useData();
   
   const firstServiceLink = (categories.length > 0 && categories[0].subCategories.length > 0)
     ? `/services/subcategory/${categories[0].subCategories[0].id}`

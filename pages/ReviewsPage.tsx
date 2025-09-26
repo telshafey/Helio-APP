@@ -6,8 +6,8 @@ import {
     CheckCircleIcon, XCircleIcon
 } from '../components/common/Icons';
 import type { Review } from '../types';
-import { useData } from '../context/DataContext';
-import { useHasPermission } from '../context/AuthContext';
+import { useServices } from '../context/ServicesContext';
+import { useAuth } from '../context/AuthContext';
 import Modal from '../components/common/Modal';
 import KpiCard from '../components/common/KpiCard';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -122,8 +122,9 @@ const AnalysisModal: React.FC<{
 // Main Page Component
 const ReviewsPage: React.FC = () => {
     const navigate = useNavigate();
-    const { services, handleUpdateReview, handleDeleteReview, handleReplyToReview } = useData();
-    const canManage = useHasPermission(['مسؤول ادارة الخدمات']);
+    const { services, handleUpdateReview, handleDeleteReview, handleReplyToReview } = useServices();
+    const { hasPermission } = useAuth();
+    const canManage = hasPermission(['مسؤول ادارة الخدمات']);
     const [searchTerm, setSearchTerm] = useState('');
     const [ratingFilter, setRatingFilter] = useState<number>(0);
     const [serviceFilter, setServiceFilter] = useState<number>(0);

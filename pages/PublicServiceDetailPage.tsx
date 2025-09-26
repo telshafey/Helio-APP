@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-// FIX: Replaced deprecated useAppContext with useData from DataContext.
-import { useData } from '../context/DataContext';
+import { useServices } from '../context/ServicesContext';
 import { useAuth } from '../context/AuthContext';
 import { ArrowLeftIcon, StarIcon, PhoneIcon, ChatBubbleOvalLeftIcon, ChevronLeftIcon, ChevronRightIcon, HomeModernIcon, HandThumbUpIcon, HeartIcon, HeartIconSolid } from '../components/common/Icons';
 import Spinner from '../components/common/Spinner';
+import ShareButton from '../components/common/ShareButton';
 
 const RatingDisplay: React.FC<{ rating: number; reviewCount: number; size?: string; }> = ({ rating, reviewCount, size = 'w-6 h-6' }) => (
     <div className="flex items-center gap-2">
@@ -48,8 +48,7 @@ const ImageSlider: React.FC<{ images: string[] }> = ({ images }) => {
 }
 
 const AddReviewForm: React.FC<{ serviceId: number }> = ({ serviceId }) => {
-    // FIX: Replaced deprecated useAppContext with useData.
-    const { addReview } = useData();
+    const { addReview } = useServices();
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
     const navigate = useNavigate();
@@ -98,8 +97,7 @@ const AddReviewForm: React.FC<{ serviceId: number }> = ({ serviceId }) => {
 const PublicServiceDetailPage: React.FC = () => {
     const navigate = useNavigate();
     const { serviceId } = useParams<{ serviceId: string }>();
-    // FIX: Get data-related state from useData and auth state from useAuth.
-    const { services, handleToggleFavorite, handleToggleHelpfulReview } = useData();
+    const { services, handleToggleFavorite, handleToggleHelpfulReview } = useServices();
     const { isPublicAuthenticated } = useAuth();
 
     const [sortOrder, setSortOrder] = useState<'latest' | 'highest' | 'helpful'>('latest');
@@ -232,6 +230,10 @@ const PublicServiceDetailPage: React.FC = () => {
                                             <span>واتساب</span>
                                         </a>
                                     )}
+                                    <ShareButton
+                                        title={service.name}
+                                        text={`تحقق من هذه الخدمة في تطبيق Helio: ${service.name}`}
+                                     />
                                 </div>
                             </div>
                         </div>

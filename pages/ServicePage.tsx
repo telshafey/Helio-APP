@@ -2,8 +2,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeftIcon, PlusIcon, StarIcon, StarIconOutline, EyeIcon, PencilSquareIcon, TrashIcon, WrenchScrewdriverIcon } from '../components/common/Icons';
 import type { Service } from '../types';
-import { useData } from '../context/DataContext';
-import { useHasPermission } from '../context/AuthContext';
+import { useServices } from '../context/ServicesContext';
+import { useAuth } from '../context/AuthContext';
 import Modal from '../components/common/Modal';
 import ImageUploader from '../components/common/ImageUploader';
 import EmptyState from '../components/common/EmptyState';
@@ -164,8 +164,9 @@ const ServicePage: React.FC = () => {
     const { subCategoryId: subCategoryIdStr } = useParams<{ subCategoryId: string }>();
     const subCategoryId = Number(subCategoryIdStr);
     
-    const { services, categories, handleSaveService, handleDeleteService, handleToggleFavorite } = useData();
-    const canManage = useHasPermission(['مسؤول ادارة الخدمات']);
+    const { services, categories, handleSaveService, handleDeleteService, handleToggleFavorite } = useServices();
+    const { hasPermission } = useAuth();
+    const canManage = hasPermission(['مسؤول ادارة الخدمات']);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingService, setEditingService] = useState<Service | null>(null);

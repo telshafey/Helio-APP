@@ -12,8 +12,9 @@ import {
     ChatBubbleOvalLeftEllipsisIcon,
     PhotoIcon
 } from './Icons';
-import { useData } from '../../context/DataContext';
+import { useServices } from '../../context/ServicesContext';
 import { useAuth } from '../../context/AuthContext';
+// FIX: Imported AdminUser type.
 import type { AdminUser } from '../../types';
 import Logo from './Logo';
 import { getIcon } from './iconUtils';
@@ -45,7 +46,8 @@ const filterNavItemsBySearch = (items: NavItemData[], query: string): NavItemDat
 };
 
 const Sidebar: React.FC = () => {
-    const { categories } = useData();
+    const { categories } = useServices();
+    // FIX: Replaced non-existent properties with correct ones from the updated AuthContext.
     const { logout, currentUser } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({ 'الخدمات الرئيسية': true });

@@ -9,6 +9,7 @@ import EmptyState from '../components/common/EmptyState';
 import KpiCard from '../components/common/KpiCard';
 import type { Post, Comment, AppUser, PostCategory } from '../types';
 import Modal from '../components/common/Modal';
+import { useCommunity } from '../context/AppContext';
 
 const CommentManagementModal: React.FC<{ 
     post: Post | null; 
@@ -138,7 +139,8 @@ const EditPostForm: React.FC<{
 
 const CommunityManagementPage: React.FC = () => {
     const navigate = useNavigate();
-    const { posts, users, deletePost, deleteComment, togglePinPost, editPost } = useData();
+    const { users } = useData();
+    const { posts, deletePost, deleteComment, togglePinPost, editPost } = useCommunity();
     const [commentPost, setCommentPost] = useState<Post | null>(null);
     const [editingPost, setEditingPost] = useState<Post | null>(null);
 

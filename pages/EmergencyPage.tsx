@@ -6,11 +6,14 @@ import { useData } from '../context/DataContext';
 import Modal from '../components/common/Modal';
 import EmptyState from '../components/common/EmptyState';
 import PageBanner from '../components/common/PageBanner';
-import { useAuth, useHasPermission } from '../context/AuthContext';
+// FIX: Changed import from `useHasPermission` to `useAuth`.
+import { useAuth } from '../context/AuthContext';
 
 const EmergencyCard: React.FC<{ contact: EmergencyContact; onEdit: (contact: EmergencyContact) => void; onDelete: (id: number) => void; }> = ({ contact, onEdit, onDelete }) => {
-    const { isAuthenticated } = useAuth();
-    const canManage = useHasPermission(['مسؤول ادارة الخدمات']);
+    // FIX: Replaced non-existent property with the correct 'isAuthenticated' from AuthContext.
+    // FIX: Use `useAuth` to get `hasPermission`.
+    const { isAuthenticated, hasPermission } = useAuth();
+    const canManage = hasPermission(['مسؤول ادارة الخدمات']);
 
     return (
         <div className="group relative bg-white dark:bg-slate-800 rounded-xl p-6 text-center shadow-lg border border-transparent dark:border-slate-700 transform hover:-translate-y-1 transition-transform duration-300 ease-in-out">
@@ -41,8 +44,10 @@ const EmergencyCard: React.FC<{ contact: EmergencyContact; onEdit: (contact: Eme
 };
 
 const EmergencyListItem: React.FC<{ contact: EmergencyContact; onEdit: (contact: EmergencyContact) => void; onDelete: (id: number) => void; }> = ({ contact, onEdit, onDelete }) => {
-    const { isAuthenticated } = useAuth();
-    const canManage = useHasPermission(['مسؤول ادارة الخدمات']);
+    // FIX: Replaced non-existent property with the correct 'isAuthenticated' from AuthContext.
+    // FIX: Use `useAuth` to get `hasPermission`.
+    const { isAuthenticated, hasPermission } = useAuth();
+    const canManage = hasPermission(['مسؤول ادارة الخدمات']);
 
     return (
         <div className="group flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-xl shadow-md border border-slate-200 dark:border-slate-700">
@@ -139,9 +144,11 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; children: Reac
 
 const EmergencyPage: React.FC = () => {
     const navigate = useNavigate();
+    // FIX: Replaced non-existent properties with correct ones from DataContext.
     const { emergencyContacts, handleSaveEmergencyContact, handleDeleteEmergencyContact } = useData();
-    const { isAuthenticated } = useAuth();
-    const canManage = useHasPermission(['مسؤول ادارة الخدمات']);
+    // FIX: Replaced non-existent property with the correct 'isAuthenticated' from AuthContext.
+    const { isAuthenticated, hasPermission } = useAuth();
+    const canManage = hasPermission(['مسؤول ادارة الخدمات']);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingContact, setEditingContact] = useState<EmergencyContact | null>(null);
     const [activeTab, setActiveTab] = useState<'city' | 'national'>('city');
