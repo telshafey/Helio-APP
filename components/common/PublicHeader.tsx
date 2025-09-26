@@ -2,14 +2,16 @@ import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
-import { BellIcon } from './Icons';
+import { useUI } from '../../context/UIContext';
+import { BellIcon, SunIcon, MoonIcon } from './Icons';
 import ProfileDropDown from './ProfileDropDown';
 import Logo from './Logo';
 
 const PublicHeader: React.FC = () => {
     const { isPublicAuthenticated, currentPublicUser } = useAuth();
     const { notifications } = useData();
-    const unreadCount = notifications.length; // Simple count for now
+    const { isDarkMode, setTheme } = useUI();
+    const unreadCount = notifications.length;
 
     const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
         `px-3 py-2 rounded-md text-sm font-medium transition-colors ${
@@ -18,6 +20,9 @@ const PublicHeader: React.FC = () => {
                 : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
         }`;
 
+    const handleToggle = () => {
+        setTheme(isDarkMode ? 'light' : 'dark');
+    };
 
     return (
         <header className="fixed top-0 left-0 right-0 h-14 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm z-20 border-b border-slate-200 dark:border-slate-700" dir="rtl">
@@ -39,7 +44,14 @@ const PublicHeader: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 sm:gap-4">
+                    <button 
+                        onClick={handleToggle} 
+                        className="p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-slate-800 focus:outline-none transition-colors" 
+                        title="Toggle dark mode"
+                    >
+                        {isDarkMode ? <SunIcon className="w-6 h-6" /> : <MoonIcon className="w-6 h-6" />}
+                    </button>
                     <Link to="/user-notifications" className="relative p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-slate-800">
                         <BellIcon className="w-6 h-6" />
                         {unreadCount > 0 && <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">{unreadCount}</span>}

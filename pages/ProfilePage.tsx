@@ -2,10 +2,11 @@ import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
-import { ArrowLeftIcon, UserCircleIcon, PencilIcon, StarIcon, ChatBubbleOvalLeftIcon, HeartIconSolid, TrashIcon } from '../components/common/Icons';
+import { useUI } from '../context/UIContext';
+import { ArrowLeftIcon, UserCircleIcon, PencilIcon, StarIcon, ChatBubbleOvalLeftIcon, HeartIconSolid, TrashIcon, Cog6ToothIcon, SunIcon, MoonIcon, ComputerDesktopIcon } from '../components/common/Icons';
 import Modal from '../components/common/Modal';
 import ImageUploader from '../components/common/ImageUploader';
-import type { AppUser } from '../types';
+import type { AppUser, Theme } from '../types';
 import ServiceCard from '../components/common/ServiceCard';
 
 const EditProfileForm: React.FC<{ user: AppUser; onSave: (data: Omit<AppUser, 'joinDate' | 'status'>) => void; onClose: () => void }> = ({ user, onSave, onClose }) => {
@@ -37,6 +38,35 @@ const EditProfileForm: React.FC<{ user: AppUser; onSave: (data: Omit<AppUser, 'j
         </form>
     );
 };
+
+const ThemeSelector: React.FC = () => {
+    const { theme, setTheme } = useUI();
+    
+    const options: { value: Theme, label: string, icon: React.ReactNode }[] = [
+        { value: 'light', label: 'فاتح', icon: <SunIcon className="w-5 h-5"/> },
+        { value: 'dark', label: 'داكن', icon: <MoonIcon className="w-5 h-5"/> },
+        { value: 'system', label: 'النظام', icon: <ComputerDesktopIcon className="w-5 h-5"/> },
+    ];
+
+    return (
+        <div className="bg-slate-100 dark:bg-slate-700/50 p-1 rounded-lg flex gap-1">
+            {options.map(option => (
+                <button
+                    key={option.value}
+                    onClick={() => setTheme(option.value)}
+                    className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold rounded-md transition-colors ${
+                        theme === option.value 
+                        ? 'bg-white dark:bg-slate-800 shadow text-cyan-500' 
+                        : 'text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-slate-800/50'
+                    }`}
+                >
+                    {option.icon}
+                    {option.label}
+                </button>
+            ))}
+        </div>
+    );
+}
 
 const ProfilePage: React.FC = () => {
     const navigate = useNavigate();
@@ -71,7 +101,6 @@ const ProfilePage: React.FC = () => {
         if (currentPublicUser) {
             requestAccountDeletion(currentPublicUser.id);
             setIsDeleteModalOpen(false);
-            // Logout and redirect after a short delay to allow the toast to be seen
             setTimeout(() => {
                 publicLogout();
                 navigate('/');
@@ -91,10 +120,35 @@ const ProfilePage: React.FC = () => {
                                 <p className="text-gray-500 dark:text-gray-400 mt-1">{currentPublicUser.email}</p>
                                 <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">عضو منذ: {new Date(currentPublicUser.joinDate).toLocaleDateString('ar-EG')}</p>
                             </div>
-                            <button onClick={() => setIsEditModalOpen(true)} className="flex items-center gap-2 bg-slate-100 dark:bg-slate-700 px-4 py-2 rounded-lg font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
-                                <PencilIcon className="w-5 h-5"/>
-                                تعديل الملف الشخصي
-                            </button>
+                        </div>
+
+                        <div className="mb-10">
+                            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-3">
+                                <Cog6ToothIcon className="w-7 h-7"/>
+                                الإعدادات
+                            </h2>
+                            <div className="space-y-6">
+                                <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
+                                    <h3 className="font-semibold mb-3">المظهر</h3>
+                                    <ThemeSelector />
+                                </div>
+                                <div className="p-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
+                                    <h3 className="font-semibold mb-3">الحساب</h3>
+                                    <div className="flex flex-col sm:flex-row gap-4">
+                                         <button onClick={() => setIsEditModalOpen(true)} className="flex-1 flex items-center justify-center gap-2 bg-slate-200 dark:bg-slate-700 px-4 py-2 rounded-lg font-semibold hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">
+                                            <PencilIcon className="w-5 h-5"/>
+                                            تعديل الملف الشخصي
+                                        </button>
+                                        <button 
+                                            onClick={() => setIsDeleteModalOpen(true)}
+                                            className="flex-1 flex items-center justify-center gap-2 bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 font-semibold px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900 transition-colors"
+                                        >
+                                            <TrashIcon className="w-5 h-5"/>
+                                            طلب حذف الحساب
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div className="mb-10">
@@ -116,7 +170,7 @@ const ProfilePage: React.FC = () => {
                             )}
                         </div>
 
-                        <div className="mb-10">
+                        <div>
                             <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center gap-3">
                                 <ChatBubbleOvalLeftIcon className="w-7 h-7"/>
                                 تقييماتي ({userReviews.length})
@@ -140,19 +194,6 @@ const ProfilePage: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="mt-10 pt-8 border-t border-red-500/30">
-                             <h2 className="text-xl font-bold text-red-600 dark:text-red-500 mb-4">حذف الحساب</h2>
-                             <p className="text-gray-600 dark:text-gray-400 mb-4">
-                                 عند طلب حذف حسابك، سيتم إرسال طلب إلى الإدارة لمراجعته. بمجرد الموافقة، سيتم حذف جميع بياناتك نهائياً. هذا الإجراء لا يمكن التراجع عنه.
-                             </p>
-                             <button 
-                                 onClick={() => setIsDeleteModalOpen(true)}
-                                 className="flex items-center gap-2 bg-red-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-                             >
-                                 <TrashIcon className="w-5 h-5"/>
-                                 طلب حذف الحساب
-                             </button>
-                        </div>
                     </div>
                 </div>
             </div>

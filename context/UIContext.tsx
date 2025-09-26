@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
-import type { ToastMessage, UIContextType } from '../types';
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useMemo } from 'react';
+import type { ToastMessage, UIContextType, Theme } from '../types';
 
 const UIContext = createContext<UIContextType | undefined>(undefined);
 
@@ -14,19 +14,36 @@ export const useUI = (): UIContextType => {
 export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [toasts, setToasts] = useState<ToastMessage[]>([]);
     
-    const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    const [theme, setThemeState] = useState<Theme>(() => {
         const storedTheme = localStorage.getItem('theme');
-        return storedTheme ? storedTheme === 'dark' : true; // Default to dark
+        if (storedTheme === 'light' || storedTheme === 'dark' || storedTheme === 'system') {
+            return storedTheme;
+        }
+        return 'system'; // Default to system preference
     });
+    
+    const [isSystemDark, setIsSystemDark] = useState(() => window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const handleChange = (e: MediaQueryListEvent) => setIsSystemDark(e.matches);
+        mediaQuery.addEventListener('change', handleChange);
+        return () => mediaQuery.removeEventListener('change', handleChange);
+    }, []);
+
+    const isDarkMode = useMemo(() => {
+        if (theme === 'system') return isSystemDark;
+        return theme === 'dark';
+    }, [theme, isSystemDark]);
 
     useEffect(() => {
         const root = window.document.documentElement;
         root.classList.toggle('dark', isDarkMode);
-        localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
     }, [isDarkMode]);
 
-    const toggleDarkMode = useCallback(() => {
-        setIsDarkMode(prev => !prev);
+    const setTheme = useCallback((newTheme: Theme) => {
+        localStorage.setItem('theme', newTheme);
+        setThemeState(newTheme);
     }, []);
 
     const showToast = useCallback((message: string, type: 'success' | 'error' = 'success') => {
@@ -39,8 +56,9 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }, []);
 
     const value: UIContextType = {
+        theme,
+        setTheme,
         isDarkMode,
-        toggleDarkMode,
         toasts,
         showToast,
         dismissToast,

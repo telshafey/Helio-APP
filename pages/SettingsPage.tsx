@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeftIcon, BellIcon, UserCircleIcon, SunIcon, Cog6ToothIcon } from '../components/common/Icons';
+import { ArrowLeftIcon, BellIcon, UserCircleIcon, SunIcon, Cog6ToothIcon, MoonIcon, ComputerDesktopIcon } from '../components/common/Icons';
 import { useUI } from '../context/UIContext';
+import type { Theme } from '../types';
 
 type Tab = 'general' | 'notifications' | 'account' | 'appearance';
 
@@ -135,13 +136,34 @@ const AccountSettings = () => (
 );
 
 const AppearanceSettings = () => {
-     const { isDarkMode, toggleDarkMode } = useUI();
+    const { theme, setTheme } = useUI();
+
+    const options: { value: Theme; label: string; icon: React.ReactNode }[] = [
+        { value: 'light', label: 'فاتح', icon: <SunIcon className="w-5 h-5"/> },
+        { value: 'dark', label: 'داكن', icon: <MoonIcon className="w-5 h-5"/> },
+        { value: 'system', label: 'النظام', icon: <ComputerDesktopIcon className="w-5 h-5"/> },
+    ];
 
     return (
         <div>
             <h2 className="text-2xl font-bold mb-6">المظهر</h2>
-            <FormRow label="الوضع الداكن">
-                <ToggleSwitch enabled={isDarkMode} setEnabled={() => toggleDarkMode()} />
+            <FormRow label="وضع المظهر" description="اختر المظهر المفضل لواجهة التحكم.">
+                 <div className="bg-slate-100 dark:bg-slate-700/50 p-1 rounded-lg flex gap-1 max-w-xs">
+                    {options.map(option => (
+                        <button
+                            key={option.value}
+                            onClick={() => setTheme(option.value)}
+                            className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold rounded-md transition-colors ${
+                                theme === option.value 
+                                ? 'bg-white dark:bg-slate-800 shadow text-cyan-500' 
+                                : 'text-gray-600 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-slate-800/50'
+                            }`}
+                        >
+                            {option.icon}
+                            {option.label}
+                        </button>
+                    ))}
+                </div>
             </FormRow>
         </div>
     );

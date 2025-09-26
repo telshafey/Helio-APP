@@ -10,9 +10,8 @@ import BottomNav from './components/common/BottomNav';
 import SideDrawer from './components/common/SideDrawer';
 import PublicHeader from './components/common/PublicHeader';
 import PublicFooter from './components/common/PublicFooter';
-// New Chat Components
-import ChatFab from './components/common/ChatFab';
-import ChatModal from './components/common/ChatModal';
+// New WhatsApp Component
+import WhatsAppFab from './components/common/WhatsAppFab';
 
 
 // Lazy-loaded page components
@@ -109,8 +108,7 @@ const App: React.FC = () => {
         </div>
       </div>
       <ToastContainer />
-      <ChatFab />
-      <ChatModal />
+      <WhatsAppFab />
     </>
   );
 };

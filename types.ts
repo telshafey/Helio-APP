@@ -361,18 +361,13 @@ export interface JobPosting {
   rejectionReason?: string;
 }
 
-// Chat Assistant Types
-export interface ChatMessage {
-  id: number;
-  role: 'user' | 'model';
-  content: string;
-}
-
-
 // --- CONTEXT TYPES ---
+export type Theme = 'light' | 'dark' | 'system';
+
 export interface UIContextType {
-  isDarkMode: boolean;
-  toggleDarkMode: () => void;
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+  isDarkMode: boolean; // Derived from theme and system preference
   toasts: ToastMessage[];
   showToast: (message: string, type?: 'success' | 'error') => void;
   dismissToast: (id: number) => void;
@@ -398,14 +393,6 @@ export interface AuthContextType {
   updateProfile: (user: Omit<AppUser, 'joinDate' | 'status' | 'password'>) => void;
 }
 
-export interface ChatContextType {
-  isChatOpen: boolean;
-  toggleChat: () => void;
-  messages: ChatMessage[];
-  sendMessage: (message: string) => void;
-  isLoading: boolean;
-}
-
 export interface CommunityContextType {
   posts: Post[];
   addPost: (postData: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments' | 'isPinned'>) => void;
@@ -416,26 +403,6 @@ export interface CommunityContextType {
   deleteComment: (postId: number, commentId: number) => void;
   togglePinPost: (postId: number) => void;
   editPost: (postId: number, data: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments' | 'isPinned'>) => void;
-}
-
-// FIX: Add missing context type definitions for Services and Properties contexts.
-export interface ServicesContextType {
-  categories: Category[];
-  services: Service[];
-  handleSaveService: (serviceData: Omit<Service, 'id' | 'rating' | 'reviews' | 'isFavorite' | 'views' | 'creationDate'> & { id?: number }) => void;
-  handleDeleteService: (serviceId: number) => void;
-  handleToggleFavorite: (serviceId: number) => void;
-  handleToggleHelpfulReview: (serviceId: number, reviewId: number) => void;
-  addReview: (serviceId: number, reviewData: Omit<Review, 'id' | 'date' | 'adminReply' | 'username' | 'avatar' | 'userId'>) => void;
-  handleUpdateReview: (serviceId: number, reviewId: number, comment: string) => void;
-  handleDeleteReview: (serviceId: number, reviewId: number) => void;
-  handleReplyToReview: (serviceId: number, reviewId: number, reply: string) => void;
-}
-
-export interface PropertiesContextType {
-  properties: Property[];
-  handleSaveProperty: (property: Omit<Property, 'id' | 'views' | 'creationDate'> & { id?: number }) => void;
-  handleDeleteProperty: (propertyId: number) => void;
 }
 
 // FIX: Added all missing state and handler methods to the context type.

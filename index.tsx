@@ -5,7 +5,6 @@ import App from './App';
 import { DataProvider } from './context/DataContext';
 import { UIProvider } from './context/UIContext';
 import { AuthProvider } from './context/AuthContext';
-import { ChatProvider } from './context/ChatContext';
 import { CommunityProvider } from './context/AppContext';
 
 const rootElement = document.getElementById('root');
@@ -19,13 +18,11 @@ root.render(
     <HashRouter>
       <UIProvider>
         <AuthProvider>
-          <ChatProvider>
-            <DataProvider>
-              <CommunityProvider>
-                <App />
-              </CommunityProvider>
-            </DataProvider>
-          </ChatProvider>
+          <DataProvider>
+            <CommunityProvider>
+              <App />
+            </CommunityProvider>
+          </DataProvider>
         </AuthProvider>
       </UIProvider>
     </HashRouter>
