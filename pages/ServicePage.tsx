@@ -2,11 +2,12 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeftIcon, PlusIcon, StarIcon, StarIconOutline, EyeIcon, PencilSquareIcon, TrashIcon, WrenchScrewdriverIcon } from '../components/common/Icons';
 import type { Service } from '../types';
-import { useServices } from '../context/ServicesContext';
+import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import Modal from '../components/common/Modal';
 import ImageUploader from '../components/common/ImageUploader';
 import EmptyState from '../components/common/EmptyState';
+import { InputField, TextareaField, MultiInputField } from '../components/common/FormControls';
 
 const Rating: React.FC<{ rating: number }> = ({ rating }) => (
     <div className="flex items-center">
@@ -18,49 +19,6 @@ const Rating: React.FC<{ rating: number }> = ({ rating }) => (
         ))}
     </div>
 );
-
-const MultiInputField: React.FC<{
-    label: string;
-    values: string[];
-    onChange: (values: string[]) => void;
-    placeholder: string;
-}> = ({ label, values, onChange, placeholder }) => {
-    const handleValueChange = (index: number, value: string) => {
-        const newValues = [...values];
-        newValues[index] = value;
-        onChange(newValues);
-    };
-    const addValue = () => onChange([...values, '']);
-    const removeValue = (index: number) => onChange(values.filter((_, i) => i !== index));
-
-    return (
-        <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</label>
-            <div className="space-y-2">
-                {values.map((value, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                        <input
-                            type="text"
-                            value={value}
-                            onChange={(e) => handleValueChange(index, e.target.value)}
-                            placeholder={placeholder}
-                            className="w-full bg-slate-100 dark:bg-slate-700 rounded-md p-2 focus:ring-2 focus:ring-cyan-500"
-                        />
-                        {values.length > 1 && (
-                            <button type="button" onClick={() => removeValue(index)} className="p-2 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 rounded-full">
-                                <TrashIcon className="w-4 h-4" />
-                            </button>
-                        )}
-                    </div>
-                ))}
-                <button type="button" onClick={addValue} className="flex items-center gap-1 text-sm text-cyan-600 font-semibold hover:underline">
-                    <PlusIcon className="w-4 h-4" />
-                    إضافة رقم آخر
-                </button>
-            </div>
-        </div>
-    );
-};
 
 const ServiceForm: React.FC<{
     onSave: (service: Omit<Service, 'id' | 'rating' | 'reviews' | 'isFavorite' | 'views' | 'creationDate'> & { id?: number }) => void;
@@ -146,25 +104,12 @@ const ServiceForm: React.FC<{
     );
 };
 
-const InputField: React.FC<{ name: string; label: string; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; required?: boolean; placeholder?: string; }> = ({ name, label, value, onChange, required, placeholder }) => (
-    <div>
-        <label htmlFor={name} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</label>
-        <input type="text" id={name} name={name} value={value} onChange={onChange} required={required} placeholder={placeholder} className="w-full bg-slate-100 dark:bg-slate-700 rounded-md p-2 focus:ring-2 focus:ring-cyan-500" />
-    </div>
-);
-const TextareaField: React.FC<{ name: string; label: string; value: string; onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void; required?: boolean; rows?: number; placeholder?: string; }> = ({ name, label, value, onChange, required, rows = 3, placeholder }) => (
-    <div>
-        <label htmlFor={name} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</label>
-        <textarea id={name} name={name} value={value} onChange={onChange} required={required} rows={rows} placeholder={placeholder} className="w-full bg-slate-100 dark:bg-slate-700 rounded-md p-2 focus:ring-2 focus:ring-cyan-500"></textarea>
-    </div>
-);
-
 const ServicePage: React.FC = () => {
     const navigate = useNavigate();
     const { subCategoryId: subCategoryIdStr } = useParams<{ subCategoryId: string }>();
     const subCategoryId = Number(subCategoryIdStr);
     
-    const { services, categories, handleSaveService, handleDeleteService, handleToggleFavorite } = useServices();
+    const { services, categories, handleSaveService, handleDeleteService, handleToggleFavorite } = useData();
     const { hasPermission } = useAuth();
     const canManage = hasPermission(['مسؤول ادارة الخدمات']);
 

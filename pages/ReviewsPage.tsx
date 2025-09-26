@@ -6,7 +6,7 @@ import {
     CheckCircleIcon, XCircleIcon
 } from '../components/common/Icons';
 import type { Review } from '../types';
-import { useServices } from '../context/ServicesContext';
+import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import Modal from '../components/common/Modal';
 import KpiCard from '../components/common/KpiCard';
@@ -122,7 +122,7 @@ const AnalysisModal: React.FC<{
 // Main Page Component
 const ReviewsPage: React.FC = () => {
     const navigate = useNavigate();
-    const { services, handleUpdateReview, handleDeleteReview, handleReplyToReview } = useServices();
+    const { services, handleUpdateReview, handleDeleteReview, handleReplyToReview } = useData();
     const { hasPermission } = useAuth();
     const canManage = hasPermission(['مسؤول ادارة الخدمات']);
     const [searchTerm, setSearchTerm] = useState('');

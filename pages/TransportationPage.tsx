@@ -7,14 +7,7 @@ import type { Driver, ExternalRoute, Supervisor, WeeklyScheduleItem } from '../t
 import { ArrowLeftIcon, PlusIcon, PencilSquareIcon, TrashIcon, BusIcon, UserCircleIcon, MapIcon, CalendarDaysIcon } from '../components/common/Icons';
 import Modal from '../components/common/Modal';
 import ImageUploader from '../components/common/ImageUploader';
-
-// Component for a single input field
-const InputField: React.FC<{ label: string; value: string; onChange: (val: string) => void; required?: boolean }> = ({ label, value, onChange, required }) => (
-    <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</label>
-        <input type="text" value={value} onChange={e => onChange(e.target.value)} required={required} className="w-full bg-slate-100 dark:bg-slate-700 rounded-md p-2 focus:ring-2 focus:ring-cyan-500" />
-    </div>
-);
+import { InputField } from '../components/common/FormControls';
 
 // Form for editing a supervisor
 const SupervisorForm: React.FC<{ supervisor: Supervisor; onSave: (supervisor: Supervisor) => void; onClose: () => void }> = ({ supervisor, onSave, onClose }) => {
@@ -28,8 +21,8 @@ const SupervisorForm: React.FC<{ supervisor: Supervisor; onSave: (supervisor: Su
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
-            <InputField label="الاسم" value={name} onChange={setName} required />
-            <InputField label="رقم الهاتف" value={phone} onChange={setPhone} required />
+            <InputField name="name" label="الاسم" value={name} onChange={e => setName(e.target.value)} required />
+            <InputField name="phone" label="رقم الهاتف" value={phone} onChange={e => setPhone(e.target.value)} required />
             <div className="flex justify-end gap-3 pt-4">
                 <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-semibold bg-slate-100 dark:bg-slate-600 rounded-md">إلغاء</button>
                 <button type="submit" className="px-4 py-2 text-sm font-semibold text-white bg-cyan-500 rounded-md">حفظ</button>
@@ -51,8 +44,8 @@ const DriverForm: React.FC<{ driver: Driver | null; onSave: (driver: Omit<Driver
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
-            <InputField label="الاسم" value={name} onChange={setName} required />
-            <InputField label="رقم الهاتف" value={phone} onChange={setPhone} required />
+            <InputField name="name" label="الاسم" value={name} onChange={e => setName(e.target.value)} required />
+            <InputField name="phone" label="رقم الهاتف" value={phone} onChange={e => setPhone(e.target.value)} required />
             <ImageUploader initialImages={avatar} onImagesChange={setAvatar} multiple={false} label="صورة السائق" />
             <div className="flex justify-end gap-3 pt-4">
                 <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-semibold bg-slate-100 dark:bg-slate-600 rounded-md">إلغاء</button>
@@ -75,9 +68,9 @@ const RouteForm: React.FC<{ route: ExternalRoute | null; onSave: (route: Omit<Ex
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
-            <InputField label="اسم المسار" value={name} onChange={setName} required />
-            <InputField label="نقطة الانتظار" value={waitingPoint} onChange={setWaitingPoint} required />
-            <InputField label="المواعيد (مفصولة بفاصلة)" value={timings} onChange={setTimings} required />
+            <InputField name="name" label="اسم المسار" value={name} onChange={e => setName(e.target.value)} required />
+            <InputField name="waitingPoint" label="نقطة الانتظار" value={waitingPoint} onChange={e => setWaitingPoint(e.target.value)} required />
+            <InputField name="timings" label="المواعيد (مفصولة بفاصلة)" value={timings} onChange={e => setTimings(e.target.value)} required />
             <div className="flex justify-end gap-3 pt-4">
                 <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-semibold bg-slate-100 dark:bg-slate-600 rounded-md">إلغاء</button>
                 <button type="submit" className="px-4 py-2 text-sm font-semibold text-white bg-cyan-500 rounded-md">حفظ</button>

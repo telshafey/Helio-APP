@@ -8,8 +8,6 @@ import {
     WrenchScrewdriverIcon
 } from '../components/common/Icons';
 import { useData } from '../context/DataContext';
-import { useServices } from '../context/ServicesContext';
-import { useProperties } from '../context/PropertiesContext';
 import ServiceCard from '../components/common/ServiceCard';
 import AdSlider from '../components/common/AdSlider';
 import NewsCard from '../components/common/NewsCard';
@@ -25,9 +23,7 @@ const QuickAccessCard: React.FC<{ icon: React.ReactNode; title: string; to: stri
 );
 
 const PublicHomePage: React.FC = () => {
-    const { publicPagesContent, advertisements, news } = useData();
-    const { services, categories } = useServices();
-    const { properties } = useProperties();
+    const { publicPagesContent, advertisements, news, services, categories, properties } = useData();
     const content = publicPagesContent.home;
 
     const sliderAds = React.useMemo(() => {

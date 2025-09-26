@@ -1,5 +1,5 @@
 // FIX: Added AdminUser and AuditLog to imports
-import type { Category, Service, Review, News, Notification, Property, EmergencyContact, ServiceGuide, AppUser, Supervisor, Driver, WeeklyScheduleItem, ExternalRoute, PublicPagesContent, Post, Advertisement, AboutCityPageContent, AdminUser, AuditLog } from '../types';
+import type { Category, Service, Review, News, Notification, Property, EmergencyContact, ServiceGuide, AppUser, Supervisor, Driver, WeeklyScheduleItem, ExternalRoute, PublicPagesContent, Post, Advertisement, AboutCityPageContent, AdminUser, AuditLog, MarketplaceItem, JobPosting } from '../types';
 
 export const mockReviews: Review[] = [
     { id: 1, userId: 1, username: 'أحمد محمود', avatar: 'https://picsum.photos/101', rating: 5, comment: 'خدمة ممتازة وتجربة رائعة! أنصح به بشدة.', date: '2024-07-10', adminReply: 'شكراً لتقييمك! نسعد بخدمتك دائماً.', helpfulCount: 12 },
@@ -466,12 +466,13 @@ export const mockPosts: Post[] = [
     userId: 5,
     username: 'محمد حسين',
     avatar: 'https://picsum.photos/200/200?random=5',
-    content: 'يوجد دراجة هوائية للبيع بحالة ممتازة، مناسبة للأطفال من سن 8-12 سنة. السعر 500 جنيه. للتواصل على الخاص.',
-    category: 'للبيع',
+    title: 'أنشطة للأطفال',
+    content: 'ما هي أفضل الأنشطة للأطفال في سن 8-12 سنة في المدينة؟ ابني يشعر بالملل وأبحث عن اقتراحات.',
+    category: 'سؤال',
     date: '2024-07-26',
     likes: [2],
     comments: [
-       { id: 103, userId: 1, username: 'أحمد محمود', avatar: 'https://picsum.photos/101', content: 'ممكن صور إضافية؟', date: '2024-07-26' },
+       { id: 103, userId: 1, username: 'أحمد محمود', avatar: 'https://picsum.photos/101', content: 'جرب النادي الاجتماعي الجديد، به أنشطة رياضية ممتازة.', date: '2024-07-26' },
     ]
   },
   {
@@ -494,6 +495,87 @@ export const mockPosts: Post[] = [
   }
 ];
 
+export const mockMarketplaceItems: MarketplaceItem[] = [
+    {
+        id: 1,
+        userId: 1,
+        username: 'أحمد محمود',
+        avatar: 'https://picsum.photos/101',
+        title: 'لابتوب مستعمل بحالة ممتازة',
+        description: 'لابتوب Dell Inspiron 15, Core i5, 8GB RAM, 256GB SSD. استخدام خفيف لمدة سنة. لا يوجد به أي خدوش.',
+        images: ['https://picsum.photos/800/600?random=201', 'https://picsum.photos/800/600?random=202'],
+        price: 8500,
+        category: 'إلكترونيات',
+        contactPhone: '01001234567',
+        status: 'approved',
+        creationDate: '2024-07-28',
+        expirationDate: '2024-08-28',
+    },
+    {
+        id: 2,
+        userId: 2,
+        username: 'فاطمة الزهراء',
+        avatar: 'https://picsum.photos/102',
+        title: 'أثاث غرفة معيشة للبيع',
+        description: 'كنبة ٣ مقاعد وكرسيين. بحالة جيدة جداً. اللون بيج.',
+        images: ['https://picsum.photos/800/600?random=203'],
+        price: 5000,
+        category: 'أثاث',
+        contactPhone: '01119876543',
+        status: 'pending',
+        creationDate: '2024-07-29',
+        expirationDate: '2024-08-29',
+    },
+    {
+        id: 3,
+        userId: 5,
+        username: 'محمد حسين',
+        avatar: 'https://picsum.photos/200/200?random=5',
+        title: 'سيارة للبيع',
+        description: 'هيونداي النترا 2018. عداد 80 ألف كيلو. فابريكة بالكامل.',
+        images: ['https://picsum.photos/800/600?random=204'],
+        price: 350000,
+        category: 'سيارات',
+        contactPhone: '01223344556',
+        status: 'rejected',
+        rejectionReason: 'الصور غير واضحة',
+        creationDate: '2024-07-25',
+        expirationDate: '2024-08-25',
+    },
+];
+
+export const mockJobPostings: JobPosting[] = [
+    {
+        id: 1,
+        userId: 3,
+        username: 'خالد العتيبي',
+        avatar: 'https://picsum.photos/103',
+        title: 'مطلوب محاسب',
+        companyName: 'شركة النور للتجارة',
+        description: 'مطلوب محاسب خبرة من 2-4 سنوات. يجيد التعامل مع برامج المحاسبة. مقر الشركة في هليوبوليس الجديدة.',
+        location: 'هليوبوليس الجديدة',
+        type: 'دوام كامل',
+        contactInfo: 'hr@elnour.com',
+        status: 'approved',
+        creationDate: '2024-07-27',
+        expirationDate: '2024-08-27',
+    },
+    {
+        id: 2,
+        userId: 4,
+        username: 'سارة عبدالله',
+        avatar: 'https://picsum.photos/106',
+        title: 'مدرس لغة إنجليزية',
+        companyName: 'مركز تعليمي',
+        description: 'مطلوب مدرس لغة إنجليزية للمرحلة الإعدادية. العمل بدوام جزئي مسائي.',
+        location: 'هليوبوليس الجديدة',
+        type: 'دوام جزئي',
+        contactInfo: '01001122334',
+        status: 'pending',
+        creationDate: '2024-07-29',
+        expirationDate: '2024-08-29',
+    },
+];
 
 // Transportation Data
 export const mockInternalSupervisor: Supervisor = { name: 'أ. محمد عبدالسلام', phone: '012-3456-7890' };

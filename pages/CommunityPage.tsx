@@ -1,9 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import type { Post, PostCategory } from '../types';
-// FIX: Imported TrashIcon to resolve missing component error.
 import { PlusIcon, ChatBubbleOvalLeftEllipsisIcon, HandThumbUpIcon, UserCircleIcon, PinIcon, TagIcon, UsersIcon, TrashIcon } from '../components/common/Icons';
 import Modal from '../components/common/Modal';
 import EmptyState from '../components/common/EmptyState';
@@ -105,7 +104,20 @@ const PostCard: React.FC<{ post: Post }> = ({ post }) => {
                 <img src={post.avatar} alt={post.username} className="w-12 h-12 rounded-full object-cover" />
                 <div>
                     <p className="font-bold text-gray-800 dark:text-white">{post.username}</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{new Date(post.date).toLocaleDateString('ar-EG-u-nu-latn')} • <span className="font-semibold text-cyan-500">{post.category}</span></p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center flex-wrap">
+                        <span>{new Date(post.date).toLocaleDateString('ar-EG-u-nu-latn')}</span>
+                        <span className="mx-1.5">•</span>
+                        <span className="font-semibold text-cyan-500">{post.category}</span>
+                        {post.targetAudience && (
+                            <>
+                                <span className="mx-1.5">•</span>
+                                <span className="font-semibold text-purple-500 flex items-center gap-1">
+                                    <UsersIcon className="w-4 h-4" />
+                                    {post.targetAudience}
+                                </span>
+                            </>
+                        )}
+                    </p>
                 </div>
             </div>
             {post.title && <h3 className="text-lg font-bold mb-2">{post.title}</h3>}
@@ -135,6 +147,13 @@ const NewPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [pollOptions, setPollOptions] = useState(['', '']);
+    const [targetAudience, setTargetAudience] = useState('');
+
+    useEffect(() => {
+        if (category !== 'نقاش خاص') {
+            setTargetAudience('');
+        }
+    }, [category]);
 
     const handlePollOptionChange = (index: number, value: string) => {
         const newOptions = [...pollOptions];
@@ -147,7 +166,7 @@ const NewPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!content.trim()) return;
+        if (!content.trim() && category !== 'استطلاع رأي' && category !== 'نقاش خاص') return;
         
         let postData: any = { category, title: title.trim() || undefined, content };
         
@@ -160,11 +179,19 @@ const NewPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             postData.pollOptions = validOptions;
         }
 
+        if (category === 'نقاش خاص') {
+            if (!targetAudience.trim()) {
+                alert('يرجى تحديد الحي أو الكومبوند المستهدف للنقاش الخاص.');
+                return;
+            }
+            postData.targetAudience = targetAudience.trim();
+        }
+
         addPost(postData);
         onClose();
     };
 
-    const postCategories: PostCategory[] = ['نقاش عام', 'سؤال', 'للبيع', 'حدث', 'استطلاع رأي'];
+    const postCategories: PostCategory[] = ['نقاش عام', 'نقاش خاص', 'سؤال', 'حدث', 'استطلاع رأي'];
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -182,6 +209,20 @@ const NewPostForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <label className="block text-sm font-medium mb-1">المحتوى</label>
                 <textarea value={content} onChange={e => setContent(e.target.value)} required rows={4} placeholder="اكتب ما يدور في ذهنك..." className="w-full bg-slate-100 dark:bg-slate-700 rounded-md p-2"></textarea>
             </div>
+            
+            {category === 'نقاش خاص' && (
+                <div className="pt-2">
+                    <label className="block text-sm font-medium mb-1">الجمهور المستهدف</label>
+                    <input 
+                        type="text" 
+                        value={targetAudience} 
+                        onChange={e => setTargetAudience(e.target.value)} 
+                        placeholder="مثال: سكان الحي الأول، ملاك كمبوند لايف بارك" 
+                        required 
+                        className="w-full bg-slate-100 dark:bg-slate-700 rounded-md p-2" 
+                    />
+                </div>
+            )}
             
             {category === 'استطلاع رأي' && (
                 <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-700">
@@ -213,7 +254,7 @@ const CommunityPage: React.FC = () => {
     const [sortOrder, setSortOrder] = useState<'latest' | 'popular'>('latest');
     const [filter, setFilter] = useState<PostCategory | 'all'>('all');
 
-    const postCategories: PostCategory[] = ['نقاش عام', 'سؤال', 'للبيع', 'حدث', 'استطلاع رأي'];
+    const postCategories: PostCategory[] = ['نقاش عام', 'نقاش خاص', 'سؤال', 'حدث', 'استطلاع رأي'];
 
     const sortedAndFilteredPosts = useMemo(() => {
         let processedPosts = [...posts];

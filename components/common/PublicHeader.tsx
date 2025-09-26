@@ -29,6 +29,8 @@ const PublicHeader: React.FC = () => {
                             <NavLink to="/" end className={navLinkClasses}>الرئيسية</NavLink>
                             <NavLink to="/services" className={navLinkClasses}>الخدمات</NavLink>
                             <NavLink to="/properties" className={navLinkClasses}>العقارات</NavLink>
+                            <NavLink to="/marketplace" className={navLinkClasses}>البيع والشراء</NavLink>
+                            <NavLink to="/jobs" className={navLinkClasses}>الوظائف</NavLink>
                             <NavLink to="/news" className={navLinkClasses}>الأخبار</NavLink>
                             <NavLink to="/community" className={navLinkClasses}>المجتمع</NavLink>
                             <NavLink to="/transportation" className={navLinkClasses}>المواصلات</NavLink>

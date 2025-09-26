@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useServices } from '../context/ServicesContext';
+// FIX: Replaced useServices with useData to fetch categories from the correct DataContext.
+import { useData } from '../context/DataContext';
 import { 
     Squares2X2Icon,
     ChevronDownIcon,
@@ -9,7 +10,7 @@ import { getIcon } from '../components/common/iconUtils';
 import PageBanner from '../components/common/PageBanner';
 
 const PublicServicesPage: React.FC = () => {
-    const { categories } = useServices();
+    const { categories } = useData();
     const serviceCategories = categories.filter(c => c.name !== "المدينة والجهاز");
     const [openCategoryId, setOpenCategoryId] = useState<number | null>(serviceCategories.length > 0 ? serviceCategories[0].id : null);
 

@@ -5,7 +5,8 @@ import Logo from './Logo';
 import { 
     XMarkIcon, TruckIcon, ShieldExclamationIcon, BuildingLibraryIcon,
     DocumentDuplicateIcon, QuestionMarkCircleIcon, BookOpenIcon, ArrowLeftOnRectangleIcon, InformationCircleIcon,
-    HeartIcon, ChatBubbleOvalLeftEllipsisIcon, NewspaperIcon, PhoneIcon
+    HeartIcon, ChatBubbleOvalLeftEllipsisIcon, NewspaperIcon, PhoneIcon,
+    ShoppingBagIcon, BriefcaseIcon
 } from './Icons';
 
 interface SideDrawerProps {
@@ -75,6 +76,8 @@ const SideDrawer: React.FC<SideDrawerProps> = ({ isOpen, onClose }) => {
                         
                         <NavLink to="/news" onClick={onClose} className={navLinkClasses}><NewspaperIcon className="w-6 h-6 text-indigo-500"/><span>الأخبار</span></NavLink>
                         <NavLink to="/community" onClick={onClose} className={navLinkClasses}><ChatBubbleOvalLeftEllipsisIcon className="w-6 h-6 text-teal-500"/><span>المجتمع</span></NavLink>
+                        <NavLink to="/marketplace" onClick={onClose} className={navLinkClasses}><ShoppingBagIcon className="w-6 h-6 text-amber-500"/><span>البيع والشراء</span></NavLink>
+                        <NavLink to="/jobs" onClick={onClose} className={navLinkClasses}><BriefcaseIcon className="w-6 h-6 text-lime-500"/><span>الوظائف</span></NavLink>
                         
                         <hr className="border-slate-200 dark:border-slate-700 my-3" />
                         

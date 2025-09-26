@@ -10,6 +10,9 @@ import BottomNav from './components/common/BottomNav';
 import SideDrawer from './components/common/SideDrawer';
 import PublicHeader from './components/common/PublicHeader';
 import PublicFooter from './components/common/PublicFooter';
+// New Chat Components
+import ChatFab from './components/common/ChatFab';
+import ChatModal from './components/common/ChatModal';
 
 
 // Lazy-loaded page components
@@ -41,6 +44,12 @@ const FavoritesPage = lazy(() => import('./pages/FavoritesPage'));
 const UserNotificationsPage = lazy(() => import('./pages/UserNotificationsPage'));
 const PublicTransportationPage = lazy(() => import('./pages/PublicTransportationPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
+
+// New Marketplace and Jobs Pages
+const PublicMarketplacePage = lazy(() => import('./pages/PublicMarketplacePage'));
+const PublicJobsPage = lazy(() => import('./pages/PublicJobsPage'));
+const MarketplaceManagementPage = lazy(() => import('./pages/MarketplaceManagementPage'));
+const JobsManagementPage = lazy(() => import('./pages/JobsManagementPage'));
 
 
 const App: React.FC = () => {
@@ -81,6 +90,13 @@ const App: React.FC = () => {
               <Route path="/city-services-guide" element={<PublicCityServicesGuidePage />} />
               <Route path="/community" element={<CommunityPage />} />
               <Route path="/post/:postId" element={<PostDetailPage />} />
+              
+              {/* New Marketplace and Jobs Routes */}
+              <Route path="/marketplace" element={<PublicMarketplacePage />} />
+              <Route path="/jobs" element={<PublicJobsPage />} />
+              <Route path="/marketplace-management" element={<MarketplaceManagementPage />} />
+              <Route path="/jobs-management" element={<JobsManagementPage />} />
+
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </Suspense>
@@ -93,6 +109,8 @@ const App: React.FC = () => {
         </div>
       </div>
       <ToastContainer />
+      <ChatFab />
+      <ChatModal />
     </>
   );
 };

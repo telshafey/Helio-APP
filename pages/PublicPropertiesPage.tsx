@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useProperties } from '../context/PropertiesContext';
+import { useData } from '../context/DataContext';
 import { MagnifyingGlassIcon, HomeModernIcon, ArrowLeftIcon } from '../components/common/Icons';
 import PropertyCard from '../components/common/PropertyCard';
 import EmptyState from '../components/common/EmptyState';
@@ -8,7 +8,7 @@ import PageBanner from '../components/common/PageBanner';
 
 const PublicPropertiesPage: React.FC = () => {
     const navigate = useNavigate();
-    const { properties } = useProperties();
+    const { properties } = useData();
 
     const [searchTerm, setSearchTerm] = useState('');
     const [typeFilter, setTypeFilter] = useState<'all' | 'sale' | 'rent'>('all');

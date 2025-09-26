@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../../context/DataContext';
-import { useServices } from '../../context/ServicesContext';
-import { useProperties } from '../../context/PropertiesContext';
 import type { SearchResult } from '../../types';
 import { MagnifyingGlassIcon, XMarkIcon, WrenchScrewdriverIcon, HomeModernIcon, NewspaperIcon, UserGroupIcon } from './Icons';
 
@@ -12,9 +10,7 @@ interface GlobalSearchModalProps {
 }
 
 const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, onClose }) => {
-    const { services } = useServices();
-    const { properties } = useProperties();
-    const { news, users } = useData();
+    const { services, properties, news, users } = useData();
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
 

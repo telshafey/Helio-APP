@@ -5,9 +5,8 @@ import App from './App';
 import { DataProvider } from './context/DataContext';
 import { UIProvider } from './context/UIContext';
 import { AuthProvider } from './context/AuthContext';
+import { ChatProvider } from './context/ChatContext';
 import { CommunityProvider } from './context/AppContext';
-import { ServicesProvider } from './context/ServicesContext';
-import { PropertiesProvider } from './context/PropertiesContext';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -20,15 +19,13 @@ root.render(
     <HashRouter>
       <UIProvider>
         <AuthProvider>
-          <DataProvider>
-            <CommunityProvider>
-              <ServicesProvider>
-                <PropertiesProvider>
-                  <App />
-                </PropertiesProvider>
-              </ServicesProvider>
-            </CommunityProvider>
-          </DataProvider>
+          <ChatProvider>
+            <DataProvider>
+              <CommunityProvider>
+                <App />
+              </CommunityProvider>
+            </DataProvider>
+          </ChatProvider>
         </AuthProvider>
       </UIProvider>
     </HashRouter>

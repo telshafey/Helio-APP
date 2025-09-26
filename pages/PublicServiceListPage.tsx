@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useServices } from '../context/ServicesContext';
+import { useData } from '../context/DataContext';
 import ServiceCard from '../components/common/ServiceCard';
 import { ArrowLeftIcon } from '../components/common/Icons';
 import Spinner from '../components/common/Spinner';
@@ -12,7 +12,7 @@ const PublicServiceListPage: React.FC = () => {
     const { subCategoryId: subCategoryIdStr } = useParams<{ subCategoryId: string }>();
     const subCategoryId = Number(subCategoryIdStr);
 
-    const { services, categories } = useServices();
+    const { services, categories } = useData();
 
     const { categoryName, subCategoryName, filteredServices, categoryIcon } = useMemo(() => {
         let catName = '';

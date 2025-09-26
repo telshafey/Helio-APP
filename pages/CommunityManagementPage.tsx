@@ -96,7 +96,8 @@ const EditPostForm: React.FC<{
         onClose();
     };
 
-    const postCategories: PostCategory[] = ['نقاش عام', 'سؤال', 'للبيع', 'حدث', 'استطلاع رأي'];
+    // FIX: Replaced invalid category 'للبيع' with 'نقاش خاص' to match the PostCategory type.
+    const postCategories: PostCategory[] = ['نقاش عام', 'نقاش خاص', 'سؤال', 'حدث', 'استطلاع رأي'];
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">

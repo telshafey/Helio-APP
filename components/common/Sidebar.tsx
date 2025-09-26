@@ -10,9 +10,11 @@ import {
     ClipboardDocumentListIcon,
     PencilSquareIcon,
     ChatBubbleOvalLeftEllipsisIcon,
-    PhotoIcon
+    PhotoIcon,
+    ShoppingBagIcon,
+    BriefcaseIcon
 } from './Icons';
-import { useServices } from '../../context/ServicesContext';
+import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
 // FIX: Imported AdminUser type.
 import type { AdminUser } from '../../types';
@@ -46,7 +48,7 @@ const filterNavItemsBySearch = (items: NavItemData[], query: string): NavItemDat
 };
 
 const Sidebar: React.FC = () => {
-    const { categories } = useServices();
+    const { categories } = useData();
     // FIX: Replaced non-existent properties with correct ones from the updated AuthContext.
     const { logout, currentUser } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
@@ -89,20 +91,40 @@ const Sidebar: React.FC = () => {
 
         constructedNavItems.push(
             { name: "إدارة العقارات", icon: <HomeModernIcon className="w-6 h-6" />, to: "/properties", roles: ['مدير عام', 'مسؤول العقارات'] },
+            { name: "إدارة البيع والشراء", icon: <ShoppingBagIcon className="w-6 h-6" />, to: "/marketplace-management", roles: serviceManagerRoles },
+            { name: "إدارة الوظائف", icon: <BriefcaseIcon className="w-6 h-6" />, to: "/jobs-management", roles: newsManagerRoles },
             { name: "إدارة النقل", icon: <TruckIcon className="w-6 h-6" />, to: "/transportation", roles: ['مدير عام', 'مسؤول الباصات'] },
             { name: "إدارة الطوارئ", icon: <ShieldExclamationIcon className="w-6 h-6" />, to: "/emergency", roles: serviceManagerRoles },
-            { name: "أخبار المدينة", icon: <NewspaperIcon className="w-6 h-6" />, to: "/news", roles: newsManagerRoles },
-            { name: "إدارة الإعلانات", icon: <PhotoIcon className="w-6 h-6" />, to: "/advertisements", roles: newsManagerRoles },
-            { name: "إدارة الإشعارات", icon: <BellAlertIcon className="w-6 h-6" />, to: "/notifications", roles: newsManagerRoles },
-            { name: "المستخدمون", icon: <UserGroupIcon className="w-6 h-6" />, to: "/users", roles: ['مدير عام'] },
-            { name: "إدارة المحتوى", icon: <PencilSquareIcon className="w-6 h-6" />, to: "/content-management", roles: ['مدير عام'] },
-            { name: "إدارة التقييمات", icon: <ChatBubbleOvalLeftIcon className="w-6 h-6" />, to: "/reviews", roles: serviceManagerRoles },
-            { name: "إدارة المجتمع", icon: <ChatBubbleOvalLeftEllipsisIcon className="w-6 h-6" />, to: "/community-management", roles: ['مدير عام', 'مسؤول الاخبار والاعلانات والاشعارات', 'مسؤول ادارة الخدمات'] },
-            { name: "التقارير", icon: <DocumentChartBarIcon className="w-6 h-6" />, to: "/reports" },
-            { name: "سجل التدقيق", icon: <ClipboardDocumentListIcon className="w-6 h-6" />, to: "/audit-log", roles: ['مدير عام'] }
+            { name: "الأخبار", icon: <NewspaperIcon className="w-6 h-6" />, to: "/news", roles: newsManagerRoles },
+            { name: "الإعلانات", icon: <PhotoIcon className="w-6 h-6" />, to: "/advertisements", roles: newsManagerRoles },
+            { name: "الإشعارات", icon: <BellAlertIcon className="w-6 h-6" />, to: "/notifications", roles: newsManagerRoles },
+            { name: "إدارة المجتمع", icon: <ChatBubbleOvalLeftEllipsisIcon className="w-6 h-6" />, to: "/community-management", roles: ['مدير عام'] },
+            { name: "إدارة المستخدمين", icon: <UserGroupIcon className="w-6 h-6" />, to: "/users", roles: ['مدير عام'] },
+            { name: "إدارة المحتوى العام", icon: <PencilSquareIcon className="w-6 h-6" />, to: "/content-management", roles: ['مدير عام'] },
+            { name: "سجل التدقيق", icon: <ClipboardDocumentListIcon className="w-6 h-6" />, to: "/audit-log", roles: ['مدير عام'] },
+            { name: "التقارير", icon: <DocumentChartBarIcon className="w-6 h-6" />, to: "/reports", roles: ['مدير عام'] },
+            { name: "الإعدادات", icon: <Cog6ToothIcon className="w-6 h-6" />, to: "/settings", roles: ['مدير عام'] }
         );
-        return constructedNavItems;
-    }, [categories]);
+        
+        if (!currentUser) return [];
+
+        return constructedNavItems.filter(item => {
+            if (!item.roles) return true;
+            return item.roles.includes(currentUser.role);
+        });
+    }, [categories, currentUser]);
+
+
+    const filteredNavItems = useMemo(() => filterNavItemsBySearch(navItems, searchQuery), [navItems, searchQuery]);
+
+    const toggleMenu = (name: string) => {
+        setOpenMenus(prev => ({ ...prev, [name]: !prev[name] }));
+    };
+
+    const isLinkActive = (to: string) => {
+        if (to === '/') return location.pathname === '/';
+        return location.pathname.startsWith(to);
+    };
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -110,113 +132,61 @@ const Sidebar: React.FC = () => {
                 setIsOpen(false);
             }
         };
-
-        if (isOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
-        } else {
-            document.removeEventListener('mousedown', handleClickOutside);
-        }
-
+        document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [isOpen]);
-
-    useEffect(() => {
-        if (isOpen) setIsOpen(false);
-    }, [location.pathname]);
-
-    const visibleNavItems = useMemo(() => {
-        if (!currentUser) return [];
-
-        const filterByRole = (items: NavItemData[]): NavItemData[] => {
-            const userRole = currentUser.role;
-            if (userRole === 'مدير عام') return items;
-            
-            return items
-                .filter(item => !item.roles || item.roles.includes(userRole))
-                .map(item => ({
-                    ...item,
-                    children: item.children ? filterByRole(item.children) : undefined
-                }))
-                .filter(item => item.to || (item.children && item.children.length > 0));
-        };
-
-        const roleFilteredItems = filterByRole(navItems);
-        return filterNavItemsBySearch(roleFilteredItems, searchQuery);
-
-    }, [navItems, currentUser, searchQuery]);
-
-
-    const handleMenuToggle = (name: string) => {
-        if (searchQuery) return;
-        setOpenMenus(prev => ({ ...prev, [name]: !prev[name] }));
-    };
+    }, []);
 
     const NavItem: React.FC<{ item: NavItemData; level: number }> = ({ item, level }) => {
         const hasChildren = item.children && item.children.length > 0;
+        const isOpen = openMenus[item.name] || false;
         
-        const isParentOfActive = useMemo(() => {
-            if (!hasChildren) return false;
-            const checkChildren = (children: NavItemData[]): boolean => children.some(child => (child.to && location.pathname.startsWith(child.to.split('#')[0])) || (child.children && checkChildren(child.children)));
-            return checkChildren(item.children!);
-        }, [item, location.pathname]);
-
-        const isActive = item.to ? location.pathname === item.to : isParentOfActive;
-        const isOpen = searchQuery ? true : openMenus[item.name];
-
-        const paddingClass = level === 1 ? 'pr-8' : 'pr-12';
+        const paddingLeftClass = `pl-${level * 4}`;
 
         if (hasChildren) {
             return (
                 <div>
-                    <button
-                        onClick={() => handleMenuToggle(item.name)}
-                        className={`w-full flex justify-between items-center px-4 py-3 rounded-lg transition-colors ${
-                            isActive ? 'bg-cyan-500/10 text-cyan-500' : 'hover:bg-slate-200/50 dark:hover:bg-slate-700/50'
-                        }`}
-                    >
+                    <button onClick={() => toggleMenu(item.name)} className={`w-full flex items-center justify-between text-right text-gray-600 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-slate-700 p-3 rounded-lg ${paddingLeftClass}`}>
                         <div className="flex items-center gap-3">
                             {item.icon}
                             <span className="font-semibold">{item.name}</span>
                         </div>
                         <ChevronDownIcon className={`w-5 h-5 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
                     </button>
-                    <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-screen' : 'max-h-0'}`}>
-                        <div className="pt-2 space-y-1">
-                            {item.children?.map(child => <NavItem key={child.name} item={child} level={level + 1} />)}
+                    {isOpen && (
+                        <div className="mt-1 space-y-1 pr-4">
+                            {item.children?.map((child) => <NavItem key={child.name} item={child} level={level + 1} />)}
                         </div>
-                    </div>
+                    )}
                 </div>
             );
         }
 
         return (
-            <Link
-                to={item.to || '#'}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors ${
-                    isActive ? 'bg-cyan-500 text-white shadow' : 'hover:bg-slate-200/50 dark:hover:bg-slate-700/50'
-                } ${paddingClass}`}
+            <Link 
+                to={item.to!} 
+                className={`w-full flex items-center gap-3 text-right p-3 rounded-lg transition-colors ${paddingLeftClass} ${isLinkActive(item.to!) ? 'bg-cyan-500/10 text-cyan-500 font-bold' : 'text-gray-600 dark:text-gray-300 hover:bg-slate-200 dark:hover:bg-slate-700'}`}
             >
                 {item.icon}
-                <span className="text-sm">{item.name}</span>
+                <span>{item.name}</span>
             </Link>
         );
     };
 
     return (
         <>
-            <button className="lg:hidden fixed top-4 right-4 z-40 p-2 bg-slate-200 dark:bg-slate-800 rounded-md" onClick={() => setIsOpen(!isOpen)}>
-                {isOpen ? <XMarkIcon className="w-6 h-6" /> : <Bars3Icon className="w-6 h-6" />}
+            {/* Mobile Toggle Button */}
+            <button onClick={() => setIsOpen(!isOpen)} className="lg:hidden fixed top-4 right-4 z-30 p-2 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-full">
+                {isOpen ? <XMarkIcon className="w-6 h-6"/> : <Bars3Icon className="w-6 h-6"/>}
             </button>
-            <aside ref={sidebarRef} className={`fixed lg:relative top-0 right-0 h-full bg-slate-100 dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700 w-72 lg:w-80 flex flex-col transition-transform duration-300 ease-in-out z-30 ${isOpen ? 'translate-x-0' : 'translate-x-full'} lg:translate-x-0`}>
-                <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+            
+            {/* Sidebar */}
+            <div ref={sidebarRef} className={`fixed lg:sticky top-0 right-0 h-screen w-72 bg-slate-100 dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 flex-col z-20 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'} lg:translate-x-0 lg:flex`}>
+                <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-800">
                     <Logo className="h-10" />
-                    <span className="px-2 py-1 text-xs font-semibold text-cyan-700 bg-cyan-100 dark:text-cyan-200 dark:bg-cyan-900/50 rounded-full">
-                        Admin
-                    </span>
                 </div>
-
+                
                 <div className="p-4">
                     <div className="relative">
                         <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute top-1/2 right-3 -translate-y-1/2" />
@@ -225,26 +195,28 @@ const Sidebar: React.FC = () => {
                             placeholder="بحث في القائمة..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-white dark:bg-slate-700 text-gray-800 dark:text-gray-200 rounded-lg py-2 pr-10 pl-4 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition"
+                            className="w-full bg-slate-200 dark:bg-slate-800 text-gray-800 dark:text-gray-200 rounded-lg py-2 pr-10 pl-4 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition"
                         />
                     </div>
                 </div>
 
-                <nav className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
-                    {visibleNavItems.map(item => <NavItem key={item.name} item={item} level={0} />)}
+                <nav className="flex-1 overflow-y-auto p-4 space-y-2">
+                    {filteredNavItems.map(item => <NavItem key={item.name} item={item} level={0} />)}
                 </nav>
 
-                <div className="p-4 border-t border-slate-200 dark:border-slate-700">
-                    <Link to="/settings" className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-700/50 transition-colors mb-2">
-                        <Cog6ToothIcon className="w-6 h-6" />
-                        <span className="font-semibold">الإعدادات</span>
-                    </Link>
-                    <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors">
-                        <ArrowLeftOnRectangleIcon className="w-6 h-6" />
-                        <span className="font-semibold">تسجيل الخروج</span>
-                    </button>
+                <div className="p-4 border-t border-slate-200 dark:border-slate-800">
+                    <div className="flex items-center p-3 rounded-lg bg-white dark:bg-slate-800 shadow-sm">
+                        <img src={currentUser?.avatar} alt={currentUser?.name} className="w-10 h-10 rounded-full object-cover" />
+                        <div className="mr-3 flex-1">
+                            <p className="font-semibold text-sm text-gray-800 dark:text-gray-200">{currentUser?.name}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{currentUser?.role}</p>
+                        </div>
+                        <button onClick={logout} className="p-2 text-gray-500 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition-colors" title="تسجيل الخروج">
+                            <ArrowLeftOnRectangleIcon className="w-5 h-5"/>
+                        </button>
+                    </div>
                 </div>
-            </aside>
+            </div>
         </>
     );
 };

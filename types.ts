@@ -292,7 +292,7 @@ export interface SearchResult {
 }
 
 // Community Forum Types
-export type PostCategory = 'نقاش عام' | 'سؤال' | 'للبيع' | 'حدث' | 'استطلاع رأي';
+export type PostCategory = 'نقاش عام' | 'نقاش خاص' | 'سؤال' | 'حدث' | 'استطلاع رأي';
 
 export interface Comment {
   id: number;
@@ -321,6 +321,51 @@ export interface Post {
   comments: Comment[];
   isPinned?: boolean;
   pollOptions?: PollOption[];
+  targetAudience?: string; // For 'نقاش خاص'
+}
+
+// New Marketplace and Jobs Types
+export type ListingStatus = 'pending' | 'approved' | 'rejected' | 'expired';
+
+export interface MarketplaceItem {
+  id: number;
+  userId: number;
+  username: string;
+  avatar: string;
+  title: string;
+  description: string;
+  images: string[];
+  price: number;
+  category: string;
+  contactPhone: string;
+  status: ListingStatus;
+  creationDate: string;
+  expirationDate: string;
+  rejectionReason?: string;
+}
+
+export interface JobPosting {
+  id: number;
+  userId: number;
+  username: string;
+  avatar: string;
+  title: string;
+  companyName: string;
+  description: string;
+  location: string;
+  type: 'دوام كامل' | 'دوام جزئي' | 'عقد' | 'تدريب';
+  contactInfo: string;
+  status: ListingStatus;
+  creationDate: string;
+  expirationDate: string;
+  rejectionReason?: string;
+}
+
+// Chat Assistant Types
+export interface ChatMessage {
+  id: number;
+  role: 'user' | 'model';
+  content: string;
 }
 
 
@@ -353,6 +398,14 @@ export interface AuthContextType {
   updateProfile: (user: Omit<AppUser, 'joinDate' | 'status' | 'password'>) => void;
 }
 
+export interface ChatContextType {
+  isChatOpen: boolean;
+  toggleChat: () => void;
+  messages: ChatMessage[];
+  sendMessage: (message: string) => void;
+  isLoading: boolean;
+}
+
 export interface CommunityContextType {
   posts: Post[];
   addPost: (postData: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments' | 'isPinned'>) => void;
@@ -365,16 +418,13 @@ export interface CommunityContextType {
   editPost: (postId: number, data: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments' | 'isPinned'>) => void;
 }
 
+// FIX: Add missing context type definitions for Services and Properties contexts.
 export interface ServicesContextType {
   categories: Category[];
   services: Service[];
-  
-  // Service methods
   handleSaveService: (serviceData: Omit<Service, 'id' | 'rating' | 'reviews' | 'isFavorite' | 'views' | 'creationDate'> & { id?: number }) => void;
   handleDeleteService: (serviceId: number) => void;
   handleToggleFavorite: (serviceId: number) => void;
-  
-  // Review methods
   handleToggleHelpfulReview: (serviceId: number, reviewId: number) => void;
   addReview: (serviceId: number, reviewData: Omit<Review, 'id' | 'date' | 'adminReply' | 'username' | 'avatar' | 'userId'>) => void;
   handleUpdateReview: (serviceId: number, reviewId: number, comment: string) => void;
@@ -390,6 +440,28 @@ export interface PropertiesContextType {
 
 // FIX: Added all missing state and handler methods to the context type.
 export interface DataContextType {
+  // Services & Categories
+  categories: Category[];
+  services: Service[];
+  
+  // Service methods
+  handleSaveService: (serviceData: Omit<Service, 'id' | 'rating' | 'reviews' | 'isFavorite' | 'views' | 'creationDate'> & { id?: number }) => void;
+  handleDeleteService: (serviceId: number) => void;
+  handleToggleFavorite: (serviceId: number) => void;
+  
+  // Review methods
+  handleToggleHelpfulReview: (serviceId: number, reviewId: number) => void;
+  addReview: (serviceId: number, reviewData: Omit<Review, 'id' | 'date' | 'adminReply' | 'username' | 'avatar' | 'userId'>) => void;
+  handleUpdateReview: (serviceId: number, reviewId: number, comment: string) => void;
+  handleDeleteReview: (serviceId: number, reviewId: number) => void;
+  handleReplyToReview: (serviceId: number, reviewId: number, reply: string) => void;
+
+  // Properties
+  properties: Property[];
+  handleSaveProperty: (property: Omit<Property, 'id' | 'views' | 'creationDate'> & { id?: number }) => void;
+  handleDeleteProperty: (propertyId: number) => void;
+
+  // Other Data
   news: News[];
   notifications: Notification[];
   advertisements: Advertisement[];
@@ -406,6 +478,8 @@ export interface DataContextType {
       externalRoutes: ExternalRoute[];
   };
   publicPagesContent: PublicPagesContent;
+  marketplaceItems: MarketplaceItem[];
+  jobPostings: JobPosting[];
 
   // User methods
   requestAccountDeletion: (userId: number) => void;
@@ -439,4 +513,14 @@ export interface DataContextType {
   
   // Content Management methods
   handleUpdatePublicPageContent: <K extends keyof PublicPagesContent>(page: K, content: PublicPagesContent[K]) => void;
+
+  // Marketplace methods
+  handleSaveMarketplaceItem: (item: Omit<MarketplaceItem, 'id' | 'status' | 'creationDate' | 'expirationDate' | 'userId' | 'username' | 'avatar'> & { id?: number, duration: number }) => void;
+  handleDeleteMarketplaceItem: (itemId: number) => void;
+  handleUpdateMarketplaceItemStatus: (itemId: number, status: ListingStatus, rejectionReason?: string) => void;
+  
+  // Job methods
+  handleSaveJobPosting: (job: Omit<JobPosting, 'id' | 'status' | 'creationDate' | 'expirationDate' | 'userId' | 'username' | 'avatar'> & { id?: number, duration: number }) => void;
+  handleDeleteJobPosting: (jobId: number) => void;
+  handleUpdateJobPostingStatus: (jobId: number, status: ListingStatus, rejectionReason?: string) => void;
 }

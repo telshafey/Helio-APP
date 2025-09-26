@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import type { Service } from '../../types';
 import { StarIcon, HeartIcon, HeartIconSolid } from './Icons';
-import { useServices } from '../../context/ServicesContext';
+import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
 
 const Rating: React.FC<{ rating: number }> = ({ rating }) => (
@@ -17,7 +17,7 @@ const Rating: React.FC<{ rating: number }> = ({ rating }) => (
 );
 
 const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
-    const { handleToggleFavorite } = useServices();
+    const { handleToggleFavorite } = useData();
     const { isPublicAuthenticated } = useAuth();
 
     const onFavoriteClick = (e: React.MouseEvent) => {
