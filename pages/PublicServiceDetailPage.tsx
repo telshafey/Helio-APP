@@ -124,7 +124,7 @@ const PublicServiceDetailPage: React.FC = () => {
 
     return (
         <div className="animate-fade-in" dir="rtl">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 pb-32 md:pb-12">
                  <button onClick={() => navigate(-1)} className="flex items-center space-x-2 rtl:space-x-reverse text-cyan-500 dark:text-cyan-400 hover:underline mb-8">
                     <ArrowLeftIcon className="w-5 h-5" />
                     <span>العودة</span>
@@ -220,12 +220,12 @@ const PublicServiceDetailPage: React.FC = () => {
                             <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
                                 <h3 className="text-xl font-bold mb-4">معلومات الاتصال</h3>
                                 <div className="space-y-4">
-                                    <a href={`tel:${service.phone}`} className="w-full flex items-center justify-center gap-3 bg-green-500 text-white font-bold px-4 py-3 rounded-lg hover:bg-green-600 transition-colors">
+                                    {service.phone.length > 0 && <a href={`tel:${service.phone[0]}`} className="w-full flex items-center justify-center gap-3 bg-green-500 text-white font-bold px-4 py-3 rounded-lg hover:bg-green-600 transition-colors">
                                         <PhoneIcon className="w-6 h-6" />
-                                        <span>اتصال: {service.phone}</span>
-                                    </a>
-                                     {service.whatsapp && (
-                                        <a href={`https://wa.me/${service.whatsapp}`} target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center gap-3 bg-emerald-500 text-white font-bold px-4 py-3 rounded-lg hover:bg-emerald-600 transition-colors">
+                                        <span>اتصال: {service.phone[0]}</span>
+                                    </a>}
+                                     {service.whatsapp.length > 0 && (
+                                        <a href={`https://wa.me/${service.whatsapp[0]}`} target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center gap-3 bg-emerald-500 text-white font-bold px-4 py-3 rounded-lg hover:bg-emerald-600 transition-colors">
                                             <ChatBubbleOvalLeftIcon className="w-6 h-6" />
                                             <span>واتساب</span>
                                         </a>
@@ -235,6 +235,28 @@ const PublicServiceDetailPage: React.FC = () => {
                                         text={`تحقق من هذه الخدمة في تطبيق Helio: ${service.name}`}
                                      />
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 {/* Floating Action Bar for Mobile */}
+                <div className="md:hidden fixed bottom-14 left-0 right-0 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg p-2 border-t border-slate-200 dark:border-slate-700 z-20">
+                    <div className="container mx-auto px-2">
+                        <div className="flex justify-around items-center gap-2">
+                            {service.phone.length > 0 && (
+                                <a href={`tel:${service.phone[0]}`} className="flex-1 flex items-center justify-center gap-2 bg-green-500 text-white font-bold px-4 py-2.5 rounded-lg hover:bg-green-600 transition-colors text-sm">
+                                    <PhoneIcon className="w-5 h-5" />
+                                    <span>اتصال</span>
+                                </a>
+                            )}
+                            {service.whatsapp.length > 0 && (
+                                <a href={`https://wa.me/${service.whatsapp[0]}`} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-2 bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-lg hover:bg-emerald-600 transition-colors text-sm">
+                                    <ChatBubbleOvalLeftIcon className="w-5 h-5" />
+                                    <span>واتساب</span>
+                                </a>
+                            )}
+                            <div className="flex-1">
+                                <ShareButton title={service.name} text={`تحقق من هذه الخدمة في تطبيق Helio: ${service.name}`} className="!py-2.5 !px-4 !text-sm" />
                             </div>
                         </div>
                     </div>
