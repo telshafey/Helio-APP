@@ -1,13 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon, ClipboardDocumentListIcon, MagnifyingGlassIcon } from '../components/common/Icons';
-// FIX: Replaced deprecated useAppContext with useData from DataContext.
-import { useData } from '../context/DataContext';
+import { useUsers } from '../context/UsersContext';
 
 const AuditLogPage: React.FC = () => {
     const navigate = useNavigate();
-    // FIX: Replaced deprecated useAppContext with useData to get auditLogs.
-    const { auditLogs } = useData();
+    const { auditLogs } = useUsers();
 
     const [searchTerm, setSearchTerm] = useState('');
     const [actionFilter, setActionFilter] = useState('all');

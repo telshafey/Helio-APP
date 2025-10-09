@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-// FIX: Replaced missing RocketLaunchIcon with ArrowTrendingUpIcon.
 import { ArrowLeftIcon, ChevronDownIcon, QuestionMarkCircleIcon, InformationCircleIcon, Cog6ToothIcon, MapPinIcon, ChatBubbleOvalLeftEllipsisIcon, ArrowTrendingUpIcon } from '../components/common/Icons';
 import PageBanner from '../components/common/PageBanner';
 
@@ -43,7 +42,6 @@ const FaqPage: React.FC = () => {
         if (lowerCaseCategory.includes('استخدام')) return <Cog6ToothIcon className="w-7 h-7" />;
         if (lowerCaseCategory.includes('أماكن')) return <MapPinIcon className="w-7 h-7" />;
         if (lowerCaseCategory.includes('تواصل')) return <ChatBubbleOvalLeftEllipsisIcon className="w-7 h-7" />;
-        // FIX: Replaced missing RocketLaunchIcon with ArrowTrendingUpIcon.
         if (lowerCaseCategory.includes('تطوير')) return <ArrowTrendingUpIcon className="w-7 h-7" />;
         return <QuestionMarkCircleIcon className="w-7 h-7" />;
     };

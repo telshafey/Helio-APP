@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-// FIX: Replaced deprecated useAppContext with useData from DataContext.
-import { useData } from '../context/DataContext';
+import { useNews } from '../context/NewsContext';
 import Spinner from '../components/common/Spinner';
 import { ArrowLeftIcon, CalendarDaysIcon, UserCircleIcon, NewspaperIcon } from '../components/common/Icons';
 import PageBanner from '../components/common/PageBanner';
@@ -10,8 +9,7 @@ import ShareButton from '../components/common/ShareButton';
 const PublicNewsDetailPage: React.FC = () => {
     const { newsId } = useParams<{ newsId: string }>();
     const navigate = useNavigate();
-    // FIX: Replaced deprecated useAppContext with useData.
-    const { news } = useData();
+    const { news } = useNews();
     const newsItem = news.find(n => n.id === Number(newsId));
 
     if (!newsItem) {
@@ -34,7 +32,7 @@ const PublicNewsDetailPage: React.FC = () => {
                 </button>
                 
                 <article className="bg-white dark:bg-slate-800 p-6 sm:p-8 rounded-2xl shadow-lg">
-                    <img src={newsItem.imageUrl} alt={newsItem.title} className="w-full h-auto max-h-[500px] object-cover rounded-xl shadow-md mb-8" />
+                    <img src={newsItem.imageUrl} alt={newsItem.title} className="w-full h-auto max-h-[500px] object-cover rounded-xl shadow-md mb-8" loading="lazy" decoding="async" />
                     <div className="prose dark:prose-invert max-w-none text-lg leading-relaxed text-gray-700 dark:text-gray-300">
                        <p>{newsItem.content}</p>
                     </div>

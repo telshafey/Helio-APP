@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useData } from '../context/DataContext';
+import { useCommunity } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import PageBanner from '../components/common/PageBanner';
@@ -11,7 +11,7 @@ import EmptyState from '../components/common/EmptyState';
 import { InputField, TextareaField } from '../components/common/FormControls';
 
 const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-    const { handleSaveMarketplaceItem } = useData();
+    const { handleSaveMarketplaceItem } = useCommunity();
     const [formData, setFormData] = useState({
         title: '', description: '', price: '', category: '', contactPhone: '', duration: 30,
     });
@@ -32,6 +32,7 @@ const AddItemForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             ...formData,
             price: parseFloat(formData.price) || 0,
             images,
+            duration: Number(formData.duration),
         });
         onClose();
     };
@@ -84,7 +85,7 @@ const MarketplaceItemCard: React.FC<{ item: MarketplaceItem }> = ({ item }) => (
 
 
 const PublicMarketplacePage: React.FC = () => {
-    const { marketplaceItems } = useData();
+    const { marketplaceItems } = useCommunity();
     const { isPublicAuthenticated } = useAuth();
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);

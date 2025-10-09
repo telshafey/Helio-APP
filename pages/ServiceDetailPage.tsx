@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import type { Review } from '../types';
 import { ArrowLeftIcon, StarIcon, PencilSquareIcon, TrashIcon, ChatBubbleLeftRightIcon } from '../components/common/Icons';
-import { useData } from '../context/DataContext';
+import { useServices } from '../context/ServicesContext';
 import { useAuth } from '../context/AuthContext';
 import Modal from '../components/common/Modal';
 
@@ -49,7 +49,7 @@ const ServiceDetailPage: React.FC = () => {
     const { serviceId: serviceIdStr } = useParams<{ serviceId: string }>();
     const serviceId = Number(serviceIdStr);
     
-    const { services, handleUpdateReview, handleDeleteReview, handleReplyToReview } = useData();
+    const { services, handleUpdateReview, handleDeleteReview, handleReplyToReview } = useServices();
     const { hasPermission } = useAuth();
     const canManage = hasPermission(['مسؤول ادارة الخدمات']);
     const service = services.find(s => s.id === serviceId);

@@ -2,8 +2,17 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
 import { GooglePlayIcon, AppleIcon } from './Icons';
+import { prefetchMap } from './AnimatedRoutes';
 
 const PublicFooter: React.FC = () => {
+
+    const handlePrefetch = (to: string) => {
+        const prefetcher = prefetchMap[to];
+        if (prefetcher) {
+            prefetcher();
+        }
+    };
+
     return (
         <footer className="bg-white dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700" dir="rtl">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -20,9 +29,9 @@ const PublicFooter: React.FC = () => {
                     <div>
                         <h3 className="text-base font-semibold text-gray-800 dark:text-white">روابط سريعة</h3>
                         <ul className="mt-4 space-y-2 text-sm">
-                            <li><Link to="/about" className="text-gray-500 dark:text-gray-400 hover:text-cyan-500">حول التطبيق</Link></li>
-                            <li><Link to="/faq" className="text-gray-500 dark:text-gray-400 hover:text-cyan-500">الأسئلة الشائعة</Link></li>
-                            <li><Link to="/city-services-guide" className="text-gray-500 dark:text-gray-400 hover:text-cyan-500">دليل خدمات المدينة</Link></li>
+                            <li><Link to="/about" onPointerDown={() => handlePrefetch('/about')} className="text-gray-500 dark:text-gray-400 hover:text-cyan-500">حول التطبيق</Link></li>
+                            <li><Link to="/faq" onPointerDown={() => handlePrefetch('/faq')} className="text-gray-500 dark:text-gray-400 hover:text-cyan-500">الأسئلة الشائعة</Link></li>
+                            <li><Link to="/city-services-guide" onPointerDown={() => handlePrefetch('/city-services-guide')} className="text-gray-500 dark:text-gray-400 hover:text-cyan-500">دليل خدمات المدينة</Link></li>
                             <li><Link to="/admin-login" className="text-gray-500 dark:text-gray-400 hover:text-cyan-500">دخول المسؤولين</Link></li>
                         </ul>
                     </div>
@@ -31,9 +40,9 @@ const PublicFooter: React.FC = () => {
                      <div>
                         <h3 className="text-base font-semibold text-gray-800 dark:text-white">روابط هامة</h3>
                         <ul className="mt-4 space-y-2 text-sm">
-                            <li><Link to="/privacy-policy" className="text-gray-500 dark:text-gray-400 hover:text-cyan-500">سياسة الخصوصية</Link></li>
-                            <li><Link to="/terms-of-use" className="text-gray-500 dark:text-gray-400 hover:text-cyan-500">شروط الاستخدام</Link></li>
-                            <li><Link to="/contact" className="text-gray-500 dark:text-gray-400 hover:text-cyan-500">تواصل معنا</Link></li>
+                            <li><Link to="/privacy-policy" onPointerDown={() => handlePrefetch('/privacy-policy')} className="text-gray-500 dark:text-gray-400 hover:text-cyan-500">سياسة الخصوصية</Link></li>
+                            <li><Link to="/terms-of-use" onPointerDown={() => handlePrefetch('/terms-of-use')} className="text-gray-500 dark:text-gray-400 hover:text-cyan-500">شروط الاستخدام</Link></li>
+                            <li><Link to="/contact" onPointerDown={() => handlePrefetch('/contact')} className="text-gray-500 dark:text-gray-400 hover:text-cyan-500">تواصل معنا</Link></li>
                         </ul>
                     </div>
                     

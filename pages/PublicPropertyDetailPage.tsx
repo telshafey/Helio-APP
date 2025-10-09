@@ -1,39 +1,16 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useData } from '../context/DataContext';
+import { useProperties } from '../context/PropertiesContext';
 import Spinner from '../components/common/Spinner';
-import { ArrowLeftIcon, MapPinIcon, PhoneIcon, HomeModernIcon, CheckCircleIcon, ChevronLeftIcon, ChevronRightIcon } from '../components/common/Icons';
+import { ArrowLeftIcon, MapPinIcon, PhoneIcon, HomeModernIcon, CheckCircleIcon } from '../components/common/Icons';
 import PageBanner from '../components/common/PageBanner';
 import ShareButton from '../components/common/ShareButton';
-
-// Reusable ImageSlider component
-const ImageSlider: React.FC<{ images: string[] }> = ({ images }) => {
-    const [currentIndex, setCurrentIndex] = useState(0);
-
-    const goToPrevious = () => setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
-    const goToNext = () => setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
-
-    if (images.length === 0) {
-        return <div className="w-full h-64 sm:h-96 bg-slate-200 dark:bg-slate-700 flex items-center justify-center rounded-lg"><HomeModernIcon className="w-20 h-20 text-slate-400"/></div>
-    }
-
-    return (
-        <div className="relative w-full h-64 sm:h-96 group">
-            <div style={{ backgroundImage: `url(${images[currentIndex]})` }} className="w-full h-full rounded-lg bg-center bg-cover duration-500"></div>
-            {images.length > 1 && (
-                <>
-                    <button onClick={goToPrevious} className="absolute top-1/2 left-2 -translate-y-1/2 bg-black/40 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"><ChevronLeftIcon className="w-6 h-6"/></button>
-                    <button onClick={goToNext} className="absolute top-1/2 right-2 -translate-y-1/2 bg-black/40 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"><ChevronRightIcon className="w-6 h-6"/></button>
-                </>
-            )}
-        </div>
-    );
-}
+import ImageSlider from '../components/common/ImageSlider';
 
 const PublicPropertyDetailPage: React.FC = () => {
     const navigate = useNavigate();
     const { propertyId } = useParams<{ propertyId: string }>();
-    const { properties } = useData();
+    const { properties } = useProperties();
 
     const property = useMemo(() => properties.find(p => p.id === Number(propertyId)), [properties, propertyId]);
 

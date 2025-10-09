@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeftIcon, PlusIcon, StarIcon, StarIconOutline, EyeIcon, PencilSquareIcon, TrashIcon, WrenchScrewdriverIcon } from '../components/common/Icons';
 import type { Service } from '../types';
-import { useData } from '../context/DataContext';
+import { useServices } from '../context/ServicesContext';
 import { useAuth } from '../context/AuthContext';
 import Modal from '../components/common/Modal';
 import ImageUploader from '../components/common/ImageUploader';
@@ -109,7 +109,7 @@ const ServicePage: React.FC = () => {
     const { subCategoryId: subCategoryIdStr } = useParams<{ subCategoryId: string }>();
     const subCategoryId = Number(subCategoryIdStr);
     
-    const { services, categories, handleSaveService, handleDeleteService, handleToggleFavorite } = useData();
+    const { services, categories, handleSaveService, handleDeleteService, handleToggleFavorite } = useServices();
     const { hasPermission } = useAuth();
     const canManage = hasPermission(['مسؤول ادارة الخدمات']);
 

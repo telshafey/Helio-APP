@@ -1,0 +1,23 @@
+{
+  "short_name": "Helio",
+  "name": "Helio App",
+  "description": "Helio App real estate application.",
+  "icons": [
+    {
+      "src": "https://i.ibb.co/bF0fJgS/favicon.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://i.ibb.co/bF0fJgS/favicon.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#0891b2",
+  "background_color": "#f1f5f9"
+}

@@ -9,9 +9,20 @@ import UsersToVerify from './dashboard/UsersToVerify';
 import Footer from './common/Footer';
 import { UserIcon, MapIcon, WrenchScrewdriverIcon, ShieldExclamationIcon, HomeModernIcon, UserGroupIcon, BusIcon, NewspaperIcon, Bars3Icon } from './common/Icons';
 import { useData } from '../context/DataContext';
+import { useServices } from '../context/ServicesContext';
+import { useProperties } from '../context/PropertiesContext';
+// Fix: Import useNews to get news and notifications data from its context
+import { useNews } from '../context/NewsContext';
+import { useUsers } from '../context/UsersContext';
 
 const DashboardView: React.FC = () => {
-  const { categories, services, properties, news, notifications, users, emergencyContacts } = useData();
+  // Fix: 'news' and 'notifications' are not in DataContext. They are in NewsContext.
+  // Fix: 'users' is not in DataContext. It's in UsersContext.
+  const { emergencyContacts } = useData();
+  const { users } = useUsers();
+  const { properties } = useProperties();
+  const { categories, services } = useServices();
+  const { news, notifications } = useNews();
   
   const firstServiceLink = (categories.length > 0 && categories[0].subCategories.length > 0)
     ? `/services/subcategory/${categories[0].subCategories[0].id}`

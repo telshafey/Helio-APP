@@ -1,13 +1,13 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useData } from '../context/DataContext';
+import { useUsers } from '../context/UsersContext';
 import { 
     ArrowLeftIcon, TrashIcon, ChatBubbleOvalLeftEllipsisIcon, PinIcon, 
     ChatBubbleOvalLeftIcon, UserCircleIcon, XMarkIcon, HandThumbUpIcon, PencilSquareIcon, PlusIcon
 } from '../components/common/Icons';
 import EmptyState from '../components/common/EmptyState';
 import KpiCard from '../components/common/KpiCard';
-import type { Post, Comment, AppUser, PostCategory } from '../types';
+import type { Post, Comment, AppUser, PostCategory, Circle } from '../types';
 import Modal from '../components/common/Modal';
 import { useCommunity } from '../context/AppContext';
 
@@ -78,7 +78,8 @@ const EditPostForm: React.FC<{
         let postData: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments'| 'isPinned'> = { 
             category, 
             title: title.trim() || undefined, 
-            content 
+            content,
+            circleId: post.circleId,
         };
 
         if (category === 'استطلاع رأي') {
@@ -96,8 +97,7 @@ const EditPostForm: React.FC<{
         onClose();
     };
 
-    // FIX: Replaced invalid category 'للبيع' with 'نقاش خاص' to match the PostCategory type.
-    const postCategories: PostCategory[] = ['نقاش عام', 'نقاش خاص', 'سؤال', 'حدث', 'استطلاع رأي'];
+    const postCategories: PostCategory[] = ['نقاش', 'سؤال', 'حدث', 'استطلاع رأي'];
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -140,8 +140,8 @@ const EditPostForm: React.FC<{
 
 const CommunityManagementPage: React.FC = () => {
     const navigate = useNavigate();
-    const { users } = useData();
-    const { posts, deletePost, deleteComment, togglePinPost, editPost } = useCommunity();
+    const { users } = useUsers();
+    const { posts, circles, deletePost, deleteComment, togglePinPost, editPost } = useCommunity();
     const [commentPost, setCommentPost] = useState<Post | null>(null);
     const [editingPost, setEditingPost] = useState<Post | null>(null);
 
@@ -211,7 +211,9 @@ const CommunityManagementPage: React.FC = () => {
 
                  {sortedPosts.length > 0 ? (
                     <div className="space-y-4">
-                        {sortedPosts.map(post => (
+                        {sortedPosts.map(post => {
+                            const circleName = circles.find(c => c.id === post.circleId)?.name || 'غير معروف';
+                            return (
                              <div key={post.id} className={`p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg border-l-4 ${post.isPinned ? 'border-cyan-500' : 'border-transparent'}`}>
                                 <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
                                     <div className="flex-1">
@@ -219,7 +221,7 @@ const CommunityManagementPage: React.FC = () => {
                                             <img src={post.avatar} alt={post.username} className="w-10 h-10 rounded-full" />
                                             <div>
                                                 <p className="font-semibold">{post.username}</p>
-                                                <p className="text-xs text-gray-500">{new Date(post.date).toLocaleDateString()}</p>
+                                                <p className="text-xs text-gray-500">{new Date(post.date).toLocaleDateString()} • في: {circleName}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-2">
@@ -267,7 +269,7 @@ const CommunityManagementPage: React.FC = () => {
                                     </div>
                                 </div>
                              </div>
-                        ))}
+                            )})}
                     </div>
                 ) : (
                     <EmptyState

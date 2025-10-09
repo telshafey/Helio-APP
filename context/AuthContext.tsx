@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
-// FIX: Added mockAdmins import and AdminUser type.
 import { mockUsers, mockAdmins } from '../data/mock-data';
 import type { AppUser, AuthContextType, AdminUser } from '../types';
 import { useUI } from './UIContext';
@@ -18,7 +17,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const { showToast } = useUI(); // Dependent on UIContext for toasts
     const [users, setUsers] = useState<AppUser[]>(mockUsers); // Keep user list here for auth purposes
     
-    // FIX: Added state and logic for admin authentication.
     const [admins] = useState<AdminUser[]>(mockAdmins);
     const [currentUser, setCurrentUser] = useState<AdminUser | null>(() => {
         const storedUser = sessionStorage.getItem('currentUser');
@@ -116,7 +114,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         showToast('تم تحديث ملفك الشخصي بنجاح!');
     }, [users, currentPublicUser, showToast]);
 
-    // FIX: Added all missing admin and public auth properties to the context value.
     const value: AuthContextType = {
         currentUser,
         isAuthenticated,

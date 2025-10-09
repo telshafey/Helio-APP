@@ -1,29 +1,25 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { 
     MagnifyingGlassIcon,
-    CakeIcon,
-    HeartIcon,
-    ShoppingBagIcon,
-    WrenchScrewdriverIcon
 } from '../components/common/Icons';
 import { useData } from '../context/DataContext';
-import ServiceCard from '../components/common/ServiceCard';
+import { useServices } from '../context/ServicesContext';
+import { useProperties } from '../context/PropertiesContext';
+import { useNews } from '../context/NewsContext';
+import { useCommunity } from '../context/AppContext';
 import AdSlider from '../components/common/AdSlider';
-import NewsCard from '../components/common/NewsCard';
-import PropertyCard from '../components/common/PropertyCard';
-
-const QuickAccessCard: React.FC<{ icon: React.ReactNode; title: string; to: string; }> = ({ icon, title, to }) => (
-    <Link to={to} className="group flex flex-col items-center justify-center p-4 bg-white dark:bg-slate-800 rounded-xl shadow-lg text-center transform hover:-translate-y-1 transition-transform duration-300">
-        <div className="flex items-center justify-center w-14 h-14 bg-cyan-100 dark:bg-cyan-900/50 rounded-full mb-3 transition-all duration-300 group-hover:scale-110 group-hover:bg-cyan-200">
-            {icon}
-        </div>
-        <h3 className="text-base font-bold text-gray-800 dark:text-white">{title}</h3>
-    </Link>
-);
+import ServicesCarousel from '../components/common/ServicesCarousel';
+import OffersHighlight from '../components/common/OffersHighlight';
+import CategoryCarousel from '../components/common/CategoryCarousel';
+import PropertyCarousel from '../components/common/PropertyCarousel';
+import NewsCarousel from '../components/common/NewsCarousel';
 
 const PublicHomePage: React.FC = () => {
-    const { publicPagesContent, advertisements, news, services, categories, properties } = useData();
+    const { publicPagesContent } = useData();
+    const { services, categories } = useServices();
+    const { properties } = useProperties();
+    const { advertisements, news } = useNews();
+    const { offers } = useCommunity();
     const content = publicPagesContent.home;
 
     const sliderAds = React.useMemo(() => {
@@ -36,23 +32,25 @@ const PublicHomePage: React.FC = () => {
         });
     }, [advertisements]);
 
-    const recentServices = [...services].sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()).slice(0, 3);
-    const recentNews = [...news].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 3);
-    const recentProperties = [...properties].sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()).slice(0, 3);
+    const highlightOffers = React.useMemo(() => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return offers
+            .filter(offer => {
+                const start = new Date(offer.startDate);
+                const end = new Date(offer.endDate);
+                return offer.status === 'approved' && today >= start && today <= end;
+            })
+            .sort((a,b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime())
+            .slice(0, 6);
+    }, [offers]);
 
-    const quickAccessItems = [
-        { title: "الطعام والشراب", icon: <CakeIcon className="w-8 h-8 text-cyan-600 dark:text-cyan-400" />, categoryName: "الطعام والشراب" },
-        { title: "الصحة", icon: <HeartIcon className="w-8 h-8 text-cyan-600 dark:text-cyan-400" />, categoryName: "الصحة" },
-        { title: "التسوق", icon: <ShoppingBagIcon className="w-8 h-8 text-cyan-600 dark:text-cyan-400" />, categoryName: "التسوق" },
-        { title: "الصيانة", icon: <WrenchScrewdriverIcon className="w-8 h-8 text-cyan-600 dark:text-cyan-400" />, categoryName: "الصيانه والخدمات المنزلية" }
-    ].map(item => {
-        const category = categories.find(c => c.name === item.categoryName);
-        const firstSubCategoryId = category?.subCategories[0]?.id;
-        return {
-            ...item,
-            to: firstSubCategoryId ? `/services/subcategory/${firstSubCategoryId}` : '/services-overview'
-        };
-    });
+    const recentServices = [...services].sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()).slice(0, 10);
+    const recentNews = [...news].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 8);
+    const recentProperties = [...properties].sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()).slice(0, 8);
+
+    // Filter service categories for the carousel
+    const serviceCategories = categories.filter(c => c.name !== "المدينة والجهاز");
 
     return (
         <div className="animate-fade-in" dir="rtl">
@@ -77,68 +75,16 @@ const PublicHomePage: React.FC = () => {
                 </div>
             </section>
             
-            {/* Ad Slider Section */}
-            {sliderAds.length > 0 && (
-                <section className="py-10 bg-slate-50 dark:bg-slate-900/50">
-                    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                        <AdSlider ads={sliderAds} />
-                    </div>
-                </section>
-            )}
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                {sliderAds.length > 0 && <AdSlider ads={sliderAds} />}
+            </div>
 
-            {/* Quick Access Section */}
-            <section className="py-12">
-                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 dark:text-white mb-8">{content.featuresSectionTitle}</h2>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-                       {quickAccessItems.map(item => <QuickAccessCard key={item.title} {...item} />)}
-                    </div>
-                </div>
-            </section>
-
-            {/* Recent Services Section */}
-            <section className="py-12 bg-slate-50 dark:bg-slate-900/50">
-                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 dark:text-white mb-8">أحدث الخدمات المضافة</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {recentServices.map(service => <ServiceCard key={service.id} service={service} />)}
-                    </div>
-                 </div>
-            </section>
+            <OffersHighlight offers={highlightOffers} services={services} />
+            <CategoryCarousel title="تصفح حسب الفئة" categories={serviceCategories} />
+            <ServicesCarousel title="أحدث الخدمات" services={recentServices} />
+            <PropertyCarousel title="أحدث العقارات" properties={recentProperties} />
+            <NewsCarousel title="آخر الأخبار" news={recentNews} />
             
-            {/* Recent Properties Section */}
-            {recentProperties.length > 0 && (
-                <section className="py-12 bg-white dark:bg-slate-900">
-                    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                        <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 dark:text-white mb-8">أحدث العقارات</h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {recentProperties.map(prop => <PropertyCard key={prop.id} property={prop} />)}
-                        </div>
-                        <div className="text-center mt-10">
-                            <Link to="/properties" className="px-8 py-3 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-transform hover:scale-105">
-                                تصفح كل العقارات
-                            </Link>
-                        </div>
-                    </div>
-                </section>
-            )}
-            
-            {/* Recent News Section */}
-             {recentNews.length > 0 && (
-                <section className="py-12 bg-slate-50 dark:bg-slate-900/50">
-                    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                        <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 dark:text-white mb-8">آخر الأخبار</h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {recentNews.map(newsItem => <NewsCard key={newsItem.id} newsItem={newsItem} />)}
-                        </div>
-                        <div className="text-center mt-10">
-                            <Link to="/news" className="px-8 py-3 bg-cyan-500 text-white font-semibold rounded-lg hover:bg-cyan-600 transition-transform hover:scale-105">
-                                قراءة كل الأخبار
-                            </Link>
-                        </div>
-                    </div>
-                </section>
-             )}
         </div>
     );
 };

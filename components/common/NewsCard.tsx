@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 import type { News } from '../../types';
 
 const NewsCard: React.FC<{ newsItem: News }> = ({ newsItem }) => {
     return (
-        <Link to={`/news/${newsItem.id}`} className="block group bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 transition-transform duration-300">
+        <Link to={`/news/${newsItem.id}`} className="block group bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 active:scale-[0.98]">
             <div className="relative">
                 <img 
                     src={newsItem.imageUrl} 
                     alt={newsItem.title} 
                     className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" 
                     loading="lazy" 
+                    decoding="async"
                 />
             </div>
             <div className="p-4">
@@ -22,4 +23,4 @@ const NewsCard: React.FC<{ newsItem: News }> = ({ newsItem }) => {
     );
 };
 
-export default NewsCard;
+export default memo(NewsCard);

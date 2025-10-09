@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { useData } from '../context/DataContext';
+import { useServices } from '../context/ServicesContext';
 import { useAuth } from '../context/AuthContext';
-import { StarIcon, PhoneIcon, ChatBubbleOvalLeftIcon, ChevronLeftIcon, ChevronRightIcon, HomeModernIcon, HandThumbUpIcon, HeartIcon, HeartIconSolid, ClockIcon, MapPinIcon, FacebookIcon, InstagramIcon, LinkIcon } from '../components/common/Icons';
+import { StarIcon, PhoneIcon, ChatBubbleOvalLeftIcon, HomeModernIcon, HandThumbUpIcon, HeartIcon, HeartIconSolid, ClockIcon, MapPinIcon, FacebookIcon, InstagramIcon } from '../components/common/Icons';
 import Spinner from '../components/common/Spinner';
 import ShareButton from '../components/common/ShareButton';
+import ImageSlider from '../components/common/ImageSlider';
 
 const RatingDisplay: React.FC<{ rating: number; reviewCount: number; size?: string; }> = ({ rating, reviewCount, size = 'w-6 h-6' }) => (
     <div className="flex items-center gap-2">
@@ -24,31 +25,8 @@ const RatingDisplay: React.FC<{ rating: number; reviewCount: number; size?: stri
     </div>
 );
 
-const ImageSlider: React.FC<{ images: string[] }> = ({ images }) => {
-    const [currentIndex, setCurrentIndex] = useState(0);
-
-    const goToPrevious = () => setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
-    const goToNext = () => setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
-
-    if (images.length === 0) {
-        return <div className="w-full h-64 sm:h-96 bg-slate-200 dark:bg-slate-700 flex items-center justify-center rounded-lg"><HomeModernIcon className="w-20 h-20 text-slate-400"/></div>
-    }
-
-    return (
-        <div className="relative w-full h-64 sm:h-96 group">
-            <div style={{ backgroundImage: `url(${images[currentIndex]})` }} className="w-full h-full rounded-lg bg-center bg-cover duration-500"></div>
-            {images.length > 1 && (
-                <>
-                    <button onClick={goToPrevious} className="absolute top-1/2 left-2 -translate-y-1/2 bg-black/40 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"><ChevronLeftIcon className="w-6 h-6"/></button>
-                    <button onClick={goToNext} className="absolute top-1/2 right-2 -translate-y-1/2 bg-black/40 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"><ChevronRightIcon className="w-6 h-6"/></button>
-                </>
-            )}
-        </div>
-    );
-}
-
 const AddReviewForm: React.FC<{ serviceId: number }> = ({ serviceId }) => {
-    const { addReview } = useData();
+    const { addReview } = useServices();
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState('');
     const navigate = useNavigate();
@@ -97,7 +75,7 @@ const AddReviewForm: React.FC<{ serviceId: number }> = ({ serviceId }) => {
 const PublicServiceDetailPage: React.FC = () => {
     const navigate = useNavigate();
     const { serviceId } = useParams<{ serviceId: string }>();
-    const { services, handleToggleFavorite, handleToggleHelpfulReview } = useData();
+    const { services, handleToggleFavorite, handleToggleHelpfulReview } = useServices();
     const { isPublicAuthenticated } = useAuth();
 
     const [sortOrder, setSortOrder] = useState<'latest' | 'highest' | 'helpful'>('latest');

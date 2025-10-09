@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useData } from '../context/DataContext';
+import { useUsers } from '../context/UsersContext';
+import { useServices } from '../context/ServicesContext';
 import { useAuth } from '../context/AuthContext';
 import { useUI } from '../context/UIContext';
 import { ArrowLeftIcon, UserCircleIcon, PencilIcon, StarIcon, ChatBubbleOvalLeftIcon, HeartIconSolid, TrashIcon, Cog6ToothIcon, SunIcon, MoonIcon, ComputerDesktopIcon } from '../components/common/Icons';
@@ -70,8 +71,9 @@ const ThemeSelector: React.FC = () => {
 
 const ProfilePage: React.FC = () => {
     const navigate = useNavigate();
+    const { requestAccountDeletion } = useUsers();
+    const { services } = useServices();
     const { currentPublicUser, updateProfile, publicLogout } = useAuth();
-    const { services, requestAccountDeletion } = useData();
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 

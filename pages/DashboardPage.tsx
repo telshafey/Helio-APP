@@ -10,7 +10,6 @@ const NewsManagerDashboard = lazy(() => import('../components/dashboard/NewsMana
 const TransportationManagerDashboard = lazy(() => import('../components/dashboard/TransportationManagerDashboard'));
 
 const DashboardPage: React.FC = () => {
-    // FIX: Replaced non-existent property with the correct 'currentUser' from AuthContext.
     const { currentUser } = useAuth();
 
     const renderDashboard = () => {

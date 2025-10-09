@@ -1,15 +1,12 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-// FIX: Replaced deprecated useAppContext with useData from DataContext.
-import { useData } from '../../context/DataContext';
+import { useTransportation } from '../../context/TransportationContext';
 import KpiCard from '../common/KpiCard';
 import { BusIcon, UserGroupIcon, MapIcon, PhoneIcon, UserCircleIcon, CalendarDaysIcon } from '../common/Icons';
 
 const TransportationManagerDashboard: React.FC = () => {
-    // FIX: Replaced deprecated useAppContext with useData.
-    const { transportation } = useData();
+    const { transportation } = useTransportation();
 
-    // FIX: Use full date for logic and day name for display.
     const todayDate = new Date();
     const todayDayName = todayDate.toLocaleDateString('ar-EG', { weekday: 'long' });
     const todayString = todayDate.toISOString().split('T')[0];

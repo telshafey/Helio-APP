@@ -1,7 +1,10 @@
 import React, { useMemo } from 'react';
 import type { Activity } from '../../types';
 import { WrenchScrewdriverIcon, ShieldExclamationIcon, NewspaperIcon, HomeModernIcon } from '../common/Icons';
-import { useData } from '../../context/DataContext';
+import { useServices } from '../context/ServicesContext';
+// Fix: Import useProperties and useNews to get data from the correct contexts
+import { useProperties } from '../../context/PropertiesContext';
+import { useNews } from '../../context/NewsContext';
 
 const formatRelativeTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -29,9 +32,11 @@ const ActivityIcon: React.FC<{ type: Activity['type'] }> = ({ type }) => {
   return <div className="p-2 bg-gray-100 dark:bg-slate-700 rounded-full">{typeMap[type]}</div>;
 };
 
-const RecentActivityTable: React.FC = () => {
-  // FIX: Destructured services, properties, and news from the single useData hook.
-  const { services, properties, news } = useData();
+const RecentInquiriesTable: React.FC = () => {
+  // Fix: 'properties' and 'news' are not in DataContext. They are in PropertiesContext and NewsContext respectively.
+  const { properties } = useProperties();
+  const { news } = useNews();
+  const { services } = useServices();
     
   const recentActivities = useMemo(() => {
       const serviceActivities: Activity[] = services.map(s => ({
@@ -85,4 +90,4 @@ const RecentActivityTable: React.FC = () => {
   );
 };
 
-export default RecentActivityTable;
+export default RecentInquiriesTable;

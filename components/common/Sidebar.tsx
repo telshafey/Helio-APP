@@ -12,11 +12,12 @@ import {
     ChatBubbleOvalLeftEllipsisIcon,
     PhotoIcon,
     ShoppingBagIcon,
-    BriefcaseIcon
+    BriefcaseIcon,
+    TagIcon,
+    ArchiveBoxIcon
 } from './Icons';
-import { useData } from '../../context/DataContext';
+import { useServices } from '../../context/ServicesContext';
 import { useAuth } from '../../context/AuthContext';
-// FIX: Imported AdminUser type.
 import type { AdminUser } from '../../types';
 import Logo from './Logo';
 import { getIcon } from './iconUtils';
@@ -48,8 +49,7 @@ const filterNavItemsBySearch = (items: NavItemData[], query: string): NavItemDat
 };
 
 const Sidebar: React.FC = () => {
-    const { categories } = useData();
-    // FIX: Replaced non-existent properties with correct ones from the updated AuthContext.
+    const { categories } = useServices();
     const { logout, currentUser } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({ 'الخدمات الرئيسية': true });
@@ -93,6 +93,8 @@ const Sidebar: React.FC = () => {
             { name: "إدارة العقارات", icon: <HomeModernIcon className="w-6 h-6" />, to: "/properties", roles: ['مدير عام', 'مسؤول العقارات'] },
             { name: "إدارة البيع والشراء", icon: <ShoppingBagIcon className="w-6 h-6" />, to: "/marketplace-management", roles: serviceManagerRoles },
             { name: "إدارة الوظائف", icon: <BriefcaseIcon className="w-6 h-6" />, to: "/jobs-management", roles: newsManagerRoles },
+            { name: "إدارة العروض", icon: <TagIcon className="w-6 h-6" />, to: "/offers-management", roles: newsManagerRoles },
+            { name: "إدارة المفقودات", icon: <ArchiveBoxIcon className="w-6 h-6" />, to: "/lost-and-found-management", roles: ['مدير عام'] },
             { name: "إدارة النقل", icon: <TruckIcon className="w-6 h-6" />, to: "/transportation", roles: ['مدير عام', 'مسؤول الباصات'] },
             { name: "إدارة الطوارئ", icon: <ShieldExclamationIcon className="w-6 h-6" />, to: "/emergency", roles: serviceManagerRoles },
             { name: "الأخبار", icon: <NewspaperIcon className="w-6 h-6" />, to: "/news", roles: newsManagerRoles },

@@ -1,12 +1,13 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { useData } from '../../context/DataContext';
+// Fix: Import useProperties instead of useData to get properties
+import { useProperties } from '../../context/PropertiesContext';
 import KpiCard from '../common/KpiCard';
 import { HomeModernIcon, ChartPieIcon, EyeIcon, ArrowTrendingUpIcon, PlusIcon, ChartBarIcon } from '../common/Icons';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const PropertyManagerDashboard: React.FC = () => {
-    const { properties } = useData();
+    const { properties } = useProperties();
 
     const stats = useMemo(() => {
         const thirtyDaysAgo = new Date();

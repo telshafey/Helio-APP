@@ -78,12 +78,14 @@ const AttachmentUploader: React.FC<AttachmentUploaderProps> = ({
                     <label className="relative flex flex-col justify-center items-center w-24 h-24 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-cyan-500 dark:hover:border-cyan-400 transition-colors">
                         <div className="text-center p-2">
                             <CloudArrowUpIcon className="mx-auto h-8 w-8 text-gray-400" />
+                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">صورة أو PDF</p>
                         </div>
                         <input
                             type="file"
                             accept="image/png, image/jpeg, image/gif, image/webp, application/pdf"
                             onChange={handleFileChange}
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            aria-label="Upload attachment"
                         />
                     </label>
                 )}

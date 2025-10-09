@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useData } from '../context/DataContext';
+import { useCommunity } from '../context/AppContext';
 import { ArrowLeftIcon, BriefcaseIcon, CheckCircleIcon, XCircleIcon, ClockIcon, TrashIcon } from '../components/common/Icons';
 import type { JobPosting, ListingStatus } from '../types';
 import RejectReasonModal from '../components/common/RejectReasonModal';
@@ -18,7 +18,7 @@ const StatusBadge: React.FC<{ status: ListingStatus }> = ({ status }) => {
 
 const JobsManagementPage: React.FC = () => {
     const navigate = useNavigate();
-    const { jobPostings, handleUpdateJobPostingStatus, handleDeleteJobPosting } = useData();
+    const { jobPostings, handleUpdateJobPostingStatus, handleDeleteJobPosting } = useCommunity();
     const [activeTab, setActiveTab] = useState<ListingStatus>('pending');
     const [rejectingJob, setRejectingJob] = useState<JobPosting | null>(null);
 

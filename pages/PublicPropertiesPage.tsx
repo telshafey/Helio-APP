@@ -1,26 +1,77 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useData } from '../context/DataContext';
-import { MagnifyingGlassIcon, HomeModernIcon, ArrowLeftIcon } from '../components/common/Icons';
+import { useProperties } from '../context/PropertiesContext';
+import { MagnifyingGlassIcon, HomeModernIcon, AdjustmentsHorizontalIcon } from '../components/common/Icons';
 import PropertyCard from '../components/common/PropertyCard';
 import EmptyState from '../components/common/EmptyState';
 import PageBanner from '../components/common/PageBanner';
+import FilterDrawer from '../components/common/FilterDrawer';
+import PropertyFilters from '../components/properties/PropertyFilters';
 
 const PublicPropertiesPage: React.FC = () => {
     const navigate = useNavigate();
-    const { properties } = useData();
+    const { properties } = useProperties();
 
+    // Existing state
     const [searchTerm, setSearchTerm] = useState('');
     const [typeFilter, setTypeFilter] = useState<'all' | 'sale' | 'rent'>('all');
+
+    // New state for advanced filters
+    const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+    const [tempPriceRange, setTempPriceRange] = useState({ min: '', max: '' });
+    const [tempSelectedAmenities, setTempSelectedAmenities] = useState<string[]>([]);
+    
+    // Applied filters state
+    const [appliedPriceRange, setAppliedPriceRange] = useState({ min: '', max: '' });
+    const [appliedAmenities, setAppliedAmenities] = useState<string[]>([]);
+    
+    const activeFilterCount = useMemo(() => {
+        let count = 0;
+        if (appliedPriceRange.min || appliedPriceRange.max) count++;
+        count += appliedAmenities.length;
+        return count;
+    }, [appliedPriceRange, appliedAmenities]);
+
 
     const filteredProperties = useMemo(() => {
         return properties.filter(prop => {
             const matchesSearch = prop.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                   prop.location.address.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesFilter = typeFilter === 'all' || prop.type === typeFilter;
-            return matchesSearch && matchesFilter;
+            const matchesType = typeFilter === 'all' || prop.type === typeFilter;
+            
+            const minPrice = parseFloat(appliedPriceRange.min);
+            const maxPrice = parseFloat(appliedPriceRange.max);
+            const matchesPrice = 
+                (isNaN(minPrice) || prop.price >= minPrice) &&
+                (isNaN(maxPrice) || prop.price <= maxPrice);
+
+            const matchesAmenities = appliedAmenities.length === 0 || 
+                                     appliedAmenities.every(amenity => prop.amenities.includes(amenity));
+
+            return matchesSearch && matchesType && matchesPrice && matchesAmenities;
         });
-    }, [properties, searchTerm, typeFilter]);
+    }, [properties, searchTerm, typeFilter, appliedPriceRange, appliedAmenities]);
+
+    const handleApplyFilters = () => {
+        setAppliedPriceRange(tempPriceRange);
+        setAppliedAmenities(tempSelectedAmenities);
+        setIsFilterDrawerOpen(false);
+    };
+    
+    const handleClearFilters = () => {
+        setTempPriceRange({ min: '', max: '' });
+        setTempSelectedAmenities([]);
+        setAppliedPriceRange({ min: '', max: '' });
+        setAppliedAmenities([]);
+        setIsFilterDrawerOpen(false);
+    };
+
+    const handleOpenDrawer = () => {
+        // Load temp state with applied state when opening
+        setTempPriceRange(appliedPriceRange);
+        setTempSelectedAmenities(appliedAmenities);
+        setIsFilterDrawerOpen(true);
+    };
     
     return (
         <div className="animate-fade-in" dir="rtl">
@@ -41,12 +92,21 @@ const PublicPropertiesPage: React.FC = () => {
                     </div>
                     <select
                         value={typeFilter} onChange={(e) => setTypeFilter(e.target.value as any)}
-                        className="w-full sm:w-48 bg-slate-100 dark:bg-slate-700 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                        className="w-full sm:w-auto bg-slate-100 dark:bg-slate-700 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-cyan-500"
                     >
                         <option value="all">الكل (بيع وإيجار)</option>
                         <option value="sale">بيع فقط</option>
                         <option value="rent">إيجار فقط</option>
                     </select>
+                    <button onClick={handleOpenDrawer} className="relative w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-700 rounded-lg py-2 px-4 font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                        <AdjustmentsHorizontalIcon className="w-5 h-5" />
+                        <span>فلاتر متقدمة</span>
+                        {activeFilterCount > 0 && (
+                            <span className="absolute -top-2 -right-2 bg-cyan-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                                {activeFilterCount}
+                            </span>
+                        )}
+                    </button>
                 </div>
                 
                 {filteredProperties.length > 0 ? (
@@ -65,6 +125,20 @@ const PublicPropertiesPage: React.FC = () => {
                     </div>
                 )}
             </div>
+            
+            <FilterDrawer 
+                isOpen={isFilterDrawerOpen}
+                onClose={() => setIsFilterDrawerOpen(false)}
+                onApply={handleApplyFilters}
+                onClear={handleClearFilters}
+            >
+                <PropertyFilters 
+                    priceRange={tempPriceRange}
+                    setPriceRange={setTempPriceRange}
+                    selectedAmenities={tempSelectedAmenities}
+                    setSelectedAmenities={setTempSelectedAmenities}
+                />
+            </FilterDrawer>
         </div>
     );
 };

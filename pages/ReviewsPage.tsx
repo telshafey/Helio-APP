@@ -6,7 +6,7 @@ import {
     CheckCircleIcon, XCircleIcon
 } from '../components/common/Icons';
 import type { Review } from '../types';
-import { useData } from '../context/DataContext';
+import { useServices } from '../context/ServicesContext';
 import { useAuth } from '../context/AuthContext';
 import Modal from '../components/common/Modal';
 import KpiCard from '../components/common/KpiCard';
@@ -122,7 +122,8 @@ const AnalysisModal: React.FC<{
 // Main Page Component
 const ReviewsPage: React.FC = () => {
     const navigate = useNavigate();
-    const { services, handleUpdateReview, handleDeleteReview, handleReplyToReview } = useData();
+    // Fix: These properties belong to ServicesContext, not DataContext.
+    const { services, handleUpdateReview, handleDeleteReview, handleReplyToReview } = useServices();
     const { hasPermission } = useAuth();
     const canManage = hasPermission(['مسؤول ادارة الخدمات']);
     const [searchTerm, setSearchTerm] = useState('');

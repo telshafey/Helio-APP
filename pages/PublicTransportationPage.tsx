@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useData } from '../context/DataContext';
+import { useTransportation } from '../context/TransportationContext';
 import { PhoneIcon, UserCircleIcon, BusIcon, CalendarDaysIcon, MapPinIcon, ChevronDownIcon } from '../components/common/Icons';
 import PageBanner from '../components/common/PageBanner';
 
@@ -37,7 +37,7 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; children: Reac
 );
 
 const PublicTransportationPage: React.FC = () => {
-    const { transportation } = useData();
+    const { transportation } = useTransportation();
     const [activeTab, setActiveTab] = useState<'internal' | 'external'>('internal');
     const [showFullWeek, setShowFullWeek] = useState(false);
 

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useData } from '../context/DataContext';
+import { useCommunity } from '../context/AppContext';
 import { ArrowLeftIcon, ShoppingBagIcon, CheckCircleIcon, XCircleIcon, ClockIcon, TrashIcon } from '../components/common/Icons';
 import type { MarketplaceItem, ListingStatus } from '../types';
 import RejectReasonModal from '../components/common/RejectReasonModal';
@@ -18,7 +18,7 @@ const StatusBadge: React.FC<{ status: ListingStatus }> = ({ status }) => {
 
 const MarketplaceManagementPage: React.FC = () => {
     const navigate = useNavigate();
-    const { marketplaceItems, handleUpdateMarketplaceItemStatus, handleDeleteMarketplaceItem } = useData();
+    const { marketplaceItems, handleUpdateMarketplaceItemStatus, handleDeleteMarketplaceItem } = useCommunity();
     const [activeTab, setActiveTab] = useState<ListingStatus>('pending');
     const [rejectingItem, setRejectingItem] = useState<MarketplaceItem | null>(null);
 
@@ -64,7 +64,7 @@ const MarketplaceManagementPage: React.FC = () => {
                     {filteredItems.length > 0 ? filteredItems.map(item => (
                         <div key={item.id} className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-lg flex flex-col sm:flex-row gap-4 justify-between">
                             <div className="flex gap-4">
-                                <img src={item.images[0]} alt={item.title} className="w-24 h-24 object-cover rounded-md flex-shrink-0" />
+                                <img src={item.images[0]} alt={item.title} className="w-24 h-24 object-cover rounded-md flex-shrink-0" loading="lazy" decoding="async" />
                                 <div>
                                     <p className="font-bold">{item.title}</p>
                                     <p className="text-sm text-gray-500">{item.description}</p>

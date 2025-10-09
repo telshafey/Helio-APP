@@ -148,7 +148,6 @@ export interface AppUser {
   joinDate: string;
 }
 
-// FIX: Added AdminUser type for admin panel authentication and roles.
 export interface AdminUser {
   id: number;
   name: string;
@@ -158,7 +157,6 @@ export interface AdminUser {
   role: 'مدير عام' | 'مسؤول ادارة الخدمات' | 'مسؤول العقارات' | 'مسؤول الاخبار والاعلانات والاشعارات' | 'مسؤول الباصات';
 }
 
-// FIX: Added AuditLog type for tracking admin actions.
 export interface AuditLog {
     id: number;
     user: string;
@@ -292,7 +290,13 @@ export interface SearchResult {
 }
 
 // Community Forum Types
-export type PostCategory = 'نقاش عام' | 'نقاش خاص' | 'سؤال' | 'حدث' | 'استطلاع رأي';
+export interface Circle {
+  id: number;
+  name: string;
+  description: string;
+}
+
+export type PostCategory = 'نقاش' | 'سؤال' | 'حدث' | 'استطلاع رأي';
 
 export interface Comment {
   id: number;
@@ -310,6 +314,7 @@ export interface PollOption {
 
 export interface Post {
   id: number;
+  circleId: number; // Replaces targetAudience with a more structured approach
   userId: number;
   username: string;
   avatar: string;
@@ -321,8 +326,8 @@ export interface Post {
   comments: Comment[];
   isPinned?: boolean;
   pollOptions?: PollOption[];
-  targetAudience?: string; // For 'نقاش خاص'
 }
+
 
 // New Marketplace and Jobs Types
 export type ListingStatus = 'pending' | 'approved' | 'rejected' | 'expired';
@@ -361,8 +366,46 @@ export interface JobPosting {
   rejectionReason?: string;
 }
 
+export interface ExclusiveOffer {
+  id: number;
+  serviceId: number;
+  title: string;
+  description: string;
+  imageUrl: string;
+  promoCode?: string;
+  status: ListingStatus;
+  startDate: string;
+  endDate: string;
+  creationDate: string;
+  rejectionReason?: string;
+}
+
+export interface LostAndFoundItem {
+  id: number;
+  userId: number;
+  username: string;
+  avatar: string;
+  type: 'lost' | 'found';
+  title: string;
+  description: string;
+  imageUrl?: string;
+  location: string;
+  contactInfo: string;
+  date: string; // Date lost or found
+  status: ListingStatus;
+  creationDate: string;
+  rejectionReason?: string;
+}
+
 // --- CONTEXT TYPES ---
 export type Theme = 'light' | 'dark' | 'system';
+
+export interface ConfirmationState {
+  isOpen: boolean;
+  title: string;
+  message: string;
+  onConfirm: () => void;
+}
 
 export interface UIContextType {
   theme: Theme;
@@ -371,16 +414,20 @@ export interface UIContextType {
   toasts: ToastMessage[];
   showToast: (message: string, type?: 'success' | 'error') => void;
   dismissToast: (id: number) => void;
+  confirmation: ConfirmationState;
+  showConfirmation: (title: string, message: string, onConfirm: () => void) => void;
+  hideConfirmation: () => void;
+  dismissedNotificationIds: Set<number>;
+  dismissNotification: (id: number) => void;
+  dismissAllNotifications: (allIds: number[]) => void;
 }
 
-// FIX: Added admin auth state and methods to the context type.
 export interface AuthContextType {
   // Admin auth
   currentUser: AdminUser | null;
   isAuthenticated: boolean;
   login: (email: string, password?: string) => boolean;
   logout: () => void;
-  // FIX: Corrected type for hasPermission to accept an array of roles.
   hasPermission: (roles: Array<AdminUser['role']>) => boolean;
 
   // Public user auth
@@ -389,12 +436,16 @@ export interface AuthContextType {
   publicLogin: (email: string, password?: string) => boolean;
   publicLogout: () => void;
   register: (user: Omit<AppUser, 'id' | 'joinDate' | 'avatar' | 'status'>) => boolean;
-  // FIX: updateProfile should not require password, status, etc.
   updateProfile: (user: Omit<AppUser, 'joinDate' | 'status' | 'password'>) => void;
 }
 
 export interface CommunityContextType {
   posts: Post[];
+  circles: Circle[];
+  marketplaceItems: MarketplaceItem[];
+  jobPostings: JobPosting[];
+  offers: ExclusiveOffer[];
+  lostAndFoundItems: LostAndFoundItem[];
   addPost: (postData: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments' | 'isPinned'>) => void;
   addComment: (postId: number, commentData: Omit<Comment, 'id' | 'date' | 'userId' | 'username' | 'avatar'>) => void;
   toggleLikePost: (postId: number) => void;
@@ -403,40 +454,67 @@ export interface CommunityContextType {
   deleteComment: (postId: number, commentId: number) => void;
   togglePinPost: (postId: number) => void;
   editPost: (postId: number, data: Omit<Post, 'id' | 'date' | 'userId' | 'username' | 'avatar' | 'likes' | 'comments' | 'isPinned'>) => void;
+  // Marketplace methods
+  handleSaveMarketplaceItem: (item: Omit<MarketplaceItem, 'id' | 'status' | 'creationDate' | 'expirationDate' | 'userId' | 'username' | 'avatar'> & { id?: number, duration: number }) => void;
+  handleDeleteMarketplaceItem: (itemId: number) => void;
+  handleUpdateMarketplaceItemStatus: (itemId: number, status: ListingStatus, rejectionReason?: string) => void;
+  // Job methods
+  handleSaveJobPosting: (job: Omit<JobPosting, 'id' | 'status' | 'creationDate' | 'expirationDate' | 'userId' | 'username' | 'avatar'> & { id?: number, duration: number }) => void;
+  handleDeleteJobPosting: (jobId: number) => void;
+  handleUpdateJobPostingStatus: (jobId: number, status: ListingStatus, rejectionReason?: string) => void;
+  // Offer methods
+  handleSaveOffer: (offer: Omit<ExclusiveOffer, 'id' | 'status' | 'creationDate' | 'rejectionReason'> & { id?: number }) => void;
+  handleUpdateOfferStatus: (offerId: number, status: ListingStatus, rejectionReason?: string) => void;
+  handleDeleteOffer: (offerId: number) => void;
+  // Lost & Found methods
+  handleSaveLostAndFoundItem: (item: Omit<LostAndFoundItem, 'id' | 'status' | 'creationDate' | 'rejectionReason' | 'userId' | 'username' | 'avatar'> & { id?: number }) => void;
+  handleUpdateLostAndFoundItemStatus: (itemId: number, status: ListingStatus, rejectionReason?: string) => void;
+  handleDeleteLostAndFoundItem: (itemId: number) => void;
 }
 
-// FIX: Added all missing state and handler methods to the context type.
-export interface DataContextType {
-  // Services & Categories
+export interface PropertiesContextType {
+  properties: Property[];
+  handleSaveProperty: (property: Omit<Property, 'id' | 'views' | 'creationDate'> & { id?: number }) => void;
+  handleDeleteProperty: (propertyId: number) => void;
+}
+
+export interface ServicesContextType {
   categories: Category[];
   services: Service[];
-  
-  // Service methods
   handleSaveService: (serviceData: Omit<Service, 'id' | 'rating' | 'reviews' | 'isFavorite' | 'views' | 'creationDate'> & { id?: number }) => void;
   handleDeleteService: (serviceId: number) => void;
   handleToggleFavorite: (serviceId: number) => void;
-  
-  // Review methods
   handleToggleHelpfulReview: (serviceId: number, reviewId: number) => void;
   addReview: (serviceId: number, reviewData: Omit<Review, 'id' | 'date' | 'adminReply' | 'username' | 'avatar' | 'userId'>) => void;
   handleUpdateReview: (serviceId: number, reviewId: number, comment: string) => void;
   handleDeleteReview: (serviceId: number, reviewId: number) => void;
   handleReplyToReview: (serviceId: number, reviewId: number, reply: string) => void;
+}
 
-  // Properties
-  properties: Property[];
-  handleSaveProperty: (property: Omit<Property, 'id' | 'views' | 'creationDate'> & { id?: number }) => void;
-  handleDeleteProperty: (propertyId: number) => void;
-
-  // Other Data
+export interface NewsContextType {
   news: News[];
   notifications: Notification[];
   advertisements: Advertisement[];
-  emergencyContacts: EmergencyContact[];
-  serviceGuides: ServiceGuide[];
+  handleSaveNews: (newsItem: Omit<News, 'id' | 'date' | 'author' | 'views'> & { id?: number }) => void;
+  handleDeleteNews: (newsId: number) => void;
+  handleSaveNotification: (notification: Omit<Notification, 'id'> & { id?: number }) => void;
+  handleDeleteNotification: (notificationId: number) => void;
+  handleSaveAdvertisement: (ad: Omit<Advertisement, 'id'> & { id?: number }) => void;
+  handleDeleteAdvertisement: (adId: number) => void;
+}
+
+export interface UsersContextType {
   users: AppUser[];
   admins: AdminUser[];
   auditLogs: AuditLog[];
+  requestAccountDeletion: (userId: number) => void;
+  handleSaveUser: (userData: Omit<AppUser, 'id' | 'joinDate'> & { id?: number }) => void;
+  handleDeleteUser: (userId: number) => void;
+  handleSaveAdmin: (adminData: Omit<AdminUser, 'id'> & { id?: number }) => void;
+  handleDeleteAdmin: (adminId: number) => void;
+}
+
+export interface TransportationContextType {
   transportation: {
       internalSupervisor: Supervisor;
       externalSupervisor: Supervisor;
@@ -444,50 +522,26 @@ export interface DataContextType {
       weeklySchedule: WeeklyScheduleItem[];
       externalRoutes: ExternalRoute[];
   };
-  publicPagesContent: PublicPagesContent;
-  marketplaceItems: MarketplaceItem[];
-  jobPostings: JobPosting[];
-
-  // User methods
-  requestAccountDeletion: (userId: number) => void;
-  // FIX: Corrected type for handleSaveUser to accept optional id.
-  handleSaveUser: (userData: Omit<AppUser, 'id' | 'joinDate'> & { id?: number }) => void;
-  handleDeleteUser: (userId: number) => void;
-
-  // Admin methods
-  handleSaveAdmin: (adminData: Omit<AdminUser, 'id'> & { id?: number }) => void;
-  handleDeleteAdmin: (adminId: number) => void;
-
-  // Other entity methods
-  handleSaveNews: (newsItem: Omit<News, 'id' | 'date' | 'author' | 'views'> & { id?: number }) => void;
-  handleDeleteNews: (newsId: number) => void;
-  handleSaveNotification: (notification: Omit<Notification, 'id'> & { id?: number }) => void;
-  handleDeleteNotification: (notificationId: number) => void;
-  handleSaveAdvertisement: (ad: Omit<Advertisement, 'id'> & { id?: number }) => void;
-  handleDeleteAdvertisement: (adId: number) => void;
-  handleSaveEmergencyContact: (contact: Omit<EmergencyContact, 'id'> & { id?: number }) => void;
-  handleDeleteEmergencyContact: (contactId: number) => void;
-  handleSaveServiceGuide: (guide: Omit<ServiceGuide, 'id'> & { id?: number }) => void;
-  handleDeleteServiceGuide: (guideId: number) => void;
-
-  // Transportation methods
   handleSaveSupervisor: (type: 'internal' | 'external', supervisor: Supervisor) => void;
   handleSaveDriver: (driver: Omit<Driver, 'id'> & { id?: number }) => void;
   handleDeleteDriver: (driverId: number) => void;
   handleSaveRoute: (route: Omit<ExternalRoute, 'id'> & { id?: number }) => void;
   handleDeleteRoute: (routeId: number) => void;
   handleSaveSchedule: (schedule: WeeklyScheduleItem[]) => void;
+}
+
+export interface DataContextType {
+  // Other Data
+  emergencyContacts: EmergencyContact[];
+  serviceGuides: ServiceGuide[];
+  publicPagesContent: PublicPagesContent;
+  
+  // Other entity methods
+  handleSaveEmergencyContact: (contact: Omit<EmergencyContact, 'id'> & { id?: number }) => void;
+  handleDeleteEmergencyContact: (contactId: number) => void;
+  handleSaveServiceGuide: (guide: Omit<ServiceGuide, 'id'> & { id?: number }) => void;
+  handleDeleteServiceGuide: (guideId: number) => void;
   
   // Content Management methods
   handleUpdatePublicPageContent: <K extends keyof PublicPagesContent>(page: K, content: PublicPagesContent[K]) => void;
-
-  // Marketplace methods
-  handleSaveMarketplaceItem: (item: Omit<MarketplaceItem, 'id' | 'status' | 'creationDate' | 'expirationDate' | 'userId' | 'username' | 'avatar'> & { id?: number, duration: number }) => void;
-  handleDeleteMarketplaceItem: (itemId: number) => void;
-  handleUpdateMarketplaceItemStatus: (itemId: number, status: ListingStatus, rejectionReason?: string) => void;
-  
-  // Job methods
-  handleSaveJobPosting: (job: Omit<JobPosting, 'id' | 'status' | 'creationDate' | 'expirationDate' | 'userId' | 'username' | 'avatar'> & { id?: number, duration: number }) => void;
-  handleDeleteJobPosting: (jobId: number) => void;
-  handleUpdateJobPostingStatus: (jobId: number, status: ListingStatus, rejectionReason?: string) => void;
 }

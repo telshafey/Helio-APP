@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect, useMemo } from 'react';
-import type { ToastMessage, UIContextType, Theme } from '../types';
+import type { ToastMessage, UIContextType, Theme, ConfirmationState } from '../types';
 
 const UIContext = createContext<UIContextType | undefined>(undefined);
 
@@ -9,6 +9,13 @@ export const useUI = (): UIContextType => {
         throw new Error('useUI must be used within a UIProvider');
     }
     return context;
+};
+
+const initialConfirmationState: ConfirmationState = {
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
 };
 
 export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -23,6 +30,17 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     });
     
     const [isSystemDark, setIsSystemDark] = useState(() => window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const [confirmation, setConfirmation] = useState<ConfirmationState>(initialConfirmationState);
+
+    const [dismissedNotificationIds, setDismissedNotificationIds] = useState<Set<number>>(() => {
+        try {
+            const item = window.localStorage.getItem('dismissedNotificationIds');
+            return item ? new Set(JSON.parse(item)) : new Set();
+        } catch (error) {
+            console.error(error);
+            return new Set();
+        }
+    });
 
     useEffect(() => {
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -30,6 +48,14 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         mediaQuery.addEventListener('change', handleChange);
         return () => mediaQuery.removeEventListener('change', handleChange);
     }, []);
+
+    useEffect(() => {
+        try {
+            window.localStorage.setItem('dismissedNotificationIds', JSON.stringify(Array.from(dismissedNotificationIds)));
+        } catch (error) {
+            console.error(error);
+        }
+    }, [dismissedNotificationIds]);
 
     const isDarkMode = useMemo(() => {
         if (theme === 'system') return isSystemDark;
@@ -55,6 +81,30 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setToasts(prev => prev.filter(t => t.id !== id));
     }, []);
 
+    const showConfirmation = useCallback((title: string, message: string, onConfirm: () => void) => {
+        setConfirmation({ isOpen: true, title, message, onConfirm });
+    }, []);
+
+    const hideConfirmation = useCallback(() => {
+        setConfirmation(initialConfirmationState);
+    }, []);
+
+    const dismissNotification = useCallback((id: number) => {
+        setDismissedNotificationIds(prev => {
+            const newSet = new Set(prev);
+            newSet.add(id);
+            return newSet;
+        });
+    }, []);
+    
+    const dismissAllNotifications = useCallback((allIds: number[]) => {
+        setDismissedNotificationIds(prev => {
+            const newSet = new Set(prev);
+            allIds.forEach(id => newSet.add(id));
+            return newSet;
+        });
+    }, []);
+
     const value: UIContextType = {
         theme,
         setTheme,
@@ -62,6 +112,12 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         toasts,
         showToast,
         dismissToast,
+        confirmation,
+        showConfirmation,
+        hideConfirmation,
+        dismissedNotificationIds,
+        dismissNotification,
+        dismissAllNotifications,
     };
 
     return (

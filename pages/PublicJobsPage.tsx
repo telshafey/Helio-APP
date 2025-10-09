@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { useData } from '../context/DataContext';
+import { useCommunity } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import PageBanner from '../components/common/PageBanner';
@@ -10,7 +10,7 @@ import EmptyState from '../components/common/EmptyState';
 import { InputField, TextareaField } from '../components/common/FormControls';
 
 const AddJobForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-    const { handleSaveJobPosting } = useData();
+    const { handleSaveJobPosting } = useCommunity();
     const [formData, setFormData] = useState({
         title: '', companyName: '', description: '', location: 'هليوبوليس الجديدة',
         type: 'دوام كامل' as JobPosting['type'], contactInfo: '', duration: 30,
@@ -23,7 +23,11 @@ const AddJobForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        handleSaveJobPosting(formData);
+        handleSaveJobPosting({
+            ...formData,
+            type: formData.type as JobPosting['type'],
+            duration: Number(formData.duration),
+        });
         onClose();
     };
     
@@ -78,7 +82,7 @@ const JobPostingCard: React.FC<{ job: JobPosting }> = ({ job }) => (
 );
 
 const PublicJobsPage: React.FC = () => {
-    const { jobPostings } = useData();
+    const { jobPostings } = useCommunity();
     const { isPublicAuthenticated } = useAuth();
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);

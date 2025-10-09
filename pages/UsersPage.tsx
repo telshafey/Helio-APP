@@ -4,10 +4,8 @@ import {
     ArrowLeftIcon, MagnifyingGlassIcon, UserPlusIcon, PencilSquareIcon, 
     TrashIcon, UserGroupIcon, UserCircleIcon, CheckCircleIcon, ClockIcon, NoSymbolIcon, UserMinusIcon 
 } from '../components/common/Icons';
-import { useData } from '../context/DataContext';
-// FIX: Changed import from `useHasPermission` to `useAuth`.
+import { useUsers } from '../context/UsersContext';
 import { useAuth } from '../context/AuthContext';
-// FIX: Imported AdminUser type.
 import type { AppUser, AdminUser, UserStatus } from '../types';
 import Modal from '../components/common/Modal';
 import ImageUploader from '../components/common/ImageUploader';
@@ -41,7 +39,6 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; children: Reac
 
 const UserForm: React.FC<{
     user: AppUser | null;
-    // FIX: Corrected type to match what's passed from handleSubmit.
     onSave: (user: Omit<AppUser, 'id' | 'joinDate'> & { id?: number }) => void;
     onClose: () => void;
 }> = ({ user, onSave, onClose }) => {
@@ -170,9 +167,7 @@ const AdminForm: React.FC<{
 };
 
 const RegularUsersTab: React.FC<{ onAdd: () => void; onEdit: (user: AppUser) => void; }> = ({ onAdd, onEdit }) => {
-    // FIX: Replaced non-existent property with correct one from DataContext.
-    const { users, handleDeleteUser } = useData();
-    // FIX: Use `useAuth` to get `hasPermission`.
+    const { users, handleDeleteUser } = useUsers();
     const { hasPermission } = useAuth();
     const canManage = hasPermission(['مدير عام']);
     const [searchTerm, setSearchTerm] = useState('');
@@ -253,9 +248,7 @@ const RegularUsersTab: React.FC<{ onAdd: () => void; onEdit: (user: AppUser) => 
 };
 
 const AdminUsersTab: React.FC<{ onAdd: () => void; onEdit: (admin: AdminUser) => void; }> = ({ onAdd, onEdit }) => {
-    // FIX: Replaced non-existent properties with correct ones from DataContext.
-    const { admins, handleDeleteAdmin } = useData();
-    // FIX: Use `useAuth` to get `hasPermission`.
+    const { admins, handleDeleteAdmin } = useUsers();
     const { hasPermission } = useAuth();
     const canManage = hasPermission(['مدير عام']);
 
@@ -346,8 +339,7 @@ const AdminUsersTab: React.FC<{ onAdd: () => void; onEdit: (admin: AdminUser) =>
 
 const UsersPage: React.FC = () => {
     const navigate = useNavigate();
-    // FIX: Replaced non-existent properties with correct ones from DataContext.
-    const { users, handleSaveUser, handleSaveAdmin } = useData();
+    const { users, admins, handleSaveUser, handleSaveAdmin } = useUsers();
     const [activeTab, setActiveTab] = useState<'users' | 'admins'>('users');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingUser, setEditingUser] = useState<AppUser | null>(null);

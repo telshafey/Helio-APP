@@ -1,5 +1,4 @@
-// FIX: Added AdminUser and AuditLog to imports
-import type { Category, Service, Review, News, Notification, Property, EmergencyContact, ServiceGuide, AppUser, Supervisor, Driver, WeeklyScheduleItem, ExternalRoute, PublicPagesContent, Post, Advertisement, AboutCityPageContent, AdminUser, AuditLog, MarketplaceItem, JobPosting } from '../types';
+import type { Category, Service, Review, News, Notification, Property, EmergencyContact, ServiceGuide, AppUser, Supervisor, Driver, WeeklyScheduleItem, ExternalRoute, PublicPagesContent, Post, Advertisement, AboutCityPageContent, AdminUser, AuditLog, MarketplaceItem, JobPosting, Circle, ExclusiveOffer, LostAndFoundItem } from '../types';
 
 export const mockReviews: Review[] = [
     { id: 1, userId: 1, username: 'أحمد محمود', avatar: 'https://picsum.photos/101', rating: 5, comment: 'خدمة ممتازة وتجربة رائعة! أنصح به بشدة.', date: '2024-07-10', adminReply: 'شكراً لتقييمك! نسعد بخدمتك دائماً.', helpfulCount: 12 },
@@ -39,6 +38,20 @@ export const mockServices: Service[] = [
         about: "مستشفى متكامل يقدم خدمات طبية على مدار 24 ساعة في جميع التخصصات.",
         rating: 4.2, reviews: [], facebookUrl: "#", instagramUrl: "#", isFavorite: true, views: 6890, creationDate: '2024-06-10',
         workingHours: "24/7"
+    },
+    // لياقة بدنية (subCategoryId: 701)
+    {
+        id: 5, subCategoryId: 701, name: "جيم فيتنس برو", images: ["https://picsum.photos/800/600?random=20"],
+        address: "المنطقة الرياضية", phone: ["010-123-4567"], whatsapp: [],
+        about: "أحدث الأجهزة الرياضية ومدربين محترفين لمساعدتك في الوصول لهدفك.",
+        rating: 4.9, reviews: [], facebookUrl: "#", instagramUrl: "#", isFavorite: false, views: 2500, creationDate: '2024-07-22'
+    },
+    // جمال وعناية (subCategoryId: 801)
+    {
+        id: 6, subCategoryId: 801, name: "صالون بيوتي كوين", images: ["https://picsum.photos/800/600?random=25"],
+        address: "مول سيتي بلازا، الطابق الأول", phone: ["011-987-6543"], whatsapp: [],
+        about: "جميع خدمات التجميل والعناية بالشعر والبشرة للسيدات.",
+        rating: 4.6, reviews: [], facebookUrl: "#", instagramUrl: "#", isFavorite: true, views: 1800, creationDate: '2024-07-18'
     },
 ];
 
@@ -414,7 +427,6 @@ export const mockUsers: AppUser[] = [
   { id: 7, name: 'مستخدم تجريبي', email: 'test@test.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=7', status: 'active', joinDate: '2024-01-01' },
 ];
 
-// FIX: Added mock admin users.
 export const mockAdmins: AdminUser[] = [
     { id: 1, name: 'المدير العام', email: 'admin@helio.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=99', role: 'مدير عام' },
     { id: 2, name: 'مسؤول الخدمات', email: 'services@helio.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=98', role: 'مسؤول ادارة الخدمات' },
@@ -423,7 +435,6 @@ export const mockAdmins: AdminUser[] = [
     { id: 5, name: 'مسؤول الباصات', email: 'transport@helio.com', password: 'password', avatar: 'https://picsum.photos/200/200?random=95', role: 'مسؤول الباصات' },
 ];
 
-// FIX: Added mock audit logs.
 export const mockAuditLogs: AuditLog[] = [
     { id: 1, user: 'المدير العام', action: 'إنشاء خدمة', details: 'أضاف خدمة جديدة: مطعم ومقهى هيليو', timestamp: '2024-07-28T10:00:00Z' },
     { id: 2, user: 'مسؤول العقارات', action: 'حذف عقار', details: 'حذف عقار: شقة فاخرة للبيع في كمبوند لايف بارك', timestamp: '2024-07-28T09:30:00Z' },
@@ -431,18 +442,26 @@ export const mockAuditLogs: AuditLog[] = [
     { id: 4, user: 'المدير العام', action: 'تعديل مستخدم', details: 'قام بتغيير حالة المستخدم خالد العتيبي إلى "مفعل"', timestamp: '2024-07-27T11:05:00Z' },
 ];
 
+export const mockCircles: Circle[] = [
+  { id: 1, name: 'الدائرة العامة', description: 'نقاشات عامة تهم جميع سكان المدينة' },
+  { id: 2, name: 'دائرة الحي الخامس', description: 'خاصة بسكان وأمور الحي الخامس' },
+  { id: 3, name: 'دائرة كمبوند الزهور', description: 'للتواصل بين سكان كمبوند الزهور' },
+  { id: 4, name: 'دائرة لايف بارك', description: 'خاصة بسكان كمبوند لايف بارك' },
+  { id: 5, name: 'دائرة الخدمات', description: 'لمناقشة جودة الخدمات وتقييمها' },
+];
 
 export const mockPosts: Post[] = [
   {
     id: 1,
+    circleId: 1,
     userId: 1,
     username: 'أحمد محمود',
     avatar: 'https://picsum.photos/101',
     title: 'تجمع ملاك الحي الأول',
     content: 'السلام عليكم، أقترح أن نقوم بإنشاء مجموعة واتساب خاصة بملاك الحي الأول لمناقشة الأمور الهامة ومتابعة المستجدات. ما رأيكم؟',
-    category: 'نقاش عام',
+    category: 'نقاش',
     date: '2024-07-28',
-    likes: [2, 3, 4], // Liked by Fatima, Khaled, Sara
+    likes: [2, 3, 4],
     comments: [
       { id: 101, userId: 2, username: 'فاطمة الزهراء', avatar: 'https://picsum.photos/102', content: 'فكرة ممتازة! أنا معكم.', date: '2024-07-28' },
       { id: 102, userId: 3, username: 'خالد العتيبي', avatar: 'https://picsum.photos/103', content: 'ياليت والله، راح تسهل علينا كثير.', date: '2024-07-29' },
@@ -451,6 +470,7 @@ export const mockPosts: Post[] = [
   },
   {
     id: 2,
+    circleId: 5,
     userId: 4,
     username: 'سارة عبدالله',
     avatar: 'https://picsum.photos/106',
@@ -463,6 +483,7 @@ export const mockPosts: Post[] = [
   },
   {
     id: 3,
+    circleId: 1,
     userId: 5,
     username: 'محمد حسين',
     avatar: 'https://picsum.photos/200/200?random=5',
@@ -477,6 +498,7 @@ export const mockPosts: Post[] = [
   },
   {
     id: 4,
+    circleId: 5,
     userId: 2,
     username: 'فاطمة الزهراء',
     avatar: 'https://picsum.photos/102',
@@ -574,6 +596,163 @@ export const mockJobPostings: JobPosting[] = [
         status: 'pending',
         creationDate: '2024-07-29',
         expirationDate: '2024-08-29',
+    },
+];
+
+export const mockOffers: ExclusiveOffer[] = [
+    {
+        id: 1,
+        serviceId: 1, // مطعم ومقهى هيليو
+        title: 'خصم 20% على وجبات الغداء',
+        description: 'استمتع بخصم 20% على جميع وجبات الغداء طوال أيام الأسبوع. العرض ساري من الساعة 12 ظهراً حتى 4 عصراً.',
+        imageUrl: 'https://picsum.photos/800/600?random=301',
+        promoCode: 'HELIO20',
+        status: 'approved',
+        startDate: '2024-07-01',
+        endDate: '2025-12-31',
+        creationDate: '2024-06-30',
+    },
+    {
+        id: 2,
+        serviceId: 3, // كافيه روز جاردن
+        title: 'قطعة حلوى مجانية مع كل مشروب ساخن',
+        description: 'اطلب أي مشروب ساخن واحصل على قطعة من حلوى اليوم مجاناً. العرض لا يشمل المشروبات المثلجة.',
+        imageUrl: 'https://picsum.photos/800/600?random=302',
+        status: 'approved',
+        startDate: '2024-08-01',
+        endDate: '2025-12-31',
+        creationDate: '2024-07-29',
+    },
+    {
+        id: 3,
+        serviceId: 4, // مستشفى هليوبوليس المركزي
+        title: 'خصم 15% على الفحص الشامل',
+        description: 'حافظ على صحتك مع خصم خاص لسكان المدينة على باقة الفحص الشامل. يشمل تحاليل وصورة دم كاملة.',
+        imageUrl: 'https://picsum.photos/800/600?random=305',
+        status: 'approved',
+        startDate: '2024-08-01',
+        endDate: '2025-12-31',
+        creationDate: '2024-07-30',
+    },
+    {
+        id: 4,
+        serviceId: 2, // مطعم أسماك المحيط
+        title: 'وجبة طفل مجانا',
+        description: 'احصل على وجبة طفل مجانية عند طلب أي وجبة رئيسية.',
+        imageUrl: 'https://picsum.photos/800/600?random=306',
+        status: 'rejected',
+        rejectionReason: 'صورة العرض غير واضحة.',
+        startDate: '2024-08-05',
+        endDate: '2024-08-20',
+        creationDate: '2024-08-01',
+    },
+    {
+        id: 5,
+        serviceId: 5, // جيم فيتنس برو
+        title: 'شهر مجاني عند الاشتراك السنوي',
+        description: 'اشترك لمدة سنة في أي من باقات الجيم واحصل على شهر إضافي مجاناً بالكامل. العرض لفترة محدودة.',
+        imageUrl: 'https://picsum.photos/800/600?random=308',
+        status: 'approved',
+        startDate: '2024-08-01',
+        endDate: '2025-12-31',
+        creationDate: '2024-07-25',
+    },
+    {
+        id: 6,
+        serviceId: 6, // صالون بيوتي كوين
+        title: 'خصم 30% على باقة العناية الكاملة',
+        description: 'دللي نفسك مع باقة العناية الكاملة (شعر - بشرة - أظافر) واستمتعي بخصم 30% حصري لسكان المدينة.',
+        imageUrl: 'https://picsum.photos/800/600?random=309',
+        status: 'approved',
+        startDate: '2024-08-10',
+        endDate: '2025-12-31',
+        creationDate: '2024-08-01',
+    },
+    {
+        id: 7,
+        serviceId: 1, // مطعم ومقهى هيليو
+        title: 'حلوى مجانية مع العشاء',
+        description: 'احصل على قطعة حلوى من اختيارك مجاناً عند طلب أي وجبة عشاء رئيسية بعد الساعة 7 مساءً.',
+        imageUrl: 'https://picsum.photos/800/600?random=310',
+        status: 'approved',
+        startDate: '2024-09-01',
+        endDate: '2025-12-31',
+        creationDate: '2024-08-15',
+    }
+];
+
+export const mockLostAndFoundItems: LostAndFoundItem[] = [
+    {
+        id: 1,
+        userId: 1,
+        username: 'أحمد محمود',
+        avatar: 'https://picsum.photos/101',
+        type: 'lost',
+        title: 'فقدت قطتي "لوسي"',
+        description: 'قطة شيرازية بيضاء، فقدت بالقرب من مول سيتي بلازا. كانت ترتدي طوقاً أحمر.',
+        imageUrl: 'https://picsum.photos/800/600?random=303',
+        location: 'بالقرب من مول سيتي بلازا',
+        contactInfo: '01001234567',
+        date: '2024-07-28',
+        status: 'approved',
+        creationDate: '2024-07-28',
+    },
+    {
+        id: 2,
+        userId: 2,
+        username: 'فاطمة الزهراء',
+        avatar: 'https://picsum.photos/102',
+        type: 'found',
+        title: 'وجدت مجموعة مفاتيح',
+        description: 'مجموعة مفاتيح بها ميدالية على شكل سيارة. وجدتها على مقعد في الحديقة المركزية.',
+        location: 'الحديقة المركزية',
+        contactInfo: '01119876543',
+        date: '2024-07-29',
+        status: 'pending',
+        creationDate: '2024-07-29',
+    },
+    {
+        id: 3,
+        userId: 5,
+        username: 'محمد حسين',
+        avatar: 'https://picsum.photos/200/200?random=5',
+        type: 'found',
+        title: 'تم العثور على محفظة رجالي',
+        description: 'محفظة جلد سوداء تحتوي على بطاقات بنكية وهوية شخصية باسم "ع. س.". تم العثور عليها بجوار ماكينة الصراف الآلي.',
+        location: 'أمام البنك الأهلي',
+        contactInfo: '01223344556',
+        date: '2024-07-30',
+        status: 'approved',
+        creationDate: '2024-07-30',
+    },
+    {
+        id: 4,
+        userId: 4,
+        username: 'سارة عبدالله',
+        avatar: 'https://picsum.photos/106',
+        type: 'lost',
+        title: 'فقدان هاتف آيفون 13',
+        description: 'هاتف آيفون 13 أزرق اللون في غطاء شفاف. آخر مكان تواجدت فيه كان في منطقة المطاعم بمول سيتي بلازا.',
+        imageUrl: 'https://picsum.photos/800/600?random=307',
+        location: 'مول سيتي بلازا',
+        contactInfo: 'برجاء التواصل على رقم 01001122334',
+        date: '2024-08-01',
+        status: 'approved',
+        creationDate: '2024-08-01',
+    },
+    {
+        id: 5,
+        userId: 6,
+        username: 'نور الهدى',
+        avatar: 'https://picsum.photos/200/200?random=6',
+        type: 'found',
+        title: 'نظارة شمسية',
+        description: 'وجدت نظارة شمسية حريمي على طاولة في كافيه روز جاردن.',
+        location: 'كافيه روز جاردن',
+        contactInfo: 'يرجى التواصل معي لاستلامها.',
+        date: '2024-08-02',
+        status: 'pending',
+        creationDate: '2024-08-02',
     },
 ];
 

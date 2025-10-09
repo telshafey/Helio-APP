@@ -2,10 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import App from './App';
-import { DataProvider } from './context/DataContext';
-import { UIProvider } from './context/UIContext';
-import { AuthProvider } from './context/AuthContext';
-import { CommunityProvider } from './context/AppContext';
+import { AppProvider } from './context/AppProvider';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -16,15 +13,9 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <HashRouter>
-      <UIProvider>
-        <AuthProvider>
-          <DataProvider>
-            <CommunityProvider>
-              <App />
-            </CommunityProvider>
-          </DataProvider>
-        </AuthProvider>
-      </UIProvider>
+      <AppProvider>
+        <App />
+      </AppProvider>
     </HashRouter>
   </React.StrictMode>
 );

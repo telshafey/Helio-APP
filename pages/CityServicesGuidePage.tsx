@@ -6,7 +6,6 @@ import {
 } from '../components/common/Icons';
 import type { ServiceGuide } from '../types';
 import { useData } from '../context/DataContext';
-// FIX: Changed import from `useHasPermission` to `useAuth`.
 import { useAuth } from '../context/AuthContext';
 import Modal from '../components/common/Modal';
 import AttachmentUploader from '../components/common/AttachmentUploader';
@@ -98,9 +97,7 @@ const GuideForm: React.FC<{
 
 const CityServicesGuidePage: React.FC = () => {
     const navigate = useNavigate();
-    // FIX: Replaced non-existent properties with correct ones from DataContext.
     const { serviceGuides, handleSaveServiceGuide, handleDeleteServiceGuide } = useData();
-    // FIX: Use `useAuth` to get `hasPermission`.
     const { hasPermission } = useAuth();
     const canManage = hasPermission(['مسؤول ادارة الخدمات']);
     const [isModalOpen, setIsModalOpen] = useState(false);

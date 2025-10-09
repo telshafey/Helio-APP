@@ -1,13 +1,11 @@
 import React from 'react';
-// FIX: Replaced deprecated useAppContext with useData from DataContext.
-import { useData } from '../context/DataContext';
+import { useNews } from '../context/NewsContext';
 import NewsCard from '../components/common/NewsCard';
 import { NewspaperIcon } from '../components/common/Icons';
 import PageBanner from '../components/common/PageBanner';
 
 const PublicNewsPage: React.FC = () => {
-    // FIX: Replaced deprecated useAppContext with useData.
-    const { news } = useData();
+    const { news } = useNews();
     const sortedNews = [...news].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     return (

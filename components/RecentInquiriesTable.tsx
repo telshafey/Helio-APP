@@ -1,7 +1,11 @@
 import React, { useMemo } from 'react';
 import type { Activity } from '../../types';
 import { WrenchScrewdriverIcon, ShieldExclamationIcon, NewspaperIcon, HomeModernIcon } from './common/Icons';
-import { useData } from '../context/DataContext';
+import { useServices } from '../context/ServicesContext';
+// Fix: Import useProperties to get properties data from its context
+import { useProperties } from '../context/PropertiesContext';
+// Fix: Import useNews to get news data from its context
+import { useNews } from '../context/NewsContext';
 
 const formatRelativeTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -30,7 +34,10 @@ const ActivityIcon: React.FC<{ type: Activity['type'] }> = ({ type }) => {
 };
 
 const RecentInquiriesTable: React.FC = () => {
-  const { services, properties, news } = useData();
+  // Fix: 'news' is not in DataContext. It's in NewsContext.
+  const { news } = useNews();
+  const { properties } = useProperties();
+  const { services } = useServices();
     
   const recentActivities = useMemo(() => {
       const serviceActivities: Activity[] = services.map(s => ({

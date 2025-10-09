@@ -6,12 +6,9 @@ import { useData } from '../context/DataContext';
 import Modal from '../components/common/Modal';
 import EmptyState from '../components/common/EmptyState';
 import PageBanner from '../components/common/PageBanner';
-// FIX: Changed import from `useHasPermission` to `useAuth`.
 import { useAuth } from '../context/AuthContext';
 
 const EmergencyCard: React.FC<{ contact: EmergencyContact; onEdit: (contact: EmergencyContact) => void; onDelete: (id: number) => void; }> = ({ contact, onEdit, onDelete }) => {
-    // FIX: Replaced non-existent property with the correct 'isAuthenticated' from AuthContext.
-    // FIX: Use `useAuth` to get `hasPermission`.
     const { isAuthenticated, hasPermission } = useAuth();
     const canManage = hasPermission(['مسؤول ادارة الخدمات']);
 
@@ -44,8 +41,6 @@ const EmergencyCard: React.FC<{ contact: EmergencyContact; onEdit: (contact: Eme
 };
 
 const EmergencyListItem: React.FC<{ contact: EmergencyContact; onEdit: (contact: EmergencyContact) => void; onDelete: (id: number) => void; }> = ({ contact, onEdit, onDelete }) => {
-    // FIX: Replaced non-existent property with the correct 'isAuthenticated' from AuthContext.
-    // FIX: Use `useAuth` to get `hasPermission`.
     const { isAuthenticated, hasPermission } = useAuth();
     const canManage = hasPermission(['مسؤول ادارة الخدمات']);
 
@@ -144,9 +139,7 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; children: Reac
 
 const EmergencyPage: React.FC = () => {
     const navigate = useNavigate();
-    // FIX: Replaced non-existent properties with correct ones from DataContext.
     const { emergencyContacts, handleSaveEmergencyContact, handleDeleteEmergencyContact } = useData();
-    // FIX: Replaced non-existent property with the correct 'isAuthenticated' from AuthContext.
     const { isAuthenticated, hasPermission } = useAuth();
     const canManage = hasPermission(['مسؤول ادارة الخدمات']);
     const [isModalOpen, setIsModalOpen] = useState(false);

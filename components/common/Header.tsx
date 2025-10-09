@@ -5,9 +5,7 @@ import { useUI } from '../../context/UIContext';
 import GlobalSearchModal from './GlobalSearchModal';
 
 const Header: React.FC = () => {
-  // FIX: Destructured setTheme instead of non-existent toggleDarkMode.
   const { isDarkMode, setTheme } = useUI();
-  // FIX: Replaced non-existent property with the correct 'currentUser' from AuthContext.
   const { currentUser } = useAuth();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   

@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 import type { Property } from '../../types';
 import { MapPinIcon, PhoneIcon } from './Icons';
 
 const PropertyCard: React.FC<{ property: Property }> = ({ property }) => {
     return (
-        <Link to={`/property/${property.id}`} className="block bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 group">
+        <Link to={`/property/${property.id}`} className="block bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 active:scale-[0.98] group">
             <div className="relative">
-                <img src={property.images[0] || 'https://picsum.photos/600/400?random=30'} alt={property.title} className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+                <img src={property.images[0] || 'https://picsum.photos/600/400?random=30'} alt={property.title} className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" decoding="async" />
                 <div className={`absolute top-3 right-3 px-3 py-1 text-sm font-bold text-white rounded-full ${property.type === 'sale' ? 'bg-cyan-500' : 'bg-purple-500'}`}>
                     {property.type === 'sale' ? 'للبيع' : 'للإيجار'}
                 </div>
@@ -28,4 +28,4 @@ const PropertyCard: React.FC<{ property: Property }> = ({ property }) => {
     );
 };
 
-export default PropertyCard;
+export default memo(PropertyCard);

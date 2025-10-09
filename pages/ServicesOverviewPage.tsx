@@ -1,22 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useData } from '../context/DataContext';
-import { ArrowLeftIcon, ChevronDownIcon, RectangleGroupIcon, Squares2X2Icon, HeartIcon, CakeIcon, AcademicCapIcon, ShoppingBagIcon, DevicePhoneMobileIcon, BoltIcon, SparklesIcon, WrenchScrewdriverIcon, CarIcon, GiftIcon, PaintBrushIcon } from '../components/common/Icons';
+import { useServices } from '../context/ServicesContext';
+import { ArrowLeftIcon, ChevronDownIcon, RectangleGroupIcon } from '../components/common/Icons';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
-const iconComponents: { [key: string]: React.FC<React.SVGProps<SVGSVGElement>> } = {
-    HeartIcon, CakeIcon, AcademicCapIcon, ShoppingBagIcon, DevicePhoneMobileIcon, BoltIcon, SparklesIcon, WrenchScrewdriverIcon, CarIcon, Squares2X2Icon, GiftIcon, PaintBrushIcon
-};
-
-const getIcon = (name: string, props: React.SVGProps<SVGSVGElement>) => {
-    const IconComponent = iconComponents[name];
-    return IconComponent ? <IconComponent {...props} /> : <Squares2X2Icon {...props} />;
-};
-
+import { getIcon } from '../components/common/iconUtils';
 
 const ServicesOverviewPage: React.FC = () => {
     const navigate = useNavigate();
-    const { services, categories } = useData();
+    const { services, categories } = useServices();
     const [openCategoryId, setOpenCategoryId] = useState<number | null>(null);
 
     const categoryData = useMemo(() => {

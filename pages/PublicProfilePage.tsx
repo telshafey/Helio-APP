@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useData } from '../context/DataContext';
+import { useUsers } from '../context/UsersContext';
+import { useServices } from '../context/ServicesContext';
 import { ArrowLeftIcon, StarIcon, ChatBubbleOvalLeftIcon } from '../components/common/Icons';
 import Spinner from '../components/common/Spinner';
 
@@ -16,7 +17,9 @@ const RatingDisplay: React.FC<{ rating: number; size?: string; }> = ({ rating, s
 const PublicProfilePage: React.FC = () => {
     const { userId } = useParams<{ userId: string }>();
     const navigate = useNavigate();
-    const { users, services } = useData();
+    // Fix: 'users' is not in DataContext. It's in UsersContext.
+    const { users } = useUsers();
+    const { services } = useServices();
 
     const user = useMemo(() => users.find(u => u.id === Number(userId)), [users, userId]);
     

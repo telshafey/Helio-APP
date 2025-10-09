@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 import type { Service } from '../../types';
 import { StarIcon, HeartIcon, HeartIconSolid } from './Icons';
-import { useData } from '../../context/DataContext';
+import { useServices } from '../../context/ServicesContext';
 import { useAuth } from '../../context/AuthContext';
 
 const Rating: React.FC<{ rating: number }> = ({ rating }) => (
@@ -17,7 +17,7 @@ const Rating: React.FC<{ rating: number }> = ({ rating }) => (
 );
 
 const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
-    const { handleToggleFavorite } = useData();
+    const { handleToggleFavorite } = useServices();
     const { isPublicAuthenticated } = useAuth();
 
     const onFavoriteClick = (e: React.MouseEvent) => {
@@ -28,13 +28,14 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
 
     return (
         <div className="relative group">
-            <Link to={`/service/${service.id}`} className="block bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 transition-transform duration-300">
+            <Link to={`/service/${service.id}`} className="block bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 active:scale-[0.98]">
                 <div className="relative">
                     <img 
                         src={service.images[0] || `https://picsum.photos/400/300?random=${service.id}`} 
                         alt={service.name} 
                         className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
                         loading="lazy"
+                        decoding="async"
                     />
                     <div className="absolute bottom-0 right-0 bg-gradient-to-t from-black/60 to-transparent w-full p-4">
                         <Rating rating={service.rating} />
@@ -58,4 +59,4 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => {
     );
 };
 
-export default ServiceCard;
+export default memo(ServiceCard);

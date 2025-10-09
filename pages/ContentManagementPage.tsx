@@ -1,5 +1,4 @@
 import React, { useState, useCallback, ReactNode } from 'react';
-// FIX: Replaced deprecated useAppContext with useData from DataContext.
 import { useData } from '../context/DataContext';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon, HomeIcon, InformationCircleIcon, QuestionMarkCircleIcon, BookOpenIcon, PlusIcon, TrashIcon, PencilSquareIcon, BuildingLibraryIcon } from '../components/common/Icons';

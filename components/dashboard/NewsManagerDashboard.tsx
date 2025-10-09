@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-// FIX: Replaced deprecated useAppContext with useData from DataContext.
-import { useData } from '../../context/DataContext';
+import { useNews } from '../../context/NewsContext';
 import KpiCard from '../common/KpiCard';
 import { NewspaperIcon, BellAlertIcon, EyeIcon, ArrowTrendingUpIcon, PlusIcon, ChartBarIcon, ChartPieIcon } from '../common/Icons';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -22,8 +21,7 @@ const StatusBadge: React.FC<{ startDate: string, endDate: string }> = ({ startDa
 };
 
 const NewsManagerDashboard: React.FC = () => {
-    // FIX: Replaced deprecated useAppContext with useData.
-    const { news, notifications, advertisements } = useData();
+    const { news, notifications, advertisements } = useNews();
 
     const stats = useMemo(() => {
         // News Stats
