@@ -40,13 +40,13 @@ const CategoryCarousel: React.FC<CategoryCarouselProps> = ({ title, categories }
     }
 
     return (
-        <section className="py-12">
+        <section className="py-10 overflow-hidden">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 dark:text-white mb-8">{title}</h2>
                 <div className="relative group">
                     <div
                         ref={scrollContainerRef}
-                        className="flex overflow-x-auto pb-4 gap-4 scrollbar-hide"
+                        className="flex overflow-x-auto pb-4 gap-4 scrollbar-hide -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8"
                         style={{ scrollSnapType: 'x mandatory' }}
                     >
                         {categories.map(category => (

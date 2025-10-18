@@ -23,16 +23,17 @@ const ServicesCarousel: React.FC<ServicesCarouselProps> = ({ title, services }) 
     }
 
     return (
-        <section className="py-12 bg-slate-50 dark:bg-slate-900/50">
+        <section className="py-10 bg-slate-50 dark:bg-slate-900/50 overflow-hidden">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 dark:text-white mb-8">{title}</h2>
                 <div className="relative group">
                     <div
                         ref={scrollContainerRef}
-                        className="flex overflow-x-auto pb-4 gap-6 scrollbar-hide"
+                        className="flex overflow-x-auto pb-4 gap-6 scrollbar-hide -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8"
+                        style={{ scrollSnapType: 'x mandatory' }}
                     >
                         {services.map(service => (
-                            <div key={service.id} className="flex-shrink-0 w-72">
+                            <div key={service.id} className="flex-shrink-0 w-72" style={{ scrollSnapAlign: 'start' }}>
                                 <ServiceCard service={service} />
                             </div>
                         ))}

@@ -15,7 +15,7 @@ const PublicFooter: React.FC = () => {
 
     return (
         <footer className="bg-white dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700" dir="rtl">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {/* Column 1: Logo & About */}
                     <div className="md:col-span-1 space-y-4">

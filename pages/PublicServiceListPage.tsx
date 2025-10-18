@@ -46,9 +46,11 @@ const PublicServiceListPage: React.FC = () => {
                 </button>
 
                 {filteredServices.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div className="flex overflow-x-auto pb-4 gap-6 scrollbar-hide -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8" style={{ scrollSnapType: 'x mandatory' }}>
                         {filteredServices.map(service => (
-                            <ServiceCard key={service.id} service={service} />
+                           <div key={service.id} className="flex-shrink-0 w-72" style={{ scrollSnapAlign: 'start' }}>
+                                <ServiceCard service={service} />
+                            </div>
                         ))}
                     </div>
                 ) : (

@@ -24,16 +24,17 @@ const PropertyCarousel: React.FC<PropertyCarouselProps> = ({ title, properties }
     }
 
     return (
-        <section className="py-12 bg-white dark:bg-slate-900">
+        <section className="py-10 bg-white dark:bg-slate-900 overflow-hidden">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 dark:text-white mb-8">{title}</h2>
                 <div className="relative group">
                     <div
                         ref={scrollContainerRef}
-                        className="flex overflow-x-auto pb-4 gap-6 scrollbar-hide"
+                        className="flex overflow-x-auto pb-4 gap-6 scrollbar-hide -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8"
+                        style={{ scrollSnapType: 'x mandatory' }}
                     >
                         {properties.map(property => (
-                            <div key={property.id} className="flex-shrink-0 w-80">
+                            <div key={property.id} className="flex-shrink-0 w-80" style={{ scrollSnapAlign: 'start' }}>
                                 <PropertyCard property={property} />
                             </div>
                         ))}

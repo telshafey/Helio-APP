@@ -33,9 +33,11 @@ const PublicNewsPage: React.FC = () => {
                     </div>
                 )}
                 {sortedNews.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div className="flex overflow-x-auto pb-4 gap-6 scrollbar-hide -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8" style={{ scrollSnapType: 'x mandatory' }}>
                         {sortedNews.map(newsItem => (
-                            <NewsCard key={newsItem.id} newsItem={newsItem} />
+                            <div key={newsItem.id} className="flex-shrink-0 w-80" style={{ scrollSnapAlign: 'start' }}>
+                                <NewsCard newsItem={newsItem} />
+                            </div>
                         ))}
                     </div>
                 ) : (

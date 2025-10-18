@@ -37,7 +37,7 @@ const PublicServicesPage: React.FC = () => {
                 subtitle="اكتشف كل ما تقدمه مدينة هليوبوليس الجديدة."
                 icon={<Squares2X2Icon className="w-12 h-12 text-cyan-500" />}
             />
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 {sliderAds.length > 0 && (
                     <div className="mb-8">
                         <AdSlider ads={sliderAds} />
@@ -55,12 +55,12 @@ const PublicServicesPage: React.FC = () => {
                             </button>
                             <div className={`transition-all duration-300 ease-in-out overflow-hidden ${openCategoryId === category.id ? 'max-h-[1000px]' : 'max-h-0'}`}>
                                 <div className="p-6 border-t border-slate-200 dark:border-slate-700">
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                    <div className="flex overflow-x-auto pb-2 gap-3 scrollbar-hide">
                                         {category.subCategories.map(sub => (
                                             <Link 
                                                 key={sub.id} 
                                                 to={`/services/subcategory/${sub.id}`} 
-                                                className="block p-4 text-center rounded-lg bg-slate-100 dark:bg-slate-700/50 hover:bg-cyan-100 dark:hover:bg-cyan-900/50 hover:text-cyan-600 transition-colors"
+                                                className="flex-shrink-0 block px-4 py-3 text-center rounded-lg bg-slate-100 dark:bg-slate-700/50 hover:bg-cyan-100 dark:hover:bg-cyan-900/50 hover:text-cyan-600 transition-colors whitespace-nowrap"
                                             >
                                                 <span className="font-medium">{sub.name}</span>
                                             </Link>

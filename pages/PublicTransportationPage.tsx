@@ -35,7 +35,7 @@ const SupervisorCard: React.FC<{ name: string; phone: string; title: string; ico
 const TabButton: React.FC<{ active: boolean; onClick: () => void; children: React.ReactNode }> = ({ active, onClick, children }) => (
     <button
         onClick={onClick}
-        className={`px-6 py-3 font-semibold rounded-t-lg transition-colors focus:outline-none text-lg ${
+        className={`px-4 py-2 text-base sm:px-6 sm:py-3 sm:text-lg font-semibold rounded-t-lg transition-colors focus:outline-none ${
             active
                 ? 'bg-slate-100 dark:bg-slate-800 text-cyan-500 border-b-2 border-cyan-500'
                 : 'bg-transparent text-gray-500 dark:text-gray-400 hover:bg-slate-200/50 dark:hover:bg-slate-700/50'

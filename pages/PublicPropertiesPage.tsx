@@ -99,7 +99,7 @@ const PublicPropertiesPage: React.FC = () => {
                     </div>
                 )}
                 {/* Filters */}
-                <div className="flex flex-col sm:flex-row gap-4 mb-8 p-4 bg-white dark:bg-slate-800 rounded-xl shadow-md sticky top-20 z-10">
+                <div className="flex flex-col sm:flex-row gap-4 mb-8 p-4 bg-white dark:bg-slate-800 rounded-xl shadow-md sticky top-12 z-10">
                     <div className="relative flex-grow">
                         <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute top-1/2 right-3 -translate-y-1/2" />
                         <input
@@ -127,9 +127,11 @@ const PublicPropertiesPage: React.FC = () => {
                 </div>
                 
                 {filteredProperties.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div className="flex overflow-x-auto pb-4 gap-6 scrollbar-hide -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8" style={{ scrollSnapType: 'x mandatory' }}>
                         {filteredProperties.map(prop => (
-                            <PropertyCard key={prop.id} property={prop} />
+                            <div key={prop.id} className="flex-shrink-0 w-80" style={{ scrollSnapAlign: 'start' }}>
+                                <PropertyCard property={prop} />
+                            </div>
                         ))}
                     </div>
                 ) : (
