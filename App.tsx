@@ -20,7 +20,7 @@ const App: React.FC = () => {
       <div className="bg-slate-100 dark:bg-slate-900 text-gray-800 dark:text-gray-200 min-h-screen font-sans flex flex-col" dir="rtl">
         <PublicHeader />
         <SideDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
-        <main className="flex-grow pt-14 pb-14 md:pb-0 relative">
+        <main className="flex-grow pt-12 md:pt-14 pb-12 md:pb-0 relative">
           <Suspense fallback={<SkeletonLoader />}>
             <AnimatedRoutes />
           </Suspense>

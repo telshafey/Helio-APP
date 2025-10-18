@@ -84,10 +84,6 @@ const SideDrawer: React.FC<SideDrawerProps> = ({ isOpen, onClose }) => {
                         
                         <NavLink to="/news" onClick={onClose} onPointerDown={() => handlePrefetch('/news')} className={navLinkClasses}><NewspaperIcon className="w-6 h-6 text-indigo-500"/><span>الأخبار</span></NavLink>
                         <NavLink to="/community" onClick={onClose} onPointerDown={() => handlePrefetch('/community')} className={navLinkClasses}><ChatBubbleOvalLeftEllipsisIcon className="w-6 h-6 text-teal-500"/><span>المجتمع</span></NavLink>
-                        <NavLink to="/marketplace" onClick={onClose} onPointerDown={() => handlePrefetch('/marketplace')} className={navLinkClasses}><ShoppingBagIcon className="w-6 h-6 text-amber-500"/><span>البيع والشراء</span></NavLink>
-                        <NavLink to="/jobs" onClick={onClose} onPointerDown={() => handlePrefetch('/jobs')} className={navLinkClasses}><BriefcaseIcon className="w-6 h-6 text-lime-500"/><span>الوظائف</span></NavLink>
-                        <NavLink to="/offers" onClick={onClose} onPointerDown={() => handlePrefetch('/offers')} className={navLinkClasses}><TagIcon className="w-6 h-6 text-pink-500"/><span>العروض الحصرية</span></NavLink>
-                        <NavLink to="/lost-and-found" onClick={onClose} onPointerDown={() => handlePrefetch('/lost-and-found')} className={navLinkClasses}><ArchiveBoxIcon className="w-6 h-6 text-orange-500"/><span>المفقودات</span></NavLink>
                         
                         <hr className="border-slate-200 dark:border-slate-700 my-3" />
                         

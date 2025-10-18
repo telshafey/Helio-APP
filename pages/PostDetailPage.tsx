@@ -119,7 +119,7 @@ const PostDetailPage: React.FC = () => {
                 subtitle={`بواسطة ${post.username} • ${new Date(post.date).toLocaleDateString('ar-EG-u-nu-latn')}`}
                 icon={<ChatBubbleOvalLeftEllipsisIcon className="w-12 h-12 text-teal-500" />}
             />
-            <div className="container mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-10">
+            <div className="container mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8">
                 <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-cyan-500 hover:underline mb-8">
                     <ArrowLeftIcon className="w-5 h-5"/>
                     <span>العودة للمجتمع</span>

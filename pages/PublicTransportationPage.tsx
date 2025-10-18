@@ -1,7 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTransportation } from '../context/TransportationContext';
-import { PhoneIcon, UserCircleIcon, BusIcon, CalendarDaysIcon, MapPinIcon, ChevronDownIcon } from '../components/common/Icons';
+import { useAuth } from '../context/AuthContext';
+import type { Driver, ExternalRoute, Supervisor, WeeklyScheduleItem } from '../types';
+// Fix: Import MapPinIcon to resolve usage error.
+import { ArrowLeftIcon, PlusIcon, PencilSquareIcon, TrashIcon, BusIcon, UserCircleIcon, MapIcon, CalendarDaysIcon, PhoneIcon, ChevronDownIcon, MapPinIcon } from '../components/common/Icons';
+import Modal from '../components/common/Modal';
+import ImageUploader from '../components/common/ImageUploader';
+import { InputField } from '../components/common/FormControls';
 import PageBanner from '../components/common/PageBanner';
+import { useNews } from '../context/NewsContext';
+import AdSlider from '../components/common/AdSlider';
 
 const CallButton: React.FC<{ phone: string }> = ({ phone }) => (
     <a href={`tel:${phone}`} className="flex items-center justify-center gap-2 bg-green-500 text-white font-semibold px-3 py-1.5 rounded-md hover:bg-green-600 transition-colors text-sm">
@@ -38,6 +47,7 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; children: Reac
 
 const PublicTransportationPage: React.FC = () => {
     const { transportation } = useTransportation();
+    const { advertisements } = useNews();
     const [activeTab, setActiveTab] = useState<'internal' | 'external'>('internal');
     const [showFullWeek, setShowFullWeek] = useState(false);
 
@@ -45,6 +55,16 @@ const PublicTransportationPage: React.FC = () => {
     const todayString = todayDate.toISOString().split('T')[0];
     const todaySchedule = transportation.weeklySchedule.find(d => d.date === todayString);
     const todayDayName = todayDate.toLocaleDateString('ar-EG', { weekday: 'long' });
+
+    const sliderAds = useMemo(() => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return advertisements.filter(ad => {
+            const start = new Date(ad.startDate);
+            const end = new Date(ad.endDate);
+            return today >= start && today <= end;
+        });
+    }, [advertisements]);
 
     return (
         <div className="animate-fade-in bg-slate-100 dark:bg-slate-900" dir="rtl">
@@ -54,6 +74,11 @@ const PublicTransportationPage: React.FC = () => {
                 icon={<BusIcon className="w-12 h-12 text-lime-500" />}
             />
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                {sliderAds.length > 0 && (
+                    <div className="mb-8">
+                        <AdSlider ads={sliderAds} />
+                    </div>
+                )}
                 <div className="border-b border-gray-200 dark:border-slate-700 mb-8">
                     <nav className="-mb-px flex justify-center gap-4" aria-label="Tabs">
                         <TabButton active={activeTab === 'internal'} onClick={() => setActiveTab('internal')}>الباصات الداخلية</TabButton>

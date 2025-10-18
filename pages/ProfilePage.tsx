@@ -112,7 +112,7 @@ const ProfilePage: React.FC = () => {
 
     return (
         <div className="animate-fade-in" dir="rtl">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 <div className="max-w-4xl mx-auto">
                     <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-8">
                         <div className="flex flex-col sm:flex-row items-center gap-6 mb-8 pb-8 border-b border-slate-200 dark:border-slate-700">

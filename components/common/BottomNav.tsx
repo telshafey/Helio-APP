@@ -21,7 +21,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ onMenuClick }) => {
     };
 
     return (
-        <footer className="fixed bottom-0 left-0 right-0 h-14 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg border-t border-slate-200 dark:border-slate-700 z-30" dir="rtl">
+        <footer className="fixed bottom-0 left-0 right-0 h-12 bg-white/80 dark:bg-slate-800/80 backdrop-blur-lg border-t border-slate-200 dark:border-slate-700 z-30" dir="rtl">
             <div className="flex justify-around h-full">
                 <NavLink to="/" end className={navLinkClasses} onPointerDown={() => handlePrefetch('/')}>
                     <HomeIcon className="w-6 h-6" />

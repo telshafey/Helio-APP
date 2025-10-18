@@ -6,10 +6,8 @@ import { useData } from '../context/DataContext';
 import { useServices } from '../context/ServicesContext';
 import { useProperties } from '../context/PropertiesContext';
 import { useNews } from '../context/NewsContext';
-import { useCommunity } from '../context/AppContext';
 import AdSlider from '../components/common/AdSlider';
 import ServicesCarousel from '../components/common/ServicesCarousel';
-import OffersHighlight from '../components/common/OffersHighlight';
 import CategoryCarousel from '../components/common/CategoryCarousel';
 import PropertyCarousel from '../components/common/PropertyCarousel';
 import NewsCarousel from '../components/common/NewsCarousel';
@@ -19,7 +17,6 @@ const PublicHomePage: React.FC = () => {
     const { services, categories } = useServices();
     const { properties } = useProperties();
     const { advertisements, news } = useNews();
-    const { offers } = useCommunity();
     const content = publicPagesContent.home;
 
     const sliderAds = React.useMemo(() => {
@@ -31,19 +28,6 @@ const PublicHomePage: React.FC = () => {
             return today >= start && today <= end;
         });
     }, [advertisements]);
-
-    const highlightOffers = React.useMemo(() => {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        return offers
-            .filter(offer => {
-                const start = new Date(offer.startDate);
-                const end = new Date(offer.endDate);
-                return offer.status === 'approved' && today >= start && today <= end;
-            })
-            .sort((a,b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime())
-            .slice(0, 6);
-    }, [offers]);
 
     const recentServices = [...services].sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()).slice(0, 10);
     const recentNews = [...news].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 8);
@@ -79,7 +63,6 @@ const PublicHomePage: React.FC = () => {
                 {sliderAds.length > 0 && <AdSlider ads={sliderAds} />}
             </div>
 
-            <OffersHighlight offers={highlightOffers} services={services} />
             <CategoryCarousel title="تصفح حسب الفئة" categories={serviceCategories} />
             <ServicesCarousel title="أحدث الخدمات" services={recentServices} />
             <PropertyCarousel title="أحدث العقارات" properties={recentProperties} />

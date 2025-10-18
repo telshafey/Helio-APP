@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useServices } from '../context/ServicesContext';
 import { 
@@ -7,12 +7,24 @@ import {
 } from '../components/common/Icons';
 import { getIcon } from '../components/common/iconUtils';
 import PageBanner from '../components/common/PageBanner';
+import { useNews } from '../context/NewsContext';
+import AdSlider from '../components/common/AdSlider';
 
 const PublicServicesPage: React.FC = () => {
     const { categories } = useServices();
+    const { advertisements } = useNews();
     const serviceCategories = categories.filter(c => c.name !== "المدينة والجهاز");
     const [openCategoryId, setOpenCategoryId] = useState<number | null>(serviceCategories.length > 0 ? serviceCategories[0].id : null);
 
+    const sliderAds = useMemo(() => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return advertisements.filter(ad => {
+            const start = new Date(ad.startDate);
+            const end = new Date(ad.endDate);
+            return today >= start && today <= end;
+        });
+    }, [advertisements]);
 
     const handleToggleCategory = (id: number) => {
         setOpenCategoryId(prevId => (prevId === id ? null : id));
@@ -26,6 +38,11 @@ const PublicServicesPage: React.FC = () => {
                 icon={<Squares2X2Icon className="w-12 h-12 text-cyan-500" />}
             />
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                {sliderAds.length > 0 && (
+                    <div className="mb-8">
+                        <AdSlider ads={sliderAds} />
+                    </div>
+                )}
                 <div className="max-w-4xl mx-auto space-y-4">
                     {serviceCategories.map(category => (
                         <div key={category.id} className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden bg-white dark:bg-slate-800">

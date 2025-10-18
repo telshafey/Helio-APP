@@ -53,7 +53,7 @@ const FaqPage: React.FC = () => {
                 subtitle={content.subtitle}
                 icon={<QuestionMarkCircleIcon className="w-12 h-12 text-cyan-500" />}
             />
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
                  <button onClick={() => navigate(-1)} className="flex items-center space-x-2 rtl:space-x-reverse text-cyan-500 dark:text-cyan-400 hover:underline mb-8 max-w-4xl mx-auto">
                     <ArrowLeftIcon className="w-5 h-5" />
                     <span>العودة</span>

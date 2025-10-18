@@ -23,7 +23,7 @@ const RegisterPage: React.FC = () => {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-[calc(100vh-8rem)] bg-slate-100 dark:bg-slate-900 px-4 py-8">
+        <div className="flex items-center justify-center min-h-[calc(100vh-6rem)] bg-slate-100 dark:bg-slate-900 px-4 py-6">
             <div className="w-full max-w-md">
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 sm:p-12 animate-fade-in-up">
                     <Logo className="h-16 mx-auto mb-4" />

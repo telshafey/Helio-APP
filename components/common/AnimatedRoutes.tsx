@@ -30,12 +30,8 @@ const FavoritesPage = lazyWithPrefetch(() => import('../../pages/FavoritesPage')
 const UserNotificationsPage = lazyWithPrefetch(() => import('../../pages/UserNotificationsPage'));
 const PublicTransportationPage = lazyWithPrefetch(() => import('../../pages/PublicTransportationPage'));
 const ContactPage = lazyWithPrefetch(() => import('../../pages/ContactPage'));
-const PublicMarketplacePage = lazyWithPrefetch(() => import('../../pages/PublicMarketplacePage'));
-const PublicJobsPage = lazyWithPrefetch(() => import('../../pages/PublicJobsPage'));
 const MarketplaceManagementPage = lazyWithPrefetch(() => import('../../pages/MarketplaceManagementPage'));
 const JobsManagementPage = lazyWithPrefetch(() => import('../../pages/JobsManagementPage'));
-const PublicOffersPage = lazyWithPrefetch(() => import('../../pages/PublicOffersPage'));
-const PublicLostAndFoundPage = lazyWithPrefetch(() => import('../../pages/PublicLostAndFoundPage'));
 const OffersManagementPage = lazyWithPrefetch(() => import('../../pages/OffersManagementPage'));
 const LostAndFoundManagementPage = lazyWithPrefetch(() => import('../../pages/LostAndFoundManagementPage'));
 
@@ -43,8 +39,6 @@ export const prefetchMap: { [path: string]: () => Promise<any> } = {
   '/': PublicHomePage.preload,
   '/services': PublicServicesPage.preload,
   '/properties': PublicPropertiesPage.preload,
-  '/marketplace': PublicMarketplacePage.preload,
-  '/jobs': PublicJobsPage.preload,
   '/news': PublicNewsPage.preload,
   '/community': CommunityPage.preload,
   '/transportation': PublicTransportationPage.preload,
@@ -61,8 +55,6 @@ export const prefetchMap: { [path: string]: () => Promise<any> } = {
   '/register': RegisterPage.preload,
   '/marketplace-management': MarketplaceManagementPage.preload,
   '/jobs-management': JobsManagementPage.preload,
-  '/offers': PublicOffersPage.preload,
-  '/lost-and-found': PublicLostAndFoundPage.preload,
   '/offers-management': OffersManagementPage.preload,
   '/lost-and-found-management': LostAndFoundManagementPage.preload,
   // Add dynamic prefetch handlers
@@ -146,14 +138,10 @@ const AnimatedRoutes: React.FC = () => {
                 <Route path="/post/:postId" element={<AnimatedPage><PostDetailPage /></AnimatedPage>} />
                 
                 {/* Marketplace and Jobs Routes */}
-                <Route path="/marketplace" element={<AnimatedPage><PublicMarketplacePage /></AnimatedPage>} />
-                <Route path="/jobs" element={<AnimatedPage><PublicJobsPage /></AnimatedPage>} />
                 <Route path="/marketplace-management" element={<AnimatedPage><MarketplaceManagementPage /></AnimatedPage>} />
                 <Route path="/jobs-management" element={<AnimatedPage><JobsManagementPage /></AnimatedPage>} />
                 
                 {/* New Offers and Lost & Found Routes */}
-                <Route path="/offers" element={<AnimatedPage><PublicOffersPage /></AnimatedPage>} />
-                <Route path="/lost-and-found" element={<AnimatedPage><PublicLostAndFoundPage /></AnimatedPage>} />
                 <Route path="/offers-management" element={<AnimatedPage><OffersManagementPage /></AnimatedPage>} />
                 <Route path="/lost-and-found-management" element={<AnimatedPage><LostAndFoundManagementPage /></AnimatedPage>} />
 

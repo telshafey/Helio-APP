@@ -19,7 +19,7 @@ const FavoritesPage: React.FC = () => {
                 subtitle="جميع خدماتك المفضلة في مكان واحد."
                 icon={<HeartIconSolid className="w-12 h-12 text-red-500" />}
             />
-             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 {favoriteServices.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                         {favoriteServices.map(service => (

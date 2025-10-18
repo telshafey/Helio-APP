@@ -33,7 +33,7 @@ const UserNotificationsPage: React.FC = () => {
                 subtitle="أحدث التنبيهات والأخبار الهامة المرسلة إليك."
                 icon={<BellIcon className="w-12 h-12 text-cyan-500" />}
             />
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 <div className="max-w-3xl mx-auto">
                     <div className="flex justify-between items-center mb-8">
                         <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-cyan-500 hover:underline">

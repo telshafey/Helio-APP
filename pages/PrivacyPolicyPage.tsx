@@ -29,7 +29,7 @@ const PrivacyPolicyPage: React.FC = () => {
     }
 
     return (
-        <div className="animate-fade-in py-12 px-4" dir="rtl">
+        <div className="animate-fade-in py-10 px-4" dir="rtl">
             <div className="max-w-4xl mx-auto">
                 <button onClick={() => navigate(-1)} className="flex items-center space-x-2 rtl:space-x-reverse text-cyan-500 dark:text-cyan-400 hover:underline mb-6">
                     <ArrowLeftIcon className="w-5 h-5" />

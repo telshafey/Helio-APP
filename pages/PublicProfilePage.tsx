@@ -38,7 +38,7 @@ const PublicProfilePage: React.FC = () => {
 
     return (
         <div className="animate-fade-in" dir="rtl">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 <div className="max-w-4xl mx-auto">
                      <button onClick={() => navigate(-1)} className="flex items-center space-x-2 rtl:space-x-reverse text-cyan-500 dark:text-cyan-400 hover:underline mb-8">
                         <ArrowLeftIcon className="w-5 h-5" />

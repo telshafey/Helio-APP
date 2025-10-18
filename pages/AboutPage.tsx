@@ -9,7 +9,7 @@ const AboutPage: React.FC = () => {
     const content = publicPagesContent.about;
 
     return (
-        <div className="animate-fade-in py-12 px-4">
+        <div className="animate-fade-in py-10 px-4">
             <button onClick={() => navigate(-1)} className="flex items-center space-x-2 rtl:space-x-reverse text-cyan-500 dark:text-cyan-400 hover:underline mb-6 max-w-4xl mx-auto">
                 <ArrowLeftIcon className="w-5 h-5" />
                 <span>العودة</span>

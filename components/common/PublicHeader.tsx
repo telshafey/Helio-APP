@@ -36,7 +36,7 @@ const PublicHeader: React.FC = () => {
     };
 
     return (
-        <header className="fixed top-0 left-0 right-0 h-14 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm z-20 border-b border-slate-200 dark:border-slate-700" dir="rtl">
+        <header className="fixed top-0 left-0 right-0 h-12 md:h-14 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm z-20 border-b border-slate-200 dark:border-slate-700" dir="rtl">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-full">
                 <div className="flex items-center gap-4">
                     <Logo className="h-8" />
@@ -45,10 +45,6 @@ const PublicHeader: React.FC = () => {
                             <NavLink to="/" end className={navLinkClasses} onPointerDown={() => handlePrefetch('/')}>الرئيسية</NavLink>
                             <NavLink to="/services" className={navLinkClasses} onPointerDown={() => handlePrefetch('/services')}>الخدمات</NavLink>
                             <NavLink to="/properties" className={navLinkClasses} onPointerDown={() => handlePrefetch('/properties')}>العقارات</NavLink>
-                            <NavLink to="/marketplace" className={navLinkClasses} onPointerDown={() => handlePrefetch('/marketplace')}>البيع والشراء</NavLink>
-                            <NavLink to="/jobs" className={navLinkClasses} onPointerDown={() => handlePrefetch('/jobs')}>الوظائف</NavLink>
-                            <NavLink to="/offers" className={navLinkClasses} onPointerDown={() => handlePrefetch('/offers')}>العروض</NavLink>
-                            <NavLink to="/lost-and-found" className={navLinkClasses} onPointerDown={() => handlePrefetch('/lost-and-found')}>المفقودات</NavLink>
                             <NavLink to="/news" className={navLinkClasses} onPointerDown={() => handlePrefetch('/news')}>الأخبار</NavLink>
                             <NavLink to="/community" className={navLinkClasses} onPointerDown={() => handlePrefetch('/community')}>المجتمع</NavLink>
                             <NavLink to="/transportation" className={navLinkClasses} onPointerDown={() => handlePrefetch('/transportation')}>المواصلات</NavLink>

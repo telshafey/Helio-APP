@@ -7,10 +7,13 @@ import EmptyState from '../components/common/EmptyState';
 import PageBanner from '../components/common/PageBanner';
 import FilterDrawer from '../components/common/FilterDrawer';
 import PropertyFilters from '../components/properties/PropertyFilters';
+import { useNews } from '../context/NewsContext';
+import AdSlider from '../components/common/AdSlider';
 
 const PublicPropertiesPage: React.FC = () => {
     const navigate = useNavigate();
     const { properties } = useProperties();
+    const { advertisements } = useNews();
 
     // Existing state
     const [searchTerm, setSearchTerm] = useState('');
@@ -32,6 +35,15 @@ const PublicPropertiesPage: React.FC = () => {
         return count;
     }, [appliedPriceRange, appliedAmenities]);
 
+    const sliderAds = useMemo(() => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return advertisements.filter(ad => {
+            const start = new Date(ad.startDate);
+            const end = new Date(ad.endDate);
+            return today >= start && today <= end;
+        });
+    }, [advertisements]);
 
     const filteredProperties = useMemo(() => {
         return properties.filter(prop => {
@@ -81,6 +93,11 @@ const PublicPropertiesPage: React.FC = () => {
                 icon={<HomeModernIcon className="w-12 h-12 text-amber-500" />}
             />
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                {sliderAds.length > 0 && (
+                    <div className="mb-8">
+                        <AdSlider ads={sliderAds} />
+                    </div>
+                )}
                 {/* Filters */}
                 <div className="flex flex-col sm:flex-row gap-4 mb-8 p-4 bg-white dark:bg-slate-800 rounded-xl shadow-md sticky top-20 z-10">
                     <div className="relative flex-grow">
